@@ -5,6 +5,7 @@
 ARK_API_EXPORT Mapping_t getFunctionsMapping()
 {
     Mapping_t map;
+
     map["httpCreateServer"] = http_create_server;
     map["httpServerGet"] = http_server_get;
     map["httpServerStop"] = http_server_stop;
@@ -15,6 +16,8 @@ ARK_API_EXPORT Mapping_t getFunctionsMapping()
     map["httpServerRmMountPoint"] = http_server_remove_mount_point;
     map["httpServerSetFileExtAndMimetypeMapping"] = http_server_set_fext_mimetype;
     map["httpServerEnableLogger"] = http_server_enable_logger;
+
+    map["httpCreateHeaders"] = http_create_headers;
 
     return map;
 }

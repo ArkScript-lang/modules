@@ -8,3 +8,4 @@ Value http_server_set_mount_point(const std::vector<Value>& n);
 Value http_server_remove_mount_point(const std::vector<Value>& n);
 Value http_server_set_fext_mimetype(const std::vector<Value>& n);
 Value http_server_enable_logger(const std::vector<Value>& n);
+Value http_create_headers(const std::vector<Value>& n);

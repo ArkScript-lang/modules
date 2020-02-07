@@ -1,12 +1,14 @@
 #include <Ark/Module.hpp>
 #include <httplib.hpp>
+#include <list>
 
 using namespace httplib;
 
 enum class Type : unsigned
 {
     Server = 0,
-    Client = 1
+    Client = 1,
+    Headers = 2
 };
 
 int& get_logger_level()
@@ -41,6 +43,12 @@ Server& create_server()
         });
     
     return srv;
+}
+
+std::list<Headers>& get_headers()
+{
+    static std::list<Headers> headers;
+    return headers;
 }
 
 Value http_create_server(const std::vector<Value>& n)
@@ -201,4 +209,39 @@ Value http_server_enable_logger(const std::vector<Value>& n)
         level = 1;
 
     return Nil;
+}
+
+Value http_create_headers(const std::vector<Value>& n)
+{
+    std::list<Headers>& h = get_headers();
+    h.emplace_back();
+    h.back().insert(std::pair<std::string, std::string>());
+
+    if ((n.size() % 2) == 1)
+        throw std::runtime_error("httpCreateHeaders: needs an even number of arguments: [header -> value]");
+    
+    std::string key = "";
+    for (Value& v : n)
+    {
+        if (v.valueType() != ValueType::String)
+            throw Ark::TypeError("httpCreateHeaders: takes only String as argument");
+        
+        if (key == "")
+            key = v.string();
+        else
+        {
+            h.back().insert(std::pair<std::string, std::string>(key, v.string()));
+            key = "";
+        }
+    }
+
+    Value headers = Ark::Value(Ark::UserType(static_cast<unsigned>(Type::Server), &h.back()));
+    headers.usertype_ref().setOStream([](std::ostream& os, const UserType& A) -> std::ostream& {
+        os << "httpHeaders<";
+        for (auto& p : *static_cast<Headers*>(A.usertype().data()))
+            std::cout << "\n\t" << p.first << " -> " << p.second;
+        os << ">";
+        return os;
+    });
+    return headers;
 }
