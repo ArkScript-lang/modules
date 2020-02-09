@@ -51,6 +51,12 @@ std::list<Headers>& get_headers()
     return headers;
 }
 
+std::list<Client>& get_clients()
+{
+    static std::list<Client> clients;
+    return clients;
+}
+
 Value http_create_server(const std::vector<Value>& n)
 {
     Value server = Ark::Value(Ark::UserType(static_cast<unsigned>(Type::Server), &create_server()));
@@ -96,7 +102,7 @@ Value http_server_get(const std::vector<Value>& n)
 Value http_server_stop(const std::vector<Value>& n)
 {
     if (n.size() != 1)
-        throw std::runtime_error("httpServerStop: needs a single argument: httpServer");
+        throw std::runtime_error("httpServerStop: needs a single argument: server");
     if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Server))
         throw Ark::TypeError("httpServerGet: server must be an httpServer");
     
@@ -108,7 +114,7 @@ Value http_server_stop(const std::vector<Value>& n)
 Value http_server_listen(const std::vector<Value>& n)
 {
     if (n.size() != 3)
-        throw std::runtime_error("httpServerListen: needs 3 arguments: httpServer, host, port");
+        throw std::runtime_error("httpServerListen: needs 3 arguments: server, host, port");
     if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Server))
         throw Ark::TypeError("httpServerListen: server must be an httpServer");
     if (n[1].valueType() != ValueType::String)
@@ -124,7 +130,7 @@ Value http_server_listen(const std::vector<Value>& n)
 Value http_server_bind_to_any_port(const std::vector<Value>& n)
 {
     if (n.size() != 2)
-        throw std::runtime_error("httpServerBindToAnyPort: needs 2 arguments: httpServer, host");
+        throw std::runtime_error("httpServerBindToAnyPort: needs 2 arguments: server, host");
     if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Server))
         throw Ark::TypeError("httpServerBindToAnyPort: server must be an httpServer");
     if (n[1].valueType() != ValueType::String)
@@ -136,7 +142,7 @@ Value http_server_bind_to_any_port(const std::vector<Value>& n)
 Value http_server_listen_after_bind(const std::vector<Value>& n)
 {
     if (n.size() != 1)
-        throw std::runtime_error("httpServerListenAfterBind: needs a single argument: httpServer");
+        throw std::runtime_error("httpServerListenAfterBind: needs a single argument: server");
     if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Server))
         throw Ark::TypeError("httpServerListenAfterBind: server must be an httpServer");
     
@@ -148,7 +154,7 @@ Value http_server_listen_after_bind(const std::vector<Value>& n)
 Value http_server_set_mount_point(const std::vector<Value>& n)
 {
     if (n.size() != 3)
-        throw std::runtime_error("httpServerSetMountPoint: needs 3 arguments: httpServer, folder, destination");
+        throw std::runtime_error("httpServerSetMountPoint: needs 3 arguments: server, folder, destination");
     if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Server))
         throw Ark::TypeError("httpServerSetMountPoint: server must be an httpServer");
     if (n[1].valueType() != ValueType::String)
@@ -165,7 +171,7 @@ Value http_server_set_mount_point(const std::vector<Value>& n)
 Value http_server_remove_mount_point(const std::vector<Value>& n)
 {
     if (n.size() != 2)
-        throw std::runtime_error("httpServerRmMountPoint: needs 2 arguments: httpServer, folder");
+        throw std::runtime_error("httpServerRmMountPoint: needs 2 arguments: server, folder");
     if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Server))
         throw Ark::TypeError("httpServerRmMountPoint: server must be an httpServer");
     if (n[1].valueType() != ValueType::String)
@@ -180,7 +186,7 @@ Value http_server_remove_mount_point(const std::vector<Value>& n)
 Value http_server_set_fext_mimetype(const std::vector<Value>& n)
 {
     if (n.size() != 3)
-        throw std::runtime_error("httpServerSetFileExtAndMimetypeMapping: needs 3 arguments: httpServer, ext, mimetype");
+        throw std::runtime_error("httpServerSetFileExtAndMimetypeMapping: needs 3 arguments: server, ext, mimetype");
     if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Server))
         throw Ark::TypeError("httpServerSetFileExtAndMimetypeMapping: server must be an httpServer");
     if (n[1].valueType() != ValueType::String)
@@ -235,7 +241,7 @@ Value http_create_headers(const std::vector<Value>& n)
         }
     }
 
-    Value headers = Ark::Value(Ark::UserType(static_cast<unsigned>(Type::Server), &h.back()));
+    Value headers = Ark::Value(Ark::UserType(static_cast<unsigned>(Type::Headers), &h.back()));
     headers.usertype_ref().setOStream([](std::ostream& os, const UserType& A) -> std::ostream& {
         os << "httpHeaders<";
         for (auto& p : *static_cast<Headers*>(A.usertype().data()))
@@ -244,4 +250,57 @@ Value http_create_headers(const std::vector<Value>& n)
         return os;
     });
     return headers;
+}
+
+Value http_create_client(const std::vector<Value>& n)
+{
+    if (n.size() != 2)
+        throw std::runtime_error("httpCreateClient: needs 2 arguments: host and port");
+    if (n[0].valueType() != ValueType::String)
+        throw Ark::TypeError("httpCreateClient: host must be a String");
+    if (n[1].valueType() != ValueType::Number)
+        throw Ark::TypeError("httpCreateClient: port must be a Number");
+
+    std::list<Client>& c = get_clients();
+    c.emplace_back(n[0].string().c_str(), static_cast<int>(n[1].number()));
+
+    Value client = Ark::Value(Ark::UserType(static_cast<unsigned>(Type::Client), &c.back()));
+    client.usertype_ref().setOStream([](std::ostream& os, const UserType& A) -> std::ostream& {
+        os << "httpClient<0x" << A.data() << ">";
+        return os;
+    });
+    return client;
+}
+
+Value http_client_get(const std::vector<Value>& n)
+{
+    if (n.size() < 2 || n.size() > 3)
+        throw std::runtime_error("httpClientGet: needs 2 arguments: client, route, [headers]");
+    if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Client))
+        throw Ark::TypeError("httpClientGet: client must be an httpClient");
+    if (n[1].valueType() != ValueType::String)
+        throw Ark::TypeError("httpClientGet: route must be a String");
+    
+    Headers* h = nullptr;
+
+    if (n.size() == 3)
+    {
+        if (n[2].valueType() != ValueType::User || n[2].usertype().type_id() != static_cast<unsigned>(Type::Headers))
+            throw Ark::TypeError("httpClientGet: headers must be httpHeaders");
+        else
+            h = static_cast<Headers*>(n[2].usertype().data());
+    }
+
+    Client* c = static_cast<Client*>(n[0].usertype().data());
+    std::string route = n[1].string();
+    auto res = (h == nullptr) ? c->Get(route.c_str()) : c->Get(route.c_str(), *h);
+
+    if (!res)
+        return Nil;
+    
+    Value data = Value(ValueType::List);
+    data.push_back(Value(res->status));
+    data.push_back(Value(res->body));
+
+    return data;
 }

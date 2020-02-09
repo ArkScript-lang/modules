@@ -18,6 +18,8 @@ ARK_API_EXPORT Mapping_t getFunctionsMapping()
     map["httpServerEnableLogger"] = http_server_enable_logger;
 
     map["httpCreateHeaders"] = http_create_headers;
+    map["httpCreateClient"] = http_create_client;
+    map["httpClientGet"] = http_client_get;
 
     return map;
 }
