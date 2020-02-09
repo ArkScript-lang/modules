@@ -141,7 +141,7 @@ Example:
     (mut output (httpClientGet cli "/"))
     (print (@ output 0))  # status: 301
 
-    (httpClientSetFollowLocation cli True)
+    (httpClientSetFollowLocation cli true)
     (set output (httpClientGet cli "/"))
     (print (@ output 0))  # status: 200
 }

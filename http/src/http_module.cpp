@@ -252,7 +252,7 @@ Value http_create_headers(const std::vector<Value>& n)
         throw std::runtime_error("httpCreateHeaders: needs an even number of arguments: [header -> value]");
     
     std::string key = "";
-    for (Value& v : n)
+    for (const Value& v : n)
     {
         if (v.valueType() != ValueType::String)
             throw Ark::TypeError("httpCreateHeaders: takes only String as argument");
@@ -269,7 +269,7 @@ Value http_create_headers(const std::vector<Value>& n)
     Value headers = Ark::Value(Ark::UserType(static_cast<unsigned>(Type::Headers), &h.back()));
     headers.usertype_ref().setOStream([](std::ostream& os, const UserType& A) -> std::ostream& {
         os << "httpHeaders<";
-        for (auto& p : *static_cast<Headers*>(A.usertype().data()))
+        for (auto& p : *static_cast<Headers*>(A.data()))
             std::cout << "\n\t" << p.first << " -> " << p.second;
         os << ">";
         return os;
@@ -340,7 +340,7 @@ Value http_create_params(const std::vector<Value>& n)
         throw std::runtime_error("httpCreateParams: needs an even number of arguments: [key -> value]");
     
     std::string key = "";
-    for (Value& v : n)
+    for (const Value& v : n)
     {
         if (v.valueType() != ValueType::String)
             throw Ark::TypeError("httpCreateParams: takes only String as arguments");
@@ -357,7 +357,7 @@ Value http_create_params(const std::vector<Value>& n)
     Value params = Ark::Value(Ark::UserType(static_cast<unsigned>(Type::Params), &p.back()));
     params.usertype_ref().setOStream([](std::ostream& os, const UserType& A) -> std::ostream& {
         os << "httpParams<";
-        for (auto& p : *static_cast<Params*>(A.usertype().data()))
+        for (auto& p : *static_cast<Params*>(A.data()))
             std::cout << "\n\t" << p.first << " -> " << p.second;
         os << ">";
         return os;
@@ -373,13 +373,13 @@ Value http_client_post(const std::vector<Value>& n)
         throw Ark::TypeError("httpClientPost: client must be an httpClient");
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("httpClientPost: route must be a String");
-    if (n[2].valueType() != String ||
+    if (n[2].valueType() != ValueType::String ||
             (n[2].valueType() != ValueType::User || n[2].usertype().type_id() != static_cast<unsigned>(Type::Params)))
         throw Ark::TypeError("httpClientPost: parameters must be a String or httpParams");
 
     Client* c = static_cast<Client*>(n[0].usertype().data());
     std::string route = n[1].string();
-    auto res = (n[2].valueType() == String) ?
+    auto res = (n[2].valueType() == ValueType::String) ?
         c->Post(route.c_str(), n[2].string().c_str(), "text/plain")
         : c->Post(route.c_str(), *static_cast<Params*>(n[2].usertype().data()));
 
@@ -401,13 +401,13 @@ Value http_client_put(const std::vector<Value>& n)
         throw Ark::TypeError("httpClientPut: client must be an httpClient");
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("httpClientPut: route must be a String");
-    if (n[2].valueType() != String ||
+    if (n[2].valueType() != ValueType::String ||
             (n[2].valueType() != ValueType::User || n[2].usertype().type_id() != static_cast<unsigned>(Type::Params)))
         throw Ark::TypeError("httpClientPut: parameters must be a String or httpParams");
 
     Client* c = static_cast<Client*>(n[0].usertype().data());
     std::string route = n[1].string();
-    auto res = (n[2].valueType() == String) ?
+    auto res = (n[2].valueType() == ValueType::String) ?
         c->Put(route.c_str(), n[2].string().c_str(), "text/plain")
         : c->Put(route.c_str(), *static_cast<Params*>(n[2].usertype().data()));
 
@@ -463,7 +463,7 @@ Value http_client_set_follow_location(const std::vector<Value>& n)
     if (n[1].valueType() != ValueType::NFT || n[1].valueType() == Nil)
         throw Ark::TypeError("httpClientSetFollowLocation: value must be a Boolean");
     
-    static_cast<Client*>(n[0].usertype().data())->set_follow_location(n[1].nft() == True);
+    static_cast<Client*>(n[0].usertype().data())->set_follow_location(n[1] == True);
 
     return Nil;
 }
