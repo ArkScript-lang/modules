@@ -49,3 +49,13 @@ Example:
     (print (@ output 0))  # print the status
 }
 ```
+
+### httpCreateParams
+
+### httpClientPost
+
+### httpClientPut
+
+### httpClientDelete
+
+### httpClientSetFollowLocation

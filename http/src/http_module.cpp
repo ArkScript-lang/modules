@@ -4,11 +4,18 @@
 
 using namespace httplib;
 
+/*
+    ***********************************
+                   Misc
+    ***********************************
+*/
+
 enum class Type : unsigned
 {
     Server = 0,
     Client = 1,
-    Headers = 2
+    Headers = 2,
+    Params = 3
 };
 
 int& get_logger_level()
@@ -51,11 +58,23 @@ std::list<Headers>& get_headers()
     return headers;
 }
 
+std::list<Params>& get_params()
+{
+    static std::list<Params> params;
+    return params;
+}
+
 std::list<Client>& get_clients()
 {
     static std::list<Client> clients;
     return clients;
 }
+
+/*
+    ***********************************
+                   Server
+    ***********************************
+*/
 
 Value http_create_server(const std::vector<Value>& n)
 {
@@ -217,6 +236,12 @@ Value http_server_enable_logger(const std::vector<Value>& n)
     return Nil;
 }
 
+/*
+    ***********************************
+                   Client
+    ***********************************
+*/
+
 Value http_create_headers(const std::vector<Value>& n)
 {
     std::list<Headers>& h = get_headers();
@@ -303,4 +328,39 @@ Value http_client_get(const std::vector<Value>& n)
     data.push_back(Value(res->body));
 
     return data;
+}
+
+Value http_create_params(const std::vector<Value>& n)
+{
+    std::list<Params>& p = get_params();
+    p.emplace_back();
+    p.back().insert(std::pair<std::string, std::string>());
+
+    if ((n.size() % 2) == 1)
+        throw std::runtime_error("httpCreateParams: needs an even number of arguments: [key -> value]");
+    
+    std::string key = "";
+    for (Value& v : n)
+    {
+        if (v.valueType() != ValueType::String)
+            throw Ark::TypeError("httpCreateParams: takes only String as arguments");
+        
+        if (key == "")
+            key = v.string();
+        else
+        {
+            p.back().insert(std::pair<std::string, std::string>(key, v.string()));
+            key = "";
+        }
+    }
+
+    Value params = Ark::Value(Ark::UserType(static_cast<unsigned>(Type::Params), &p.back()));
+    params.usertype_ref().setOStream([](std::ostream& os, const UserType& A) -> std::ostream& {
+        os << "httpParams<";
+        for (auto& p : *static_cast<Params*>(A.usertype().data()))
+            std::cout << "\n\t" << p.first << " -> " << p.second;
+        os << ">";
+        return os;
+    });
+    return params;
 }

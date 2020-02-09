@@ -20,6 +20,11 @@ ARK_API_EXPORT Mapping_t getFunctionsMapping()
     map["httpCreateHeaders"] = http_create_headers;
     map["httpCreateClient"] = http_create_client;
     map["httpClientGet"] = http_client_get;
+    map["httpCreateParams"] = http_create_params;
+    map["httpClientPost"] = http_client_post;
+    map["httpClientPut"] = http_client_put;
+    map["httpClientDelete"] = http_client_delete;
+    map["httpClientSetFollowLocation"] = http_client_set_follow_location;
 
     return map;
 }

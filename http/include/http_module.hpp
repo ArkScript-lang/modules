@@ -12,3 +12,8 @@ Value http_server_enable_logger(const std::vector<Value>& n);
 Value http_create_headers(const std::vector<Value>& n);
 Value http_create_client(const std::vector<Value>& n);
 Value http_client_get(const std::vector<Value>& n);
+Value http_create_params(const std::vector<Value>& n);
+Value http_client_post(const std::vector<Value>& n);
+Value http_client_put(const std::vector<Value>& n);
+Value http_client_delete(const std::vector<Value>& n);
+Value http_client_set_follow_location(const std::vector<Value>& n);
