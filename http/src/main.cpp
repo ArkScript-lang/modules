@@ -8,6 +8,7 @@ ARK_API_EXPORT Mapping_t getFunctionsMapping()
 
     map["httpCreateServer"] = http_create_server;
     map["httpServerGet"] = http_server_get;
+    // TODO add httpServerPost, httpServerPut, httpServerDelete
     map["httpServerStop"] = http_server_stop;
     map["httpServerListen"] = http_server_listen;
     map["httpServerBindToAnyPort"] = http_server_bind_to_any_port;

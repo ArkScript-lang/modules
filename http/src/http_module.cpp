@@ -364,3 +364,106 @@ Value http_create_params(const std::vector<Value>& n)
     });
     return params;
 }
+
+Value http_client_post(const std::vector<Value>& n)
+{
+    if (n.size() != 3)
+        throw std::runtime_error("httpClientPost: needs 3 arguments: client, route, parameters");
+    if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Client))
+        throw Ark::TypeError("httpClientPost: client must be an httpClient");
+    if (n[1].valueType() != ValueType::String)
+        throw Ark::TypeError("httpClientPost: route must be a String");
+    if (n[2].valueType() != String ||
+            (n[2].valueType() != ValueType::User || n[2].usertype().type_id() != static_cast<unsigned>(Type::Params)))
+        throw Ark::TypeError("httpClientPost: parameters must be a String or httpParams");
+
+    Client* c = static_cast<Client*>(n[0].usertype().data());
+    std::string route = n[1].string();
+    auto res = (n[2].valueType() == String) ?
+        c->Post(route.c_str(), n[2].string().c_str(), "text/plain")
+        : c->Post(route.c_str(), *static_cast<Params*>(n[2].usertype().data()));
+
+    if (!res)
+        return Nil;
+    
+    Value data = Value(ValueType::List);
+    data.push_back(Value(res->status));
+    data.push_back(Value(res->body));
+
+    return data;
+}
+
+Value http_client_put(const std::vector<Value>& n)
+{
+    if (n.size() != 3)
+        throw std::runtime_error("httpClientPut: needs 3 arguments: client, route, parameters");
+    if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Client))
+        throw Ark::TypeError("httpClientPut: client must be an httpClient");
+    if (n[1].valueType() != ValueType::String)
+        throw Ark::TypeError("httpClientPut: route must be a String");
+    if (n[2].valueType() != String ||
+            (n[2].valueType() != ValueType::User || n[2].usertype().type_id() != static_cast<unsigned>(Type::Params)))
+        throw Ark::TypeError("httpClientPut: parameters must be a String or httpParams");
+
+    Client* c = static_cast<Client*>(n[0].usertype().data());
+    std::string route = n[1].string();
+    auto res = (n[2].valueType() == String) ?
+        c->Put(route.c_str(), n[2].string().c_str(), "text/plain")
+        : c->Put(route.c_str(), *static_cast<Params*>(n[2].usertype().data()));
+
+    if (!res)
+        return Nil;
+    
+    Value data = Value(ValueType::List);
+    data.push_back(Value(res->status));
+    data.push_back(Value(res->body));
+
+    return data;
+}
+
+Value http_client_delete(const std::vector<Value>& n)
+{
+    if (n.size() < 2 || n.size() > 3)
+        throw std::runtime_error("httpClientDelete: needs 2 arguments: client, route, [data]");
+    if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Client))
+        throw Ark::TypeError("httpClientDelete: client must be an httpClient");
+    if (n[1].valueType() != ValueType::String)
+        throw Ark::TypeError("httpClientDelete: route must be a String");
+    
+    std::string content = "";
+
+    if (n.size() == 3)
+    {
+        if (n[2].valueType() != ValueType::String)
+            throw Ark::TypeError("httpClientDelete: data must be a String");
+        else
+            content = n[2].string();
+    }
+
+    Client* c = static_cast<Client*>(n[0].usertype().data());
+    std::string route = n[1].string();
+    auto res = (content.empty()) ? c->Delete(route.c_str()) : c->Delete(route.c_str(), content.c_str(), "text/plain");
+
+    if (!res)
+        return Nil;
+    
+    Value data = Value(ValueType::List);
+    data.push_back(Value(res->status));
+    data.push_back(Value(res->body));
+
+    return data;
+}
+
+Value http_client_set_follow_location(const std::vector<Value>& n)
+{
+    if (n.size() != 2)
+        throw std::runtime_error("httpClientSetFollowLocation: needs 2 arguments: client, value");
+    if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != static_cast<unsigned>(Type::Client))
+        throw Ark::TypeError("httpClientSetFollowLocation: client must be an httpClient");
+    if (n[1].valueType() != ValueType::NFT || n[1].valueType() == Nil)
+        throw Ark::TypeError("httpClientSetFollowLocation: value must be a Boolean");
+    
+    static_cast<Client*>(n[0].usertype().data())->set_follow_location(n[1].nft() == True);
+
+    return Nil;
+}

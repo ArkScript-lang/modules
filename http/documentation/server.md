@@ -31,6 +31,8 @@ Example:
 
 Stop a server.
 
+Returns `nil`.
+
 Example:
 
 ```clojure
@@ -40,6 +42,8 @@ Example:
 ### httpServerListen
 
 Setup the server to listen forever on a given host (String) and port (Number). Should be called after having setup all the routes.
+
+Returns `nil`.
 
 Example:
 
@@ -58,6 +62,8 @@ Example:
 
 Bind a socket to any available port.
 
+Returns `nil`.
+
 Example:
 
 ```clojure
@@ -72,6 +78,8 @@ Example:
 ### httpServerListenAfterBind
 
 If you've done a `httpServerBindToAnyPort`, you shouldn't call `httpServerListen` but `httpServerListenAfterBind` since the server was already binded to an host and port.
+
+Returns the port number it was binded to.
 
 Example:
 
@@ -92,7 +100,7 @@ Mount a given directory to a specific location.
 
 You can mount a directory to multiple locations, thus creating a search order.
 
-Returns a boolean: true if it worked, false if the base directory doesn't exist.
+Returns a Boolean: true if it worked, false if the base directory doesn't exist.
 
 Example:
 
@@ -135,6 +143,8 @@ Example:
 
 Map a file extension to a mimetype.
 
+Returns `nil`.
+
 Built-in mappings:
 
 Extension | MIME Type
@@ -163,6 +173,8 @@ Example:
 ### httpServerEnableLogger
 
 Set the logging level, by default 0.
+
+Returns `nil`.
 
 TODO document the logging level
 
