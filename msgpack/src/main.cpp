@@ -2,7 +2,7 @@
 
 namespace ArkMsgpack
 {
-    Value pack(const std::vector<Value> &args)
+    Value pack(std::vector<Value> &args)
     {
         // pack(Value src) and return a buffer's string packed 
         if(args.size() != 1)
@@ -40,7 +40,7 @@ namespace ArkMsgpack
         return packed;
     }
 
-    Value unpack(const std::vector<Value> &args)
+    Value unpack(std::vector<Value> &args)
     {
         //unpack(Value packed(string or list)) and return an object unpacked 
         if(args.size() != 1)
@@ -92,7 +92,7 @@ namespace ArkMsgpack
         return dst;
     }
 
-    Value object_str(const std::vector<Value> &args)
+    Value object_str(std::vector<Value> &args)
     {
         if(args.size() != 1)
             throw std::runtime_error("ArgError : This function must have 1 argument");

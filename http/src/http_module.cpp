@@ -75,7 +75,7 @@ std::list<Client>& get_clients()
     ***********************************
 */
 
-Value http_create_server(const std::vector<Value>& n)
+Value http_create_server(std::vector<Value>& n)
 {
     Value server = Ark::Value(Ark::UserType(&create_server()));
     server.usertype_ref().setOStream([](std::ostream& os, const UserType& A) -> std::ostream& {
@@ -85,7 +85,7 @@ Value http_create_server(const std::vector<Value>& n)
     return server;
 }
 
-Value http_server_get(const std::vector<Value>& n)
+Value http_server_get(std::vector<Value>& n)
 {
     if (n.size() < 3 || n.size() > 4)
         throw std::runtime_error("httpServerGet needs 3 to 4 arguments: server, route, content, [type=text/plain]");
@@ -126,7 +126,7 @@ Value http_server_get(const std::vector<Value>& n)
     return Nil;
 }
 
-Value http_server_stop(const std::vector<Value>& n)
+Value http_server_stop(std::vector<Value>& n)
 {
     if (n.size() != 1)
         throw std::runtime_error("httpServerStop: needs a single argument: server");
@@ -138,7 +138,7 @@ Value http_server_stop(const std::vector<Value>& n)
     return Nil;
 }
 
-Value http_server_listen(const std::vector<Value>& n)
+Value http_server_listen(std::vector<Value>& n)
 {
     if (n.size() != 3)
         throw std::runtime_error("httpServerListen: needs 3 arguments: server, host, port");
@@ -154,7 +154,7 @@ Value http_server_listen(const std::vector<Value>& n)
     return Nil;
 }
 
-Value http_server_bind_to_any_port(const std::vector<Value>& n)
+Value http_server_bind_to_any_port(std::vector<Value>& n)
 {
     if (n.size() != 2)
         throw std::runtime_error("httpServerBindToAnyPort: needs 2 arguments: server, host");
@@ -166,7 +166,7 @@ Value http_server_bind_to_any_port(const std::vector<Value>& n)
     return Value(static_cast<Server*>(n[0].usertype().data())->bind_to_any_port(n[1].string().c_str()));
 }
 
-Value http_server_listen_after_bind(const std::vector<Value>& n)
+Value http_server_listen_after_bind(std::vector<Value>& n)
 {
     if (n.size() != 1)
         throw std::runtime_error("httpServerListenAfterBind: needs a single argument: server");
@@ -178,7 +178,7 @@ Value http_server_listen_after_bind(const std::vector<Value>& n)
     return Nil;
 }
 
-Value http_server_set_mount_point(const std::vector<Value>& n)
+Value http_server_set_mount_point(std::vector<Value>& n)
 {
     if (n.size() != 3)
         throw std::runtime_error("httpServerSetMountPoint: needs 3 arguments: server, folder, destination");
@@ -195,7 +195,7 @@ Value http_server_set_mount_point(const std::vector<Value>& n)
     return True;
 }
 
-Value http_server_remove_mount_point(const std::vector<Value>& n)
+Value http_server_remove_mount_point(std::vector<Value>& n)
 {
     if (n.size() != 2)
         throw std::runtime_error("httpServerRmMountPoint: needs 2 arguments: server, folder");
@@ -210,7 +210,7 @@ Value http_server_remove_mount_point(const std::vector<Value>& n)
     return True;
 }
 
-Value http_server_set_fext_mimetype(const std::vector<Value>& n)
+Value http_server_set_fext_mimetype(std::vector<Value>& n)
 {
     if (n.size() != 3)
         throw std::runtime_error("httpServerSetFileExtAndMimetypeMapping: needs 3 arguments: server, ext, mimetype");
@@ -227,7 +227,7 @@ Value http_server_set_fext_mimetype(const std::vector<Value>& n)
     return Nil;
 }
 
-Value http_server_enable_logger(const std::vector<Value>& n)
+Value http_server_enable_logger(std::vector<Value>& n)
 {
     if (n.size() > 1)
         throw std::runtime_error("httpServerEnableLogger: needs 0 or 1 argument: [level=1]");
@@ -250,7 +250,7 @@ Value http_server_enable_logger(const std::vector<Value>& n)
     ***********************************
 */
 
-Value http_create_headers(const std::vector<Value>& n)
+Value http_create_headers(std::vector<Value>& n)
 {
     std::list<Headers>& h = get_headers();
     h.emplace_back();
@@ -285,7 +285,7 @@ Value http_create_headers(const std::vector<Value>& n)
     return headers;
 }
 
-Value http_create_client(const std::vector<Value>& n)
+Value http_create_client(std::vector<Value>& n)
 {
     if (n.size() != 2)
         throw std::runtime_error("httpCreateClient: needs 2 arguments: host and port");
@@ -305,7 +305,7 @@ Value http_create_client(const std::vector<Value>& n)
     return client;
 }
 
-Value http_client_get(const std::vector<Value>& n)
+Value http_client_get(std::vector<Value>& n)
 {
     if (n.size() < 2 || n.size() > 3)
         throw std::runtime_error("httpClientGet: needs 2 arguments: client, route, [headers]");
@@ -338,7 +338,7 @@ Value http_client_get(const std::vector<Value>& n)
     return data;
 }
 
-Value http_create_params(const std::vector<Value>& n)
+Value http_create_params(std::vector<Value>& n)
 {
     std::list<Params>& p = get_params();
     p.emplace_back();
@@ -373,7 +373,7 @@ Value http_create_params(const std::vector<Value>& n)
     return params;
 }
 
-Value http_client_post(const std::vector<Value>& n)
+Value http_client_post(std::vector<Value>& n)
 {
     if (n.size() != 3)
         throw std::runtime_error("httpClientPost: needs 3 arguments: client, route, parameters");
@@ -401,7 +401,7 @@ Value http_client_post(const std::vector<Value>& n)
     return data;
 }
 
-Value http_client_put(const std::vector<Value>& n)
+Value http_client_put(std::vector<Value>& n)
 {
     if (n.size() != 3)
         throw std::runtime_error("httpClientPut: needs 3 arguments: client, route, parameters");
@@ -429,7 +429,7 @@ Value http_client_put(const std::vector<Value>& n)
     return data;
 }
 
-Value http_client_delete(const std::vector<Value>& n)
+Value http_client_delete(std::vector<Value>& n)
 {
     if (n.size() < 2 || n.size() > 3)
         throw std::runtime_error("httpClientDelete: needs 2 arguments: client, route, [data]");
@@ -462,7 +462,7 @@ Value http_client_delete(const std::vector<Value>& n)
     return data;
 }
 
-Value http_client_set_follow_location(const std::vector<Value>& n)
+Value http_client_set_follow_location(std::vector<Value>& n)
 {
     if (n.size() != 2)
         throw std::runtime_error("httpClientSetFollowLocation: needs 2 arguments: client, value");
