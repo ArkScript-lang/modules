@@ -13,8 +13,8 @@ namespace ArkMsgpack
     extern Value list_packing(std::vector<Value> &list);
     extern Value list_unpacking(std::vector<Value> &buffer_list);
     extern void list_unpacked_str(std::vector<Value> &buffer_list, std::ostringstream &stream);
-    extern Value pack(const std::vector<Value> &args);
-    extern Value unpack(const std::vector<Value> &args);
-    extern Value object_str(const std::vector<Value> &args);
+    extern Value pack(std::vector<Value> &args);
+    extern Value unpack(std::vector<Value> &args);
+    extern Value object_str(std::vector<Value> &args);
 }
 #endif
