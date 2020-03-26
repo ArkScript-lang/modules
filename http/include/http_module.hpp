@@ -1,3 +1,8 @@
+#ifndef http_module
+#define http_module
+
+#include <Ark/Module.hpp>
+
 Value http_create_server(std::vector<Value>& n);
 Value http_server_get(std::vector<Value>& n);
 Value http_server_stop(std::vector<Value>& n);
@@ -17,3 +22,5 @@ Value http_client_post(std::vector<Value>& n);
 Value http_client_put(std::vector<Value>& n);
 Value http_client_delete(std::vector<Value>& n);
 Value http_client_set_follow_location(std::vector<Value>& n);
+
+#endif
