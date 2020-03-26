@@ -468,7 +468,7 @@ Value http_client_set_follow_location(std::vector<Value>& n)
         throw std::runtime_error("httpClientSetFollowLocation: needs 2 arguments: client, value");
     if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != typeid(Client))
         throw Ark::TypeError("httpClientSetFollowLocation: client must be an httpClient");
-    if (n[1].valueType() != ValueType::NFT || n[1].valueType() == Nil)
+    if (n[1] != Ark::True || n[1] != Ark::False)
         throw Ark::TypeError("httpClientSetFollowLocation: value must be a Boolean");
     
     static_cast<Client*>(n[0].usertype().data())->set_follow_location(n[1] == True);

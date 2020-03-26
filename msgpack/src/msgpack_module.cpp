@@ -6,13 +6,10 @@ namespace ArkMsgpack
     {
         CObject object;
 
-        if(type == ValueType::NFT)
-        {
-            if(ark_object == Ark::True)
-                object = true;
-            else if(ark_object == Ark::False)
-                object = false;
-        }
+        if(ark_object == Ark::True)
+            object = true;
+        else if(ark_object == Ark::False)
+            object = false;
         else if(type == ValueType::Number)
             object = static_cast<Value>(ark_object).number();
         else if(type == ValueType::String)
@@ -33,7 +30,7 @@ namespace ArkMsgpack
         {
             ValueType type {src_list[i].valueType()};
             each = get_cobject(src_list[i], type);
-            if(type == ValueType::NFT)
+            if(type == ValueType::True || type == ValueType::False)
             {
                 bool src = std::get<bool>(each);
                 msgpack::pack(buffer, src);

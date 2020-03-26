@@ -13,7 +13,7 @@ namespace ArkMsgpack
         Value packed;
         
         buffer.seekg(0);
-        if(type == ValueType::NFT)
+        if(type == ValueType::True || type == ValueType::False)
         {
             bool src {std::get<bool>(value_src)};
             msgpack::pack(buffer, src);
