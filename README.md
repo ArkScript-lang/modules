@@ -20,7 +20,7 @@ Basic module code:
 
 namespace MyModule
 {
-    Value foo(const std::vector<Value>& args)
+    Value foo(std::vector<Value>& args)
     {
         // do stuff
         // ...
@@ -35,7 +35,7 @@ ARK_API_EXPORT Mapping_t getFunctionsMapping()
     Mapping_t map;
     // map[name in Ark] = C++ function
     map["foo"] = MyModule::foo;
-    map["test"] = [](const std::vector<Value>& args) {
+    map["test"] = [](std::vector<Value>& args) {
         // lambdas work too!
         return True;
     };
