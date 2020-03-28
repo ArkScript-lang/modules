@@ -15,7 +15,11 @@ namespace msgpack
 			{
 				msgpack::object const& operator()(msgpack::object const& o, Value& v) const 
 				{
-					if(v.valueType() == ValueType::Number)
+					if(v.valueType() == ValueType::NFT)
+					{
+						v = Value(o.via.f64);
+					}
+					else if(v.valueType() == ValueType::Number)
 					{
 						v = Value(o.via.f64);
 					}
@@ -38,8 +42,9 @@ namespace msgpack
 								{
 									ark_object = Value(o.via.array.ptr[i].as<std::string>());
 								}
-								catch(const std::bad_cast &e) {}
+								catch(const std::bad_cast &e) {} // sub list convert
 							}
+
 							v.push_back(ark_object);
 						}
 					}
@@ -52,7 +57,16 @@ namespace msgpack
 			{
 				template<typename Stream> packer<Stream>& operator()(msgpack::packer<Stream>& o, Value const& v) const 
 				{
-					if(v.valueType() == ValueType::Number)
+					if(v.valueType() == ValueType::NFT)
+					{
+						if(v == Ark::Nil)
+							o.pack_double(-1);
+						else if(v == Ark::True)
+							o.pack_true();
+						else
+							o.pack_false();
+					}
+					else if(v.valueType() == ValueType::Number)
 					{
 						o.pack_double(static_cast<Value>(v).number());
 					}
