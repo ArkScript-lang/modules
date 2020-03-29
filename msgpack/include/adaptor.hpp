@@ -15,15 +15,11 @@ namespace msgpack
 			{
 				msgpack::object const& operator()(msgpack::object const& o, Value& v) const 
 				{
-					if(v.valueType() == ValueType::NFT)
+					if(o.type == msgpack::type::object_type::FLOAT64)
 					{
 						v = Value(o.via.f64);
 					}
-					else if(v.valueType() == ValueType::Number)
-					{
-						v = Value(o.via.f64);
-					}
-					else if(v.valueType() == ValueType::String)
+					else if(o.type == msgpack::type::object_type::STR)
 					{
 						v = Value(std::string {o.via.str.ptr});
 					}
@@ -86,6 +82,15 @@ namespace msgpack
 					return o;
 				}
 			};
+/*
+			template <> struct object<Value> 
+			{
+				void operator()(msgpack::object& o, Value const&) const 
+				{
+					
+				}
+			};	
+*/		
 		}
 	}
 }
