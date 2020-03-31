@@ -32,22 +32,11 @@ namespace msgpack
 							Value ark_object_v;
 
 							// number
-							try
-							{
+							if(o.via.array.ptr[i].type == type::FLOAT64 || o.via.array.ptr[i].type == type::BOOLEAN)
 								ark_object_v = Value(o.via.array.ptr[i].via.f64);
-							}
-							catch(const std::bad_cast &e)
-							{
-								// string
-								try
-								{
-									ark_object_v = Value(std::string {o.via.array.ptr[i].via.str.ptr});
-								}
-							
-								catch(const std::bad_cast &e) 
-								{
-								} // TODO : sub list convert
-							}
+							// string
+							else if(o.via.array.ptr[i].type == type::STR)
+								ark_object_v = Value(std::string {o.via.array.ptr[i].via.str.ptr});
 
 							lst_v.push_back(ark_object_v);
 						}
