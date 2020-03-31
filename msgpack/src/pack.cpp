@@ -1,4 +1,5 @@
 #include <pack.hpp>
+#include <adaptor.hpp>
 
 namespace ArkMsgpack
 {
@@ -78,4 +79,18 @@ namespace ArkMsgpack
         	return list;
     	}
 	}
+
+    Value pack(std::vector<Value> &args)
+    {
+        if(args.size() != 2)
+            throw std::runtime_error("ArgError : This function must have 2 arguments");
+        if(args[0].valueType() != ValueType::User && args[0].usertype_ref().type_id() != std::type_index(typeid(msgpack::sbuffer)))
+            throw Ark::TypeError("The packed buffer must be a string or a list");
+        msgpack::sbuffer* sbuf {static_cast<msgpack::sbuffer*>((args[0]).usertype().data())};
+
+        msgpack::pack(sbuf, args[1]);
+
+        return Value(Nil);
+    }
+
 }

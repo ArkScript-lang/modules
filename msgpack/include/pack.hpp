@@ -10,6 +10,8 @@ namespace ArkMsgpack
 		extern Value list_packing(std::vector<Value> &list);
     	extern Value pack(std::vector<Value> &args);
 	}
+
+	extern Value pack(std::vector<Value> &args);
 }
 
 #endif
