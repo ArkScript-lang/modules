@@ -1,4 +1,5 @@
-# include <unpack.hpp>
+#include <unpack.hpp>
+#include <adaptor.hpp>
 
 namespace ArkMsgpack
 {
@@ -141,4 +142,17 @@ namespace ArkMsgpack
 			return list;
 		}
 	}
+
+	Value unpack(std::vector<Value> &args)
+	{
+        if(args.size() != 1)
+            throw std::runtime_error("ArgError : This function must have 1 argument");
+        if(args[0].valueType() != ValueType::User && args[0].usertype_ref().type_id() != std::type_index(typeid(msgpack::sbuffer)))
+            throw Ark::TypeError("The packed buffer must be msgpack::sbuffer");
+        msgpack::sbuffer* sbuf {static_cast<msgpack::sbuffer*>((args[0]).usertype().data())};
+        static msgpack::object_handle oh = msgpack::unpack(sbuf->data(), sbuf->size());
+
+		return Value(UserType(&oh));
+	}
+
 }
