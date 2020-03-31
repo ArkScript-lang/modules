@@ -14,6 +14,7 @@ namespace ArkMsgpack
 	}
 
 	extern Value unpack(std::vector<Value> &args);
+	extern Value convert(std::vector<Value> &args);
 }
 
 #endif
