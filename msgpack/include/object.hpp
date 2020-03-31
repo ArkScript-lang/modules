@@ -11,9 +11,9 @@ using CObject = std::variant<bool, double, std::string, std::vector<Value>>;
 extern CObject get_cobject(const Value &ark_object, ValueType type);
 namespace ArkMsgpack
 {
-	// msgpack::object_handle
 	extern Value msgpack_obj_handle(std::vector<Value> &args);
 	extern Value msgpack_sbuffer(std::vector<Value> &args);
+	extern Value msgpack_obj(std::vector<Value> &args);
 }
 
 #endif
