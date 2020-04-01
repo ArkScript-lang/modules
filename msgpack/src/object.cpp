@@ -74,7 +74,7 @@ namespace ArkMsgpack
 			throw std::runtime_error("ArgError : This function must have 1 argument");
 		msgpack::object* o {static_cast<msgpack::object*>(args[0].usertype().data())};
 
-		std::cout << *o << std::endl;
+		std::cout << "msgpack::object : " << *o << std::endl;
 
 		return Value(Ark::Nil);
 	}
