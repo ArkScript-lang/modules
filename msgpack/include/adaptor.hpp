@@ -15,7 +15,15 @@ namespace msgpack
 			{
 				msgpack::object const& operator()(msgpack::object const& o, Value& v) const 
 				{
-					if(o.type == type::FLOAT64 || o.type == type::BOOLEAN)
+					if(o.type == type::NIL)
+					{
+						v = Value(-1);
+					}
+					else if(o.type == type::BOOLEAN)
+					{
+						v = Value(o.via.boolean);
+					}
+					else if(o.type == type::FLOAT64)
 					{
 						v = Value(o.via.f64);
 					}
@@ -31,7 +39,15 @@ namespace msgpack
 						{
 							Value ark_object_v;
 
-							if(o.via.array.ptr[i].type == type::FLOAT64 || o.via.array.ptr[i].type == type::BOOLEAN)
+							if(o.via.array.ptr[i].type == type::NIL)
+							{
+								ark_object_v = Value(-1);
+							}
+							else if(o.via.array.ptr[i].type == type::BOOLEAN)
+							{
+								ark_object_v = Value(o.via.array.ptr[i].via.boolean);
+							}
+							else if(o.via.array.ptr[i].type == type::FLOAT64)
 							{
 								// number
 								ark_object_v = Value(o.via.array.ptr[i].via.f64);
@@ -41,7 +57,7 @@ namespace msgpack
 								// string
 								ark_object_v = Value(std::string {o.via.array.ptr[i].via.str.ptr});
 							}
-
+							// sub list
 							lst_v.push_back(ark_object_v);
 						}
 						v = lst_v;
@@ -62,7 +78,7 @@ namespace msgpack
 							o.pack_double(-1);
 						else if(v == Ark::True)
 							o.pack_true();
-						else
+						else if(v == Ark::False)
 							o.pack_false();
 					}
 					else if(v.valueType() == ValueType::Number)
