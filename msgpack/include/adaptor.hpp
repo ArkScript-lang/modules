@@ -31,12 +31,16 @@ namespace msgpack
 						{
 							Value ark_object_v;
 
-							// number
 							if(o.via.array.ptr[i].type == type::FLOAT64 || o.via.array.ptr[i].type == type::BOOLEAN)
+							{
+								// number
 								ark_object_v = Value(o.via.array.ptr[i].via.f64);
-							// string
+							}
 							else if(o.via.array.ptr[i].type == type::STR)
+							{
+								// string
 								ark_object_v = Value(std::string {o.via.array.ptr[i].via.str.ptr});
+							}
 
 							lst_v.push_back(ark_object_v);
 						}
@@ -54,7 +58,9 @@ namespace msgpack
 				{
 					if(v.valueType() == ValueType::NFT)
 					{
-						if(v == Ark::True)
+						if(v == Ark::Nil)
+							o.pack_double(-1);
+						else if(v == Ark::True)
 							o.pack_true();
 						else
 							o.pack_false();
