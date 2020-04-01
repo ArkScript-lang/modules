@@ -15,7 +15,7 @@ ARK_API_EXPORT Mapping_t getFunctionsMapping()
     map["msgpackObjHandle"] = ArkMsgpack::msgpack_obj_handle;
     map["msgpackObj"] = ArkMsgpack::msgpack_obj;
     // msgpack objets functions
-    map["print_o"] = ArkMsgpack::print_msgpack_o;
+    map["printO"] = ArkMsgpack::print_msgpack_o;
     map["msgpackPack"] = ArkMsgpack::pack;
     map["msgpackUnpack"] = ArkMsgpack::unpack;
     map["msgpackConvert"] = ArkMsgpack::convert;
