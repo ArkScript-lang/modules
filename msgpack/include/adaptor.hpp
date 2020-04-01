@@ -49,15 +49,13 @@ namespace msgpack
 							}
 							else if(o.via.array.ptr[i].type == type::FLOAT64)
 							{
-								// number
 								ark_object_v = Value(o.via.array.ptr[i].via.f64);
 							}
 							else if(o.via.array.ptr[i].type == type::STR)
 							{
-								// string
 								ark_object_v = Value(std::string {o.via.array.ptr[i].via.str.ptr});
 							}
-							// sub list
+							// TODO : sub list convert
 							lst_v.push_back(ark_object_v);
 						}
 						v = lst_v;
