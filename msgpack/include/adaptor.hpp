@@ -79,7 +79,7 @@ namespace msgpack
 					if(v.valueType() == ValueType::NFT)
 					{
 						if(v == Ark::Nil)
-							o.pack_nil();
+							o.pack_double(-1);
 						else if(v == Ark::True)
 							o.pack_true();
 						else if(v == Ark::False)
