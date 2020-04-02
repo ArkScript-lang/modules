@@ -90,7 +90,7 @@ namespace ArkMsgpack
 
 		msgpack::pack(sbuf, args[1]);
 
-		return Value(Nil);
+		return Ark::Nil;
 	}
 
 }
