@@ -40,7 +40,7 @@ Now, we propose two ways to use msgpack in Ark, the minimalist msgpack (with lim
 
 
 + **msgpackSBuffer()** : construct the buffer that must containes packed data ;
-+ **msgpackObjHandle(sbuf)** : construct a msgpack::object_handle. It's must manage and return msgpack::object ;
++ **msgpackObjHandle(sbuf)** : construct a msgpack::object_handle. It must manage and return msgpack::object ;
 + **msgpackObj(msgpack_object_handle)** : construct the msgpack::object. It must containe the unpacked object ;
 + **msgpackPack(sbuf object)** : data packing ;
 + **msgpackUnpack** : for data unpacking ;
