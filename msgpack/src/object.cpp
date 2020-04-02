@@ -44,8 +44,8 @@ namespace ArkMsgpack
 	{
 		if(args.size() != 1)
 			throw std::runtime_error("ArgError : This function must have 1 argument");
-        if(args[0].valueType() != ValueType::User || args[0].usertype().type_id() != std::type_index(typeid(msgpack::sbuffer)))
-            throw Ark::TypeError("The packed buffer must be a msgpack::sbuffer");
+		if(args[0].valueType() != ValueType::User || args[0].usertype().type_id() != std::type_index(typeid(msgpack::sbuffer)))
+			throw Ark::TypeError("The packed buffer must be a msgpack::sbuffer");
 		static msgpack::object_handle oh;
 
 		msgpack::sbuffer* sbuf {static_cast<msgpack::sbuffer*>((args[0]).usertype().data())};
@@ -58,8 +58,8 @@ namespace ArkMsgpack
 	{
 		if(args.size() != 1)
 			throw std::runtime_error("ArgError : This function must have 1 argument");
-        if(args[0].valueType() != ValueType::User || args[0].usertype().type_id() != std::type_index(typeid(msgpack::object_handle)))
-            throw Ark::TypeError("The packed buffer must be a msgpack::object_handle");
+		if(args[0].valueType() != ValueType::User || args[0].usertype().type_id() != std::type_index(typeid(msgpack::object_handle)))
+			throw Ark::TypeError("The packed buffer must be a msgpack::object_handle");
 		static msgpack::object o;
 
 		msgpack::object_handle* oh {static_cast<msgpack::object_handle*>((args[0]).usertype().data())};
