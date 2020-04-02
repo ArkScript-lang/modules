@@ -76,6 +76,6 @@ namespace ArkMsgpack
 
 		std::cout << "msgpack::object : " << *o << std::endl;
 
-		return Value(Ark::Nil);
+		return Ark::Nil;
 	}
 }
