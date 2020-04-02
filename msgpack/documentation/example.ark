@@ -1,14 +1,19 @@
 {
 	(import "msgpack.bin")
 
-	# list source
-	(let lst (list 1 true "hello" 1.453))
-	# list packing
-	(let buffer (msgPack lst))
-	(print "buffer : " buffer)
-	# getting deserialized object string
-	(let deserialized (msgObjectStr buffer))
-	(print "deserialized : " deserialized)
-	# print unpacked 
-	(print "unpacked result : " (msgUnpack buffer))
+	# buffer
+	(let sbuf (msgpackSBuffer))
+	# packing
+	(msgpackPack sbuf (list 1 2.45 "Yellow Bow !" true nil false))
+	
+	# unpacking
+	# msgpack object handle
+	(let oh (msgpackUnpack sbuf))
+	# msgpack object
+	(let o (msgpackObj oh))
+	(printO o)
+
+	# convert msgpackObj to ark object
+	(mut dst (msgpackConvert o))
+	(print "dst : " dst)
 }
