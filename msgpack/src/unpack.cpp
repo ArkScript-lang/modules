@@ -23,7 +23,7 @@ namespace ArkMsgpack
 				try
 				{
 					deserialized.convert(ark_bool);
-					dst = Value(ark_bool);
+					dst = ark_bool;
 				}
 				catch(const std::bad_cast &e)
 				{

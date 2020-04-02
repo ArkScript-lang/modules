@@ -21,7 +21,7 @@ namespace msgpack
 					}
 					else if(o.type == type::BOOLEAN)
 					{
-						v = Value(o.via.boolean);
+						v = o.via.boolean;
 					}
 					else if(o.type == type::FLOAT64)
 					{
@@ -45,7 +45,7 @@ namespace msgpack
 							}
 							else if(o.via.array.ptr[i].type == type::BOOLEAN)
 							{
-								ark_object_v = Value(o.via.array.ptr[i].via.boolean);
+								ark_object_v = o.via.array.ptr[i].via.boolean;
 							}
 							else if(o.via.array.ptr[i].type == type::FLOAT64)
 							{
