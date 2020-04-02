@@ -17,11 +17,14 @@ namespace msgpack
 				{
 					if(o.type == type::NIL)
 					{
-						v = Value(-1);
+						v = Ark::Nil;
 					}
 					else if(o.type == type::BOOLEAN)
 					{
-						v = o.via.boolean;
+						if(o.via.boolean == true)
+							v = Ark::True;
+						else
+							v = Ark::False;
 					}
 					else if(o.type == type::FLOAT64)
 					{
@@ -41,11 +44,14 @@ namespace msgpack
 
 							if(o.via.array.ptr[i].type == type::NIL)
 							{
-								ark_object_v = Value(-1);
+								ark_object_v = Ark::Nil;
 							}
 							else if(o.via.array.ptr[i].type == type::BOOLEAN)
 							{
-								ark_object_v = o.via.array.ptr[i].via.boolean;
+								if(o.via.array.ptr[i].via.boolean == true)
+									ark_object_v = Ark::True;
+								else
+									ark_object_v = Ark::False;
 							}
 							else if(o.via.array.ptr[i].type == type::FLOAT64)
 							{
@@ -73,7 +79,7 @@ namespace msgpack
 					if(v.valueType() == ValueType::NFT)
 					{
 						if(v == Ark::Nil)
-							o.pack_double(-1);
+							o.pack_nil();
 						else if(v == Ark::True)
 							o.pack_true();
 						else if(v == Ark::False)
