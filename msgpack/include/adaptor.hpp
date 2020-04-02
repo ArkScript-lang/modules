@@ -61,9 +61,11 @@ namespace msgpack
 							{
 								ark_object_v = Value(std::string {o.via.array.ptr[i].via.str.ptr});
 							}
+							
 							// TODO : sub list convert
 							lst_v.push_back(ark_object_v);
 						}
+
 						v = lst_v;
 					}
 					
@@ -79,7 +81,7 @@ namespace msgpack
 					if(v.valueType() == ValueType::NFT)
 					{
 						if(v == Ark::Nil)
-							o.pack_double(-1);
+							o.pack_nil();
 						else if(v == Ark::True)
 							o.pack_true();
 						else if(v == Ark::False)
