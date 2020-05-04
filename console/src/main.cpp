@@ -85,7 +85,7 @@ namespace ArkConsole
         else if (value == "on_white")
             std::cout << termcolor::on_white;
         else
-            throw std::runtime_error("Couldn't identify argument given to consoleColor: '" + value + "'");
+            throw std::runtime_error("Couldn't identify argument given to consoleColor: '" + value.toString() + "'");
 
         return Nil;
     }

@@ -84,7 +84,7 @@ Value http_server_get(std::vector<Value>& n)
         if (n[3].valueType() != ValueType::String)
             throw Ark::TypeError("httpServGet: type must be a String");
         else
-            type = n[3].string();
+            type = n[3].string_ref().toString();
     }
 
     Server *srv = static_cast<Server*>(n[0].usertype().data());
@@ -93,12 +93,12 @@ Value http_server_get(std::vector<Value>& n)
         // TODO allow use of external functions (eg, httpServerStop when going to /stop)
         get_mutex().lock();
 
-        std::string content = (n[2].valueType() == ValueType::String) ? n[2].string() : "";
+        std::string content = (n[2].valueType() == ValueType::String) ? n[2].string().toString() : "";
         if (n[2].isFunction())
         {
             Value r = n[2].resolve("test");
             if (r.valueType() == ValueType::String)
-                content = r.string();
+                content = r.string_ref().toString();
         }
 
         res.set_content(content, type.c_str());
@@ -144,7 +144,7 @@ Value http_server_bind_to_any_port(std::vector<Value>& n)
         throw Ark::TypeError("httpServerBindToAnyPort: server must be an httpServer");
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("httpServerBindToAnyPort: host must be a String");
-    
+
     return Value(static_cast<Server*>(n[0].usertype().data())->bind_to_any_port(n[1].string().c_str()));
 }
 

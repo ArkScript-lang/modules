@@ -44,16 +44,16 @@ Value http_create_headers(std::vector<Value>& n)
         throw std::runtime_error("httpCreateHeaders: needs an even number of arguments: [header -> value]");
     
     std::string key = "";
-    for (const Value& v : n)
+    for (Value& v : n)
     {
         if (v.valueType() != ValueType::String)
             throw Ark::TypeError("httpCreateHeaders: takes only String as argument");
         
         if (key == "")
-            key = v.string();
+            key = v.string_ref().toString();
         else
         {
-            h.back().insert(std::pair<std::string, std::string>(key, v.string()));
+            h.back().insert(std::pair<std::string, std::string>(key, v.string_ref().toString()));
             key = "";
         }
     }
@@ -79,7 +79,7 @@ Value http_create_client(std::vector<Value>& n)
         throw Ark::TypeError("httpCreateClient: port must be a Number");
 
     std::list<Client>& c = get_clients();
-    c.emplace_back(n[0].string().c_str(), static_cast<int>(n[1].number()));
+    c.emplace_back(n[0].string_ref().toString(), static_cast<int>(n[1].number()));
 
     Value client = Ark::Value(Ark::UserType(&c.back()));
     client.usertype_ref().setOStream([](std::ostream& os, const UserType& A) -> std::ostream& {
@@ -109,7 +109,7 @@ Value http_client_get(std::vector<Value>& n)
     }
 
     Client* c = static_cast<Client*>(n[0].usertype().data());
-    std::string route = n[1].string();
+    std::string route = n[1].string_ref().toString();
     auto res = (h == nullptr) ? c->Get(route.c_str()) : c->Get(route.c_str(), *h);
 
     if (!res)
@@ -132,16 +132,16 @@ Value http_create_params(std::vector<Value>& n)
         throw std::runtime_error("httpCreateParams: needs an even number of arguments: [key -> value]");
     
     std::string key = "";
-    for (const Value& v : n)
+    for (Value& v : n)
     {
         if (v.valueType() != ValueType::String)
             throw Ark::TypeError("httpCreateParams: takes only String as arguments");
-        
+
         if (key == "")
-            key = v.string();
+            key = v.string_ref().toString();
         else
         {
-            p.back().insert(std::pair<std::string, std::string>(key, v.string()));
+            p.back().insert(std::pair<std::string, std::string>(key, v.string_ref().toString()));
             key = "";
         }
     }
@@ -170,7 +170,7 @@ Value http_client_post(std::vector<Value>& n)
         throw Ark::TypeError("httpClientPost: parameters must be a String or httpParams");
 
     Client* c = static_cast<Client*>(n[0].usertype().data());
-    std::string route = n[1].string();
+    std::string route = n[1].string_ref().toString();
     auto res = (n[2].valueType() == ValueType::String) ?
         c->Post(route.c_str(), n[2].string().c_str(), "text/plain")
         : c->Post(route.c_str(), *static_cast<Params*>(n[2].usertype().data()));
@@ -198,7 +198,7 @@ Value http_client_put(std::vector<Value>& n)
         throw Ark::TypeError("httpClientPut: parameters must be a String or httpParams");
 
     Client* c = static_cast<Client*>(n[0].usertype().data());
-    std::string route = n[1].string();
+    std::string route = n[1].string_ref().toString();
     auto res = (n[2].valueType() == ValueType::String) ?
         c->Put(route.c_str(), n[2].string().c_str(), "text/plain")
         : c->Put(route.c_str(), *static_cast<Params*>(n[2].usertype().data()));
@@ -229,11 +229,11 @@ Value http_client_delete(std::vector<Value>& n)
         if (n[2].valueType() != ValueType::String)
             throw Ark::TypeError("httpClientDelete: data must be a String");
         else
-            content = n[2].string();
+            content = n[2].string_ref().toString();
     }
 
     Client* c = static_cast<Client*>(n[0].usertype().data());
-    std::string route = n[1].string();
+    std::string route = n[1].string_ref().toString();
     auto res = (content.empty()) ? c->Delete(route.c_str()) : c->Delete(route.c_str(), content.c_str(), "text/plain");
 
     if (!res)
