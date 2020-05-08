@@ -93,7 +93,7 @@ Value http_client_get(std::vector<Value>& n)
 {
     if (n.size() < 2 || n.size() > 3)
         throw std::runtime_error("httpClientGet: needs 2 arguments: client, route, [headers]");
-    if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != typeid(Client))
+    if (n[0].valueType() != ValueType::User || n[0].usertype().is<Client>())
         throw Ark::TypeError("httpClientGet: client must be an httpClient");
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("httpClientGet: route must be a String");
@@ -102,7 +102,7 @@ Value http_client_get(std::vector<Value>& n)
 
     if (n.size() == 3)
     {
-        if (n[2].valueType() != ValueType::User || n[2].usertype().type_id() != typeid(Headers))
+        if (n[2].valueType() != ValueType::User || n[2].usertype().is<Headers>())
             throw Ark::TypeError("httpClientGet: headers must be httpHeaders");
         else
             h = static_cast<Headers*>(n[2].usertype().data());
@@ -161,12 +161,12 @@ Value http_client_post(std::vector<Value>& n)
 {
     if (n.size() != 3)
         throw std::runtime_error("httpClientPost: needs 3 arguments: client, route, parameters");
-    if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != typeid(Client))
+    if (n[0].valueType() != ValueType::User || n[0].usertype().is<Client>())
         throw Ark::TypeError("httpClientPost: client must be an httpClient");
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("httpClientPost: route must be a String");
     if (n[2].valueType() != ValueType::String ||
-            (n[2].valueType() != ValueType::User || n[2].usertype().type_id() != typeid(Params)))
+            (n[2].valueType() != ValueType::User || n[2].usertype().is<Params>()))
         throw Ark::TypeError("httpClientPost: parameters must be a String or httpParams");
 
     Client* c = static_cast<Client*>(n[0].usertype().data());
@@ -189,12 +189,12 @@ Value http_client_put(std::vector<Value>& n)
 {
     if (n.size() != 3)
         throw std::runtime_error("httpClientPut: needs 3 arguments: client, route, parameters");
-    if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != typeid(Client))
+    if (n[0].valueType() != ValueType::User || n[0].usertype().is<Client>())
         throw Ark::TypeError("httpClientPut: client must be an httpClient");
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("httpClientPut: route must be a String");
     if (n[2].valueType() != ValueType::String ||
-            (n[2].valueType() != ValueType::User || n[2].usertype().type_id() != typeid(Params)))
+            (n[2].valueType() != ValueType::User || n[2].usertype().is<Params>()))
         throw Ark::TypeError("httpClientPut: parameters must be a String or httpParams");
 
     Client* c = static_cast<Client*>(n[0].usertype().data());
@@ -217,7 +217,7 @@ Value http_client_delete(std::vector<Value>& n)
 {
     if (n.size() < 2 || n.size() > 3)
         throw std::runtime_error("httpClientDelete: needs 2 arguments: client, route, [data]");
-    if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != typeid(Client))
+    if (n[0].valueType() != ValueType::User || n[0].usertype().is<Client>())
         throw Ark::TypeError("httpClientDelete: client must be an httpClient");
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("httpClientDelete: route must be a String");
@@ -250,7 +250,7 @@ Value http_client_set_follow_location(std::vector<Value>& n)
 {
     if (n.size() != 2)
         throw std::runtime_error("httpClientSetFollowLocation: needs 2 arguments: client, value");
-    if (n[0].valueType() != ValueType::User || n[0].usertype().type_id() != typeid(Client))
+    if (n[0].valueType() != ValueType::User || n[0].usertype().is<Client>())
         throw Ark::TypeError("httpClientSetFollowLocation: client must be an httpClient");
     if (n[1] != Ark::True || n[1] != Ark::False)
         throw Ark::TypeError("httpClientSetFollowLocation: value must be a Boolean");
