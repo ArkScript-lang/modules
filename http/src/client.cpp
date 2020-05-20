@@ -34,7 +34,7 @@ std::list<Client>& get_clients()
     ***********************************
 */
 
-Value http_create_headers(std::vector<Value>& n)
+Value http_create_headers(std::vector<Value>& n, Ark::VM* vm)
 {
     std::list<Headers>& h = get_headers();
     h.emplace_back();
@@ -69,7 +69,7 @@ Value http_create_headers(std::vector<Value>& n)
     return headers;
 }
 
-Value http_create_client(std::vector<Value>& n)
+Value http_create_client(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 2)
         throw std::runtime_error("httpCreateClient: needs 2 arguments: host and port");
@@ -89,7 +89,7 @@ Value http_create_client(std::vector<Value>& n)
     return client;
 }
 
-Value http_client_get(std::vector<Value>& n)
+Value http_client_get(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() < 2 || n.size() > 3)
         throw std::runtime_error("httpClientGet: needs 2 arguments: client, route, [headers]");
@@ -122,7 +122,7 @@ Value http_client_get(std::vector<Value>& n)
     return data;
 }
 
-Value http_create_params(std::vector<Value>& n)
+Value http_create_params(std::vector<Value>& n, Ark::VM* vm)
 {
     std::list<Params>& p = get_params();
     p.emplace_back();
@@ -157,7 +157,7 @@ Value http_create_params(std::vector<Value>& n)
     return params;
 }
 
-Value http_client_post(std::vector<Value>& n)
+Value http_client_post(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 3)
         throw std::runtime_error("httpClientPost: needs 3 arguments: client, route, parameters");
@@ -185,7 +185,7 @@ Value http_client_post(std::vector<Value>& n)
     return data;
 }
 
-Value http_client_put(std::vector<Value>& n)
+Value http_client_put(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 3)
         throw std::runtime_error("httpClientPut: needs 3 arguments: client, route, parameters");
@@ -213,7 +213,7 @@ Value http_client_put(std::vector<Value>& n)
     return data;
 }
 
-Value http_client_delete(std::vector<Value>& n)
+Value http_client_delete(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() < 2 || n.size() > 3)
         throw std::runtime_error("httpClientDelete: needs 2 arguments: client, route, [data]");
@@ -246,7 +246,7 @@ Value http_client_delete(std::vector<Value>& n)
     return data;
 }
 
-Value http_client_set_follow_location(std::vector<Value>& n)
+Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 2)
         throw std::runtime_error("httpClientSetFollowLocation: needs 2 arguments: client, value");

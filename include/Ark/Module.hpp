@@ -19,7 +19,7 @@ using Mapping_t = std::unordered_map<std::string, Value::ProcType>;
     #endif
 #else // Linux, FreeBSD, Mac OS X
     #define OS_LINUX
-    
+
     #if __GNUC__ >= 4
         // GCC 4 has special keywords for showing/hidding symbols,
         // the same keyword is used for both importing and exporting

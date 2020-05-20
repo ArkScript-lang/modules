@@ -10,7 +10,7 @@ std::unordered_map<std::string, sf::Font>& get_fonts() { static std::unordered_m
 std::unordered_map<std::string, sf::Text>& get_texts() { static std::unordered_map<std::string, sf::Text> t; return t; }
 
 // module functions
-Value sf_window_init(std::vector<Value>& n)
+Value sf_window_init(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 3)
         throw std::runtime_error("sfWindowInit needs 3 arguments: width, height and title");
@@ -32,12 +32,12 @@ Value sf_window_init(std::vector<Value>& n)
     return Nil;
 }
 
-Value sf_window_isopen(std::vector<Value>& n)
+Value sf_window_isopen(std::vector<Value>& n, Ark::VM* vm)
 {
     return get_window().isOpen() ? True : False;
 }
 
-Value sf_poll_event(std::vector<Value>& n)
+Value sf_poll_event(std::vector<Value>& n, Ark::VM* vm)
 {
     if (get_window().pollEvent(get_event()))
     {
@@ -124,7 +124,7 @@ Value sf_poll_event(std::vector<Value>& n)
     return Value("event-empty");
 }
 
-Value sf_window_clear(std::vector<Value>& n)
+Value sf_window_clear(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 3)
         throw std::runtime_error("sfWindowClear needs 3 arguments: r, g and b");
@@ -138,7 +138,7 @@ Value sf_window_clear(std::vector<Value>& n)
     return Nil;
 }
 
-Value sf_draw(std::vector<Value>& n)
+Value sf_draw(std::vector<Value>& n, Ark::VM* vm)
 {
     for (Value::Iterator it=n.begin(); it != n.end(); ++it)
     {
@@ -162,13 +162,13 @@ Value sf_draw(std::vector<Value>& n)
     return Nil;
 }
 
-Value sf_window_display(std::vector<Value>& n)
+Value sf_window_display(std::vector<Value>& n, Ark::VM* vm)
 {
     get_window().display();
     return Nil;
 }
 
-Value sf_window_set_fps(std::vector<Value>& n)
+Value sf_window_set_fps(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n[0].valueType() != ValueType::Number)
         throw Ark::TypeError("sfWindowSetFPS: fps must be a Number");
@@ -176,7 +176,7 @@ Value sf_window_set_fps(std::vector<Value>& n)
     return Nil;
 }
 
-Value sf_load_sprite(std::vector<Value>& n)
+Value sf_load_sprite(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 1)
         throw std::runtime_error("sfLoadSprite: need 1 argument: path to sprite");
@@ -195,7 +195,7 @@ Value sf_load_sprite(std::vector<Value>& n)
     return Value(name);
 }
 
-Value sf_load_font(std::vector<Value>& n)
+Value sf_load_font(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 1)
         throw std::runtime_error("sfLoadFont: need 1 argument: path to font");
@@ -210,7 +210,7 @@ Value sf_load_font(std::vector<Value>& n)
     return Value(name);
 }
 
-Value sf_make_text(std::vector<Value>& n)
+Value sf_make_text(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 4)
         throw std::runtime_error("sfMakeText: need 4 arguments: font, text, size, color");
@@ -243,7 +243,7 @@ Value sf_make_text(std::vector<Value>& n)
     return Value(name);
 }
 
-Value sf_set_text(std::vector<Value>& n)
+Value sf_set_text(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 2)
         throw std::runtime_error("sfMakeText: need 2 arguments: text object, new value");
@@ -263,7 +263,7 @@ Value sf_set_text(std::vector<Value>& n)
     return Nil;
 }
 
-Value sf_setpos(std::vector<Value>& n)
+Value sf_setpos(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 3)
         throw std::runtime_error("sfSetPos: need 3 arguments: object, x, y");
@@ -291,7 +291,7 @@ Value sf_setpos(std::vector<Value>& n)
     return Nil;
 }
 
-Value sf_width(std::vector<Value>& n)
+Value sf_width(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 1)
         throw std::runtime_error("sfWidth: need 1 argument: object");
@@ -312,7 +312,7 @@ Value sf_width(std::vector<Value>& n)
     throw Ark::TypeError("Object isn't a SFML object");
 }
 
-Value sf_height(std::vector<Value>& n)
+Value sf_height(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 1)
         throw std::runtime_error("sfHeight: need 1 argument: object");
@@ -333,7 +333,7 @@ Value sf_height(std::vector<Value>& n)
     throw Ark::TypeError("Object isn't a SFML object");
 }
 
-Value sf_event(std::vector<Value>& n)
+Value sf_event(std::vector<Value>& n, Ark::VM* vm)
 {
     std::string out = "event-";
 
@@ -350,7 +350,7 @@ Value sf_event(std::vector<Value>& n)
     return Value(out);
 }
 
-Value sf_window_close(std::vector<Value>& n)
+Value sf_window_close(std::vector<Value>& n, Ark::VM* vm)
 {
     get_window().close();
     return Nil;
