@@ -20,7 +20,7 @@ Basic module code:
 
 namespace MyModule
 {
-    Value foo(std::vector<Value>& args)
+    Value foo(std::vector<Value>& args, Ark::VM* vm)
     {
         // do stuff
         // ...
@@ -35,8 +35,8 @@ ARK_API_EXPORT Mapping_t getFunctionsMapping()
     Mapping_t map;
     // map[name in Ark] = C++ function
     map["foo"] = MyModule::foo;
-    map["test"] = [](std::vector<Value>& args) {
-        // lambdas work too!
+    map["test"] = [](std::vector<Value>& args, Ark::VM* vm) {
+        // lambdas work too! (if it does not capture)
         return True;
     };
 
@@ -84,6 +84,6 @@ To create SFML windows, load and display images, fonts, play sounds...
 
 ## Copyright and Licence information
 
-Copyright (c) 2019 Alexandre Plateau. All rights reserved.
+Copyright (c) 2019-2020 Alexandre Plateau. All rights reserved.
 
 This ArkScript distribution contains no GNU GPL code, which means it can be used in proprietary projects.
