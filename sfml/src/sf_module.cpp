@@ -10,7 +10,7 @@ std::unordered_map<std::string, sf::Font>& get_fonts() { static std::unordered_m
 std::unordered_map<std::string, sf::Text>& get_texts() { static std::unordered_map<std::string, sf::Text> t; return t; }
 
 // module functions
-Value sf_window_init(std::vector<Value>& n)
+Value sf_window_init(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 3)
         throw std::runtime_error("sfWindowInit needs 3 arguments: width, height and title");
@@ -23,7 +23,7 @@ Value sf_window_init(std::vector<Value>& n)
     
     if (!get_has_window())
     {
-        get_window().create(sf::VideoMode(static_cast<long>(n[0].number()), static_cast<long>(n[1].number())), n[2].string());
+        get_window().create(sf::VideoMode(static_cast<long>(n[0].number()), static_cast<long>(n[1].number())), n[2].string().toString());
         get_has_window() = true;
     }
     else
@@ -32,12 +32,12 @@ Value sf_window_init(std::vector<Value>& n)
     return Nil;
 }
 
-Value sf_window_isopen(std::vector<Value>& n)
+Value sf_window_isopen(std::vector<Value>& n, Ark::VM* vm)
 {
     return get_window().isOpen() ? True : False;
 }
 
-Value sf_poll_event(std::vector<Value>& n)
+Value sf_poll_event(std::vector<Value>& n, Ark::VM* vm)
 {
     if (get_window().pollEvent(get_event()))
     {
@@ -124,7 +124,7 @@ Value sf_poll_event(std::vector<Value>& n)
     return Value("event-empty");
 }
 
-Value sf_window_clear(std::vector<Value>& n)
+Value sf_window_clear(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 3)
         throw std::runtime_error("sfWindowClear needs 3 arguments: r, g and b");
@@ -138,20 +138,20 @@ Value sf_window_clear(std::vector<Value>& n)
     return Nil;
 }
 
-Value sf_draw(std::vector<Value>& n)
+Value sf_draw(std::vector<Value>& n, Ark::VM* vm)
 {
     for (Value::Iterator it=n.begin(); it != n.end(); ++it)
     {
         if (it->valueType() != ValueType::String)
             throw Ark::TypeError("sfDraw: invalid argument");
         
-        std::size_t i = it->string().find_first_of('-');
-        std::string sub = it->string().substr(0, i);
+        std::size_t i = it->string().toString().find_first_of('-');
+        std::string sub = it->string().toString().substr(0, i);
 
         if (sub == "text")
-            get_window().draw(get_texts()[n[0].string()]);
+            get_window().draw(get_texts()[n[0].string().toString()]);
         else if (sub == "sprite")
-            get_window().draw(get_sprites()[n[0].string()]);
+            get_window().draw(get_sprites()[n[0].string().toString()]);
         else if (sub == "event")
             throw Ark::TypeError("sfDraw: Can not draw event");
         else if (sub == "font")
@@ -162,13 +162,13 @@ Value sf_draw(std::vector<Value>& n)
     return Nil;
 }
 
-Value sf_window_display(std::vector<Value>& n)
+Value sf_window_display(std::vector<Value>& n, Ark::VM* vm)
 {
     get_window().display();
     return Nil;
 }
 
-Value sf_window_set_fps(std::vector<Value>& n)
+Value sf_window_set_fps(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n[0].valueType() != ValueType::Number)
         throw Ark::TypeError("sfWindowSetFPS: fps must be a Number");
@@ -176,18 +176,18 @@ Value sf_window_set_fps(std::vector<Value>& n)
     return Nil;
 }
 
-Value sf_load_sprite(std::vector<Value>& n)
+Value sf_load_sprite(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 1)
         throw std::runtime_error("sfLoadSprite: need 1 argument: path to sprite");
     if (n[0].valueType() != ValueType::String)
         throw Ark::TypeError("sfLoadSprite: need a String");
     
-    std::string name = "sprite-" + n[0].string();
+    std::string name = "sprite-" + n[0].string().toString();
     
     get_textures()[name] = sf::Texture();
-    if (!get_textures()[name].loadFromFile(n[0].string()))
-        throw std::runtime_error("sfLoadSprite: Could not load sprite: " + n[0].string());
+    if (!get_textures()[name].loadFromFile(n[0].string().toString()))
+        throw std::runtime_error("sfLoadSprite: Could not load sprite: " + n[0].string().toString());
     
     get_sprites()[name] = sf::Sprite();
     get_sprites()[name].setTexture(get_textures()[name]);
@@ -195,22 +195,22 @@ Value sf_load_sprite(std::vector<Value>& n)
     return Value(name);
 }
 
-Value sf_load_font(std::vector<Value>& n)
+Value sf_load_font(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 1)
         throw std::runtime_error("sfLoadFont: need 1 argument: path to font");
     if (n[0].valueType() != ValueType::String)
         throw Ark::TypeError("sfLoadFont: need a String");
     
-    std::string name = "font-" + n[0].string();
+    std::string name = "font-" + n[0].string().toString();
     get_fonts()[name] = sf::Font();
-    if (!get_fonts()[name].loadFromFile(n[0].string()))
-        throw std::runtime_error("sfLoadFont: Could not load font: " + n[0].string());
+    if (!get_fonts()[name].loadFromFile(n[0].string().toString()))
+        throw std::runtime_error("sfLoadFont: Could not load font: " + n[0].string().toString());
 
     return Value(name);
 }
 
-Value sf_make_text(std::vector<Value>& n)
+Value sf_make_text(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 4)
         throw std::runtime_error("sfMakeText: need 4 arguments: font, text, size, color");
@@ -223,16 +223,16 @@ Value sf_make_text(std::vector<Value>& n)
     if (n[3].valueType() != ValueType::List)
         throw Ark::TypeError("sfMakeText: invalid argument (color)");
     
-    std::size_t i = n[0].string().find_first_of('-');
-    std::string sub = n[0].string().substr(0, i);
+    std::size_t i = n[0].string().toString().find_first_of('-');
+    std::string sub = n[0].string().toString().substr(0, i);
 
     if (sub != "font")
         throw Ark::TypeError("sfMakeText: invalid font object");
     
-    std::string name = "text-" + n[0].string() + n[1].string();
+    std::string name = "text-" + n[0].string().toString() + n[1].string().toString();
     get_texts()[name] = sf::Text();
-    get_texts()[name].setFont(get_fonts()[n[0].string()]);
-    get_texts()[name].setString(n[1].string());
+    get_texts()[name].setFont(get_fonts()[n[0].string().toString()]);
+    get_texts()[name].setString(n[1].string().toString());
     get_texts()[name].setCharacterSize(static_cast<long>(n[2].number()));
     get_texts()[name].setFillColor(sf::Color(
         static_cast<long>(n[3].const_list()[0].number()),
@@ -243,7 +243,7 @@ Value sf_make_text(std::vector<Value>& n)
     return Value(name);
 }
 
-Value sf_set_text(std::vector<Value>& n)
+Value sf_set_text(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 2)
         throw std::runtime_error("sfMakeText: need 2 arguments: text object, new value");
@@ -252,18 +252,18 @@ Value sf_set_text(std::vector<Value>& n)
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("sfMakeText: invalid argument (new value)");
     
-    std::size_t i = n[0].string().find_first_of('-');
-    std::string sub = n[0].string().substr(0, i);
+    std::size_t i = n[0].string().toString().find_first_of('-');
+    std::string sub = n[0].string().toString().substr(0, i);
 
     if (sub == "text")
-        get_texts()[n[0].string()].setString(n[1].string());
+        get_texts()[n[0].string().toString()].setString(n[1].string().toString());
     else
         throw Ark::TypeError("Object isn't a text object");
     
     return Nil;
 }
 
-Value sf_setpos(std::vector<Value>& n)
+Value sf_setpos(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 3)
         throw std::runtime_error("sfSetPos: need 3 arguments: object, x, y");
@@ -274,13 +274,13 @@ Value sf_setpos(std::vector<Value>& n)
     if (n[2].valueType() != ValueType::Number)
         throw Ark::TypeError("sfSetPos: invalid argument (y)");
     
-    std::size_t i = n[0].string().find_first_of('-');
-    std::string sub = n[0].string().substr(0, i);
+    std::size_t i = n[0].string().toString().find_first_of('-');
+    std::string sub = n[0].string().toString().substr(0, i);
 
     if (sub == "text")
-        get_texts()[n[0].string()].setPosition(static_cast<long>(n[1].number()), static_cast<long>(n[2].number()));
+        get_texts()[n[0].string().toString()].setPosition(static_cast<long>(n[1].number()), static_cast<long>(n[2].number()));
     else if (sub == "sprite")
-        get_sprites()[n[0].string()].setPosition(static_cast<long>(n[1].number()), static_cast<long>(n[2].number()));
+        get_sprites()[n[0].string().toString()].setPosition(static_cast<long>(n[1].number()), static_cast<long>(n[2].number()));
     else if (sub == "event")
         throw Ark::TypeError("sfSetPos: Can not set position of event");
     else if (sub == "font")
@@ -291,20 +291,20 @@ Value sf_setpos(std::vector<Value>& n)
     return Nil;
 }
 
-Value sf_width(std::vector<Value>& n)
+Value sf_width(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 1)
         throw std::runtime_error("sfWidth: need 1 argument: object");
     if (n[0].valueType() != ValueType::String)
         throw Ark::TypeError("sfWidth: invalid argument");
     
-    std::size_t i = n[0].string().find_first_of('-');
-    std::string sub = n[0].string().substr(0, i);
+    std::size_t i = n[0].string().toString().find_first_of('-');
+    std::string sub = n[0].string().toString().substr(0, i);
 
     if (sub == "text")
-        return Value(static_cast<int>(get_texts()[n[0].string()].getGlobalBounds().width));
+        return Value(static_cast<int>(get_texts()[n[0].string().toString()].getGlobalBounds().width));
     else if (sub == "sprite")
-        return Value(static_cast<int>(get_sprites()[n[0].string()].getGlobalBounds().width));
+        return Value(static_cast<int>(get_sprites()[n[0].string().toString()].getGlobalBounds().width));
     else if (sub == "event")
         throw Ark::TypeError("sfWidth: Can not get width of event");
     else if (sub == "font")
@@ -312,20 +312,20 @@ Value sf_width(std::vector<Value>& n)
     throw Ark::TypeError("Object isn't a SFML object");
 }
 
-Value sf_height(std::vector<Value>& n)
+Value sf_height(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() != 1)
         throw std::runtime_error("sfHeight: need 1 argument: object");
     if (n[0].valueType() != ValueType::String)
         throw Ark::TypeError("sfHeight: invalid argument");
     
-    std::size_t i = n[0].string().find_first_of('-');
-    std::string sub = n[0].string().substr(0, i);
+    std::size_t i = n[0].string().toString().find_first_of('-');
+    std::string sub = n[0].string().toString().substr(0, i);
 
     if (sub == "text")
-        return Value(static_cast<int>(get_texts()[n[0].string()].getGlobalBounds().height));
+        return Value(static_cast<int>(get_texts()[n[0].string().toString()].getGlobalBounds().height));
     else if (sub == "sprite")
-        return Value(static_cast<int>(get_sprites()[n[0].string()].getGlobalBounds().height));
+        return Value(static_cast<int>(get_sprites()[n[0].string().toString()].getGlobalBounds().height));
     else if (sub == "event")
         throw Ark::TypeError("sfHeight: Can not get height of event");
     else if (sub == "font")
@@ -333,7 +333,7 @@ Value sf_height(std::vector<Value>& n)
     throw Ark::TypeError("Object isn't a SFML object");
 }
 
-Value sf_event(std::vector<Value>& n)
+Value sf_event(std::vector<Value>& n, Ark::VM* vm)
 {
     std::string out = "event-";
 
@@ -344,13 +344,13 @@ Value sf_event(std::vector<Value>& n)
     {
         if (it->valueType() != ValueType::String)
             throw Ark::TypeError("sfEvent: invalid argument");
-        out += it->string();
+        out += it->string().toString();
     }
 
     return Value(out);
 }
 
-Value sf_window_close(std::vector<Value>& n)
+Value sf_window_close(std::vector<Value>& n, Ark::VM* vm)
 {
     get_window().close();
     return Nil;

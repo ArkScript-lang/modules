@@ -2,7 +2,7 @@
 
 namespace ArkMsgpack
 {
-    Value pack(std::vector<Value> &args)
+    Value pack(std::vector<Value>& args, Ark::VM* vm)
     {
         // pack(Value src) and return a buffer's string packed 
         if(args.size() != 1)
@@ -13,7 +13,7 @@ namespace ArkMsgpack
         Value packed;
         
         buffer.seekg(0);
-        if(type == ValueType::NFT)
+        if(type == ValueType::True || type == ValueType::False)
         {
             bool src {std::get<bool>(value_src)};
             msgpack::pack(buffer, src);
@@ -40,7 +40,7 @@ namespace ArkMsgpack
         return packed;
     }
 
-    Value unpack(std::vector<Value> &args)
+    Value unpack(std::vector<Value>& args, Ark::VM* vm)
     {
         //unpack(Value packed(string or list)) and return an object unpacked 
         if(args.size() != 1)
@@ -53,7 +53,7 @@ namespace ArkMsgpack
         std::string ark_string;
         msgpack::object deserialized;
         auto type_test = [&](void) {
-            std::string packed {static_cast<Value>(args[0]).string_ref()};
+            std::string packed {static_cast<Value>(args[0]).string_ref().toString()};
             deserialized = msgpack::unpack(packed.data(), packed.size()).get();
             try
             {
@@ -92,7 +92,7 @@ namespace ArkMsgpack
         return dst;
     }
 
-    Value object_str(std::vector<Value> &args)
+    Value object_str(std::vector<Value>& args, Ark::VM* vm)
     {
         if(args.size() != 1)
             throw std::runtime_error("ArgError : This function must have 1 argument");
@@ -109,7 +109,7 @@ namespace ArkMsgpack
         }
         else
         {
-            std::string packed {static_cast<Value>(args[0]).string_ref()};
+            std::string packed {static_cast<Value>(args[0]).string_ref().toString()};
             deserialized =  msgpack::unpack(packed.data(), packed.size()).get();
             str_buffer << deserialized;
             msg_object_str = Value(str_buffer.str());

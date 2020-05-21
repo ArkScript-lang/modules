@@ -7,7 +7,7 @@
 
 namespace ArkRandom
 {
-    Value random(std::vector<Value>& n)
+    Value random(std::vector<Value>& n, Ark::VM* vm)
     {
         unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
         std::mt19937 g(seed);
@@ -17,7 +17,7 @@ namespace ArkRandom
         return Value(x);
     }
 
-    Value random_10(std::vector<Value>& n)
+    Value random_10(std::vector<Value>& n, Ark::VM* vm)
     {
         unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
         std::mt19937 g(seed);

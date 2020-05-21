@@ -1,4 +1,3 @@
-#include <Ark/Module.hpp>
 #include <http_module.hpp>
 
 // module functions mapping

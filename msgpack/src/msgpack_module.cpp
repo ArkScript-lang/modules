@@ -6,17 +6,14 @@ namespace ArkMsgpack
     {
         CObject object;
 
-        if(type == ValueType::NFT)
-        {
-            if(ark_object == Ark::True)
-                object = true;
-            else if(ark_object == Ark::False)
-                object = false;
-        }
+        if(ark_object == Ark::True)
+            object = true;
+        else if(ark_object == Ark::False)
+            object = false;
         else if(type == ValueType::Number)
             object = static_cast<Value>(ark_object).number();
         else if(type == ValueType::String)
-            object = static_cast<Value>(ark_object).string_ref();
+            object = static_cast<Value>(ark_object).string_ref().toString();
         else
             object = static_cast<Value>(ark_object).list();
 
@@ -33,7 +30,7 @@ namespace ArkMsgpack
         {
             ValueType type {src_list[i].valueType()};
             each = get_cobject(src_list[i], type);
-            if(type == ValueType::NFT)
+            if(type == ValueType::True || type == ValueType::False)
             {
                 bool src = std::get<bool>(each);
                 msgpack::pack(buffer, src);
@@ -84,7 +81,7 @@ namespace ArkMsgpack
                     try
                     {
                         deserialized.convert(ark_string);
-                        list.push_back(Value(ark_string));                  
+                        list.push_back(Value(ark_string));
                     }
                     catch(std::exception &e) {}
                 }
@@ -93,7 +90,7 @@ namespace ArkMsgpack
  
         for(unsigned i {0}; i < buffer_list.size(); ++ i)
         {
-            std::string buffer {static_cast<Value>(buffer_list[i]).string_ref()};
+            std::string buffer {static_cast<Value>(buffer_list[i]).string_ref().toString()};
             deserialized = msgpack::unpack(buffer.data(), buffer.size()).get();
             each_to_value();
         }
@@ -108,7 +105,7 @@ namespace ArkMsgpack
  
         for(unsigned i {0}; i < buffer_list.size(); ++ i)
         {
-            std::string buffer {static_cast<Value>(buffer_list[i]).string_ref()};
+            std::string buffer {static_cast<Value>(buffer_list[i]).string_ref().toString()};
             deserialized = msgpack::unpack(buffer.data(), buffer.size()).get();
             if(i > 0)
                 stream << ' ';

@@ -7,7 +7,7 @@
 
 namespace ArkConsole
 {
-    Value clear(std::vector<Value>& n)
+    Value clear(std::vector<Value>& n, Ark::VM* vm)
     {
     #if defined(OS_WINDOWS)
         COORD topLeft  = { 0, 0 };
@@ -30,7 +30,7 @@ namespace ArkConsole
         return Nil;
     }
 
-    Value color(std::vector<Value>& n)
+    Value color(std::vector<Value>& n, Ark::VM* vm)
     {
         if (n.size() != 1)
             throw std::runtime_error("consoleColor need a single argument, a string representing the color to apply");
@@ -85,7 +85,7 @@ namespace ArkConsole
         else if (value == "on_white")
             std::cout << termcolor::on_white;
         else
-            throw std::runtime_error("Couldn't identify argument given to consoleColor: '" + value + "'");
+            throw std::runtime_error("Couldn't identify argument given to consoleColor: '" + value.toString() + "'");
 
         return Nil;
     }
