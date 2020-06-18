@@ -1,5 +1,5 @@
 {
-	(import "msgpack.bin")
+	(import "msgpack.arkm")
 
 	# list source
 	(let lst (list 1 true "hello" 1.453))
