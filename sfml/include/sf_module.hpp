@@ -14,3 +14,4 @@ Value sf_width(std::vector<Value>& n, Ark::VM* vm);
 Value sf_height(std::vector<Value>& n, Ark::VM* vm);
 Value sf_event(std::vector<Value>& n, Ark::VM* vm);
 Value sf_window_close(std::vector<Value>& n, Ark::VM* vm);
+Value sf_load_texture(std::vector<Value>& n, Ark::VM* vm);

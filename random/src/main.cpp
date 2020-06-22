@@ -13,7 +13,7 @@ namespace ArkRandom
         std::mt19937 g(seed);
         int x = static_cast<int>(g());
         x = (x > 0) ? x : -x;
-        x %= 16384;
+        x %= 32768;
         return Value(x);
     }
 

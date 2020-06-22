@@ -33,9 +33,9 @@ namespace ArkConsole
     Value color(std::vector<Value>& n, Ark::VM* vm)
     {
         if (n.size() != 1)
-            throw std::runtime_error("consoleColor need a single argument, a string representing the color to apply");
+            throw std::runtime_error("console:color need a single argument, a string representing the color to apply");
         if (n[0].valueType() != ValueType::String)
-            throw std::runtime_error("consoleColor need a single argument, a string representing the color to apply");
+            throw std::runtime_error("console:color need a single argument, a string representing the color to apply");
 
         auto value = n[0].string();
         if (value == "reset")
@@ -85,7 +85,7 @@ namespace ArkConsole
         else if (value == "on_white")
             std::cout << termcolor::on_white;
         else
-            throw std::runtime_error("Couldn't identify argument given to consoleColor: '" + value.toString() + "'");
+            throw std::runtime_error("Couldn't identify argument given to console:color: '" + value.toString() + "'");
 
         return Nil;
     }
@@ -94,8 +94,8 @@ namespace ArkConsole
 ARK_API_EXPORT Mapping_t getFunctionsMapping()
 {
     Mapping_t map;
-    map["consoleClear"] = ArkConsole::clear;
-    map["consoleColor"] = ArkConsole::color;
+    map["console:clear"] = ArkConsole::clear;
+    map["console:color"] = ArkConsole::color;
 
     return map;
 }
