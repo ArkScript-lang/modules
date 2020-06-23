@@ -208,7 +208,7 @@ Value sf_load_font(std::vector<Value>& n, Ark::VM* vm)
         throw Ark::TypeError("sf:load:font: need a String");
 
     sf::Font& font = get_fonts().emplace_back();
-    if (!fonts.loadFromFile(n[0].string().toString()))
+    if (!font.loadFromFile(n[0].string().toString()))
         throw std::runtime_error("sf:load:font: Could not load font: " + n[0].string().toString());
 
     return Value(UserType(&font));
