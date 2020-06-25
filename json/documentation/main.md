@@ -13,7 +13,7 @@ We have an implementation of a json object. The possibility to print, read and w
 
 ```clojure
 {
-    (import "/home/jamil/Projects/Ark/lib/json.arkm")
+    (import "json.arkm")
 
 	(let json_object (open "test.json"))
 
