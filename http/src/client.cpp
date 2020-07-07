@@ -1,5 +1,5 @@
-#include <http_module.hpp>
 #include <httplib.hpp>
+#include <http_module.hpp>
 #include <list>
 
 using namespace httplib;
@@ -28,6 +28,48 @@ std::list<Client>& get_clients()
     return clients;
 }
 
+UserType::ControlFuncs& get_cfs_client()
+{
+    static UserType::ControlFuncs cfs;
+    cfs.ostream_func = [](std::ostream& os, const UserType& a) -> std::ostream& {
+        os << "httpClient<0x" << a.data() << ">";
+        return os;
+    };
+    cfs.deleter = [](void* data) {
+        get_clients().erase(data);  ///@todo won't work asis
+    };
+}
+
+UserType::ControlFuncs& get_cfs_header()
+{
+    static UserType::ControlFuncs cfs;
+    cfs.ostream_func = [](std::ostream& os, const UserType& a) -> std::ostream& {
+        os << "httpHeaders<";
+        for (auto& p : a.as<Headers>())
+            os << "\n\t" << p.first << " -> " << p.second;
+        os << ">";
+        return os;
+    };
+    cfs.deleter = [](void* data) {
+        get_headers().erase(data);  ///@todo won't work asis
+    };
+}
+
+UserType::ControlFuncs& get_cfs_param()
+{
+    static UserType::ControlFuncs cfs;
+    cfs.ostream_func = [](std::ostream& os, const UserType& a) -> std::ostream& {
+        os << "httpParams<";
+        for (auto& p : *static_cast<Params*>(A.data()))
+            os << "\n\t" << p.first << " -> " << p.second;
+        os << ">";
+        return os;
+    };
+    cfs.deleter = [](void* data) {
+        get_params().erase(data);  ///@todo won't work asis
+    };
+}
+
 /*
     ***********************************
                    Client
@@ -48,7 +90,7 @@ Value http_create_headers(std::vector<Value>& n, Ark::VM* vm)
     {
         if (v.valueType() != ValueType::String)
             throw Ark::TypeError("httpCreateHeaders: takes only String as argument");
-        
+
         if (key == "")
             key = v.string_ref().toString();
         else
@@ -59,13 +101,7 @@ Value http_create_headers(std::vector<Value>& n, Ark::VM* vm)
     }
 
     Value headers = Ark::Value(Ark::UserType(&h.back()));
-    headers.usertype_ref().setOStream([](std::ostream& os, const UserType& A) -> std::ostream& {
-        os << "httpHeaders<";
-        for (auto& p : *static_cast<Headers*>(A.data()))
-            std::cout << "\n\t" << p.first << " -> " << p.second;
-        os << ">";
-        return os;
-    });
+    headers.usertype_ref().setControlFuncs(&get_cfs_header());
     return headers;
 }
 
@@ -82,10 +118,7 @@ Value http_create_client(std::vector<Value>& n, Ark::VM* vm)
     c.emplace_back(n[0].string_ref().toString(), static_cast<int>(n[1].number()));
 
     Value client = Ark::Value(Ark::UserType(&c.back()));
-    client.usertype_ref().setOStream([](std::ostream& os, const UserType& A) -> std::ostream& {
-        os << "httpClient<0x" << A.data() << ">";
-        return os;
-    });
+    client.usertype_ref().setControlFuncs(&get_cfs_client());
     return client;
 }
 
@@ -147,13 +180,7 @@ Value http_create_params(std::vector<Value>& n, Ark::VM* vm)
     }
 
     Value params = Ark::Value(Ark::UserType(&p.back()));
-    params.usertype_ref().setOStream([](std::ostream& os, const UserType& A) -> std::ostream& {
-        os << "httpParams<";
-        for (auto& p : *static_cast<Params*>(A.data()))
-            std::cout << "\n\t" << p.first << " -> " << p.second;
-        os << ">";
-        return os;
-    });
+    params.usertype_ref().setControlFuncs(&get_cfs_param());
     return params;
 }
 
