@@ -8,6 +8,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/random)
 add_subdirectory(${PROJECT_SOURCE_DIR}/console)
 add_subdirectory(${PROJECT_SOURCE_DIR}/msgpack)
 add_subdirectory(${PROJECT_SOURCE_DIR}/http)
+add_subdirectory(${PROJECT_SOURCE_DIR}/json)
 
 if (NOT ARK_BUILD_BASE_MODULES)
     add_subdirectory(${PROJECT_SOURCE_DIR}/sfml)
