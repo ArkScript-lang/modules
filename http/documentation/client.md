@@ -2,7 +2,7 @@
 
 ## Functions
 
-### httpCreateHeaders
+### http:headers:create
 
 Create a header map to use with the http client.
 
@@ -11,12 +11,12 @@ You can give it the headers you want when creating it.
 Example:
 
 ```clojure
-(let headers (httpCreateHeaders
+(let headers (http:headers:create
     "Accept-Encoding" "gzip, deflate"
 ))
 ```
 
-### httpCreateClient
+### http:client:create
 
 Create an http client to query a server.
 
@@ -25,10 +25,10 @@ Must give an host (String) and a port number.
 Example:
 
 ```clojure
-(let cli (httpCreateClient "localhost" 1234))
+(let cli (http:client:create "localhost" 1234))
 ```
 
-### httpClientGet
+### http:client:get
 
 Get content from an online ressource.
 
@@ -39,36 +39,33 @@ Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
 Example:
 
 ```clojure
-{
-    (let headers (httpCreateHeaders
-        "Accept-Encoding" "gzip, deflate"
-    ))
-    (let cli (httpCreateClient "localhost" 1234))
+(let headers (http:headers:create
+    "Accept-Encoding" "gzip, deflate"
+))
+(let cli (http:client:create "localhost" 1234))
 
-    (mut output (httpClientGet cli "/hi" headers))
-    (if (nil? output)
-        (print "couldn't reach the server")
-        (print (@ output 0))  # print the status
-    )
-}
+(mut output (http:client:get cli "/hi" headers))
+(if (nil? output)
+    (print "couldn't reach the server")
+    (print (@ output 0)))  # print the status
 ```
 
-### httpCreateParams
+### http:params:create
 
 Used to create a parameter list for a POST request (`application/x-www-form-urlencoded`).
 
-It works like `httpCreateHeaders`, you need to give an even number of Strings (key -> value mapping).
+It works like `http:headers:create`, you need to give an even number of Strings (key -> value mapping).
 
 Example:
 
 ```clojure
-(let params (httpCreateParams
+(let params (http:params:create
     "name" "john"
     "note" "coder"
 ))
 ```
 
-### httpClientPost
+### http:client:post
 
 Make a POST request with either a String (request type would be `text/plain`) as the content or `httpParams` (request type would be `application/x-www-form-urlencoded`).
 
@@ -77,36 +74,32 @@ Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
 Example:
 
 ```clojure
-{
-    (let cli (httpCreateClient "localhost" 1234))
+(let cli (http:client:create "localhost" 1234))
 
-    (mut output (httpClientPost cli "/form" "hello world!"))
-    (if (nil? output)
-        (print "couldn't reach the server")
-        (print (@ output 0))  # prints status of the request
-    )
+(mut output (http:client:post cli "/form" "hello world!"))
+(if (nil? output)
+    (print "couldn't reach the server")
+    (print (@ output 0)))  # prints status of the request
 
-    (let params (httpCreateParams
-        "name" "john"
-        "note" "coder"
-    ))
-    (set output (httpClientPost "/form-bis" params))
-    (if (nil? output)
-        (print "couldn't reach the server")
-        (print (@ output 0))  # prints status of the request
-    )
-}
+(let params (http:params:create
+    "name" "john"
+    "note" "coder"
+))
+(set output (http:client:post "/form-bis" params))
+(if (nil? output)
+    (print "couldn't reach the server")
+    (print (@ output 0)))  # prints status of the request
 ```
 
-### httpClientPut
+### http:client:put
 
 Make a PUT request with either a String (request type would be `text/plain`) as the content or `httpParams` (request type would be `application/x-www-form-urlencoded`).
 
 Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
 
-Works exactly like `httpClientPost`.
+Works exactly like `http:client:post`.
 
-### httpClientDelete
+### http:client:delete
 
 Make a DELETE request with an optional data field (request type would be `text/plain`).
 
@@ -115,18 +108,15 @@ Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
 Example:
 
 ```clojure
-{
-    (let cli (httpCreateClient "localhost" 1234))
+(let cli (http:client:create "localhost" 1234))
 
-    (mut output (httpClientDelete cli "/delete-me"))
-    (if (nil? output)
-        (print "couldn't reach the server")
-        (print (@ output 0))  # prints status of the request
-    )
-}
+(mut output (http:client:delete cli "/delete-me"))
+(if (nil? output)
+    (print "couldn't reach the server")
+    (print (@ output 0)))  # prints status of the request
 ```
 
-### httpClientSetFollowLocation
+### http:client:setFollowLocation
 
 Choose if the request should follow the redirection or not.
 
@@ -135,14 +125,12 @@ Returns `nil`.
 Example:
 
 ```clojure
-{
-    (let cli (httpCreateClient "yahoo.com" 80))
+(let cli (http:client:create "yahoo.com" 80))
 
-    (mut output (httpClientGet cli "/"))
-    (print (@ output 0))  # status: 301
+(mut output (http:client:get cli "/"))
+(print (@ output 0))  # status: 301
 
-    (httpClientSetFollowLocation cli true)
-    (set output (httpClientGet cli "/"))
-    (print (@ output 0))  # status: 200
-}
+(http:client:setFollowLocation cli true)
+(set output (http:client:get cli "/"))
+(print (@ output 0))  # status: 200
 ```

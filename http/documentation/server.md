@@ -2,17 +2,17 @@
 
 ## Functions
 
-### httpCreateServer
+### http:server:create
 
 Create a server.
 
 Example:
 
 ```clojure
-(let srv (httpCreateServer))
+(let srv (http:server:create))
 ```
 
-### httpServerGet
+### http:server:get
 
 Create a route to answer GET requests.
 
@@ -21,13 +21,11 @@ The route and the content should both be of type String.
 Example:
 
 ```clojure
-{
-    (let srv (httpCreateServer))
-    (httpServerGet srv "/hi" "this is my fabulous content")
-}
+(let srv (http:server:create))
+(http:server:get srv "/hi" "this is my fabulous content")
 ```
 
-### httpServerStop
+### http:server:stop
 
 Stop a server.
 
@@ -36,65 +34,29 @@ Returns `nil`.
 Example:
 
 ```clojure
-(httpServerStop srv)
+(http:server:stop srv)
 ```
 
-### httpServerListen
+### http:server:listen
 
 Setup the server to listen forever on a given host (String) and port (Number). Should be called after having setup all the routes.
 
-Returns `nil`.
-
-Example:
-
-```clojure
-{
-    (let srv (httpCreateServer))
-
-    (httpServerGet srv "/hi" "this is my fabulous content")
-    # more routes...
-
-    (httpServerListen srv "localhost" 1234)
-}
-```
-
-### httpServerBindToAnyPort
-
-Bind a socket to any available port.
+The port is optional if the host is `"0.0.0.0"` (aka *bind to all interfaces*).
 
 Returns `nil`.
 
 Example:
 
 ```clojure
-{
-    (let srv (httpCreateServer))
+(let srv (http:server:create))
 
-    # binding to host 0.0.0.0, thus to multiple interfaces
-    (httpServerBindToAnyPort srv "0.0.0.0")
-}
+(http:server:get srv "/hi" "this is my fabulous content")
+# more routes...
+
+(http:server:listen srv "localhost" 1234)
 ```
 
-### httpServerListenAfterBind
-
-If you've done a `httpServerBindToAnyPort`, you shouldn't call `httpServerListen` but `httpServerListenAfterBind` since the server was already binded to an host and port.
-
-Returns the port number it was binded to.
-
-Example:
-
-```clojure
-{
-    (let srv (httpCreateServer))
-
-    # binding to host 0.0.0.0, thus to multiple interfaces
-    (httpServerBindToAnyPort srv "0.0.0.0")
-
-    (httpServerListenAfterBind)
-}
-```
-
-### httpServerSetMountPoint
+### http:server:setMountPoint
 
 Mount a given directory to a specific location.
 
@@ -105,41 +67,37 @@ Returns a Boolean: true if it worked, false if the base directory doesn't exist.
 Example:
 
 ```clojure
-{
-    (let srv (httpCreateServer))
+(let srv (http:server:create))
 
-    # mount / to ./www
-    (httpServerSetMountPoint srv "/" "./www")
+# mount / to ./www
+(http:server:setMountPoint srv "/" "./www")
 
-    # mount /public to ./www1 and ./www2 directories
-    (httpServerSetMountPoint srv "/public" "/www1")  # 1st order to search
-    (httpServerSetMountPoint srv "/public" "/www2")  # 2nd order to search
-}
+# mount /public to ./www1 and ./www2 directories
+(http:server:setMountPoint srv "/public" "/www1")  # 1st order to search
+(http:server:setMountPoint srv "/public" "/www2")  # 2nd order to search
 ```
 
-### httpServerRmMountPoint
+### http:server:rmMountPoint
 
 Remove a mount point. Returns false if the mount point can't be found, true otherwise.
 
 Example:
 
 ```clojure
-{
-    (let srv (httpCreateServer))
+(let srv (http:server:create))
 
-    # mount / to ./www
-    (httpServerSetMountPoint srv "/" "./www")
+# mount / to ./www
+(http:server:setMountPoint srv "/" "./www")
 
-    # mount /public to ./www1 and ./www2 directories
-    (httpServerSetMountPoint srv "/public" "/www1")  # 1st order to search
-    (httpServerSetMountPoint srv "/public" "/www2")  # 2nd order to search
+# mount /public to ./www1 and ./www2 directories
+(http:server:setMountPoint srv "/public" "/www1")  # 1st order to search
+(http:server:setMountPoint srv "/public" "/www2")  # 2nd order to search
 
-    # remove mount /
-    (httpServerRmMountPoint srv "/")
-}
+# remove mount /
+(http:server:rmMountPoint srv "/")
 ```
 
-### httpServerSetFileExtAndMimetypeMapping
+### http:server:setFileExtAndMimetypeMapping
 
 Map a file extension to a mimetype.
 
@@ -167,10 +125,10 @@ xhtml | application/xhtml+xml
 Example:
 
 ```clojure
-(httpServerSetFileExtAndMimetypeMapping srv "cc" "text/x-c")
+(http:server:setFileExtAndMimetypeMapping srv "cc" "text/x-c")
 ```
 
-### httpServerEnableLogger
+### http:server:enableLogger
 
 Set the logging level, by default 0.
 
@@ -183,9 +141,9 @@ Example:
 ```clojure
 {
     # set logger level to 1
-    (httpServerEnableLogger)
+    (http:server:enableLogger)
 
     # select a given logger level, here 3
-    (httpServerEnableLogger 3)
+    (http:server:enableLogger 3)
 }
 ```

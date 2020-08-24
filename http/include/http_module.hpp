@@ -7,8 +7,6 @@ Value http_create_server(std::vector<Value>& n, Ark::VM* vm);
 Value http_server_get(std::vector<Value>& n, Ark::VM* vm);
 Value http_server_stop(std::vector<Value>& n, Ark::VM* vm);
 Value http_server_listen(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_bind_to_any_port(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_listen_after_bind(std::vector<Value>& n, Ark::VM* vm);
 Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm);
 Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm);
 Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm);
