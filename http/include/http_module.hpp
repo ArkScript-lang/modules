@@ -34,7 +34,7 @@ Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm);
 Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm);
 Value http_server_enable_logger(std::vector<Value>& n, Ark::VM* vm);
 
-// params
+// client
 Value http_create_headers(std::vector<Value>& n, Ark::VM* vm);
 Value http_create_client(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_get(std::vector<Value>& n, Ark::VM* vm);
@@ -43,5 +43,17 @@ Value http_client_post(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_put(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_delete(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm);
+
+Value http_client_set_co_timeout(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_set_read_timeout(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_set_write_timeout(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_set_basic_auth(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_set_digest_auth(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_set_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_set_keep_alive(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_set_proxy(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_set_proxy_basic_auth(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_set_proxy_digest_auth(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_set_proxy_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm);
 
 #endif

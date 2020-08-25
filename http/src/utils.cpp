@@ -44,7 +44,7 @@ Server& create_server()
 {
     static Server srv;
 
-    // TODO
+    // TODO make the logger great again
     if (get_logger_level() > 0)
         srv.set_logger([](const auto& req, const auto& res) {
             std::cout << "got request\n";

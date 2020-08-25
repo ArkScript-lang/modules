@@ -28,5 +28,17 @@ ARK_API_EXPORT Mapping_t getFunctionsMapping()
     map["http:client:delete"] = http_client_delete;
     map["http:client:setFollowLocation"] = http_client_set_follow_location;
 
+    map["http:client:setConnectionTimeout"] = http_client_set_co_timeout;
+    map["http:client:setReadTimeout"] = http_client_set_read_timeout;
+    map["http:client:setWriteTimeout"] = http_client_set_write_timeout;
+    map["http:client:setBasicAuth"] = http_client_set_basic_auth;
+    map["http:client:setDigestAuth"] = http_client_set_digest_auth;
+    map["http:client:setBearerTokenAuth"] = http_client_set_bearer_token_auth;
+    map["http:client:setKeepAlive"] = http_client_set_keep_alive;
+    map["http:client:setProxy"] = http_client_set_proxy;
+    map["http:client:setBasicAuth"] = http_client_set_proxy_basic_auth;
+    map["http:client:setDigestAuth"] = http_client_set_proxy_digest_auth;
+    map["http:client:setProxyBearerTokenAuth"] = http_client_set_proxy_bearer_token_auth;
+
     return map;
 }

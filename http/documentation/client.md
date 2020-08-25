@@ -50,9 +50,65 @@ Example:
     (print (@ output 0)))  # print the status
 ```
 
+### http:client:post
+
+Make a POST request with either a String as the request's body or `httpParams` (request type would be `application/x-www-form-urlencoded`).
+
+If the request's body is a String, you can pass an optional String argument `content-type` (defaults to `text/plain` when not given).
+
+A fifth (or fourth, depending on the form of the request) optional argument can be added: `headers`. They always come last.
+
+Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
+
+Example:
+
+```clojure
+(let cli (http:client:create "localhost" 1234))
+
+# the "text/plain" argument is optional here
+(mut output (http:client:post cli "/form" "hello world!" "text/plain"))
+(if (nil? output)
+    (print "couldn't reach the server")
+    (print (@ output 0)))  # prints status of the request
+
+(let params (http:params:create
+    "name" "john"
+    "note" "coder"
+))
+# here, no need to add the content-type because we are sending parameters
+(set output (http:client:post "/form-bis" params))
+(if (nil? output)
+    (print "couldn't reach the server")
+    (print (@ output 0)))  # prints status of the request
+```
+
+### http:client:put
+
+Make a PUT request with either a String as the request's body or `httpParams` (request type would be `application/x-www-form-urlencoded`).
+
+If the request's body is a String, you can pass an optional String argument `content-type` (defaults to `text/plain` when not given).
+
+A fifth (or fourth, depending on the form of the request) optional argument can be added: `headers`. They always come last.
+
+Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
+
+Works exactly like `http:client:post`.
+
+### http:client:delete
+
+Make a DELETE request with either a String as the request's body or `httpParams` (request type would be `application/x-www-form-urlencoded`).
+
+If the request's body is a String, you can pass an optional String argument `content-type` (defaults to `text/plain` when not given).
+
+A fifth (or fourth, depending on the form of the request) optional argument can be added: `headers`. They always come last.
+
+Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
+
+Works exactly like `http:client:post`.
+
 ### http:params:create
 
-Used to create a parameter list for a POST request (`application/x-www-form-urlencoded`).
+Used to create a parameter list for a POST/PUT/DELETE request (`application/x-www-form-urlencoded`).
 
 It works like `http:headers:create`, you need to give an even number of Strings (key -> value mapping).
 
@@ -63,57 +119,6 @@ Example:
     "name" "john"
     "note" "coder"
 ))
-```
-
-### http:client:post
-
-Make a POST request with either a String (request type would be `text/plain`) as the content or `httpParams` (request type would be `application/x-www-form-urlencoded`).
-
-Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
-
-Example:
-
-```clojure
-(let cli (http:client:create "localhost" 1234))
-
-(mut output (http:client:post cli "/form" "hello world!"))
-(if (nil? output)
-    (print "couldn't reach the server")
-    (print (@ output 0)))  # prints status of the request
-
-(let params (http:params:create
-    "name" "john"
-    "note" "coder"
-))
-(set output (http:client:post "/form-bis" params))
-(if (nil? output)
-    (print "couldn't reach the server")
-    (print (@ output 0)))  # prints status of the request
-```
-
-### http:client:put
-
-Make a PUT request with either a String (request type would be `text/plain`) as the content or `httpParams` (request type would be `application/x-www-form-urlencoded`).
-
-Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
-
-Works exactly like `http:client:post`.
-
-### http:client:delete
-
-Make a DELETE request with an optional data field (request type would be `text/plain`).
-
-Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
-
-Example:
-
-```clojure
-(let cli (http:client:create "localhost" 1234))
-
-(mut output (http:client:delete cli "/delete-me"))
-(if (nil? output)
-    (print "couldn't reach the server")
-    (print (@ output 0)))  # prints status of the request
 ```
 
 ### http:client:setFollowLocation
