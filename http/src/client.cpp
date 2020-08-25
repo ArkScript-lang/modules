@@ -1,77 +1,7 @@
 #include <httplib.hpp>
 #include <http_module.hpp>
-#include <list>
 
 using namespace httplib;
-
-/*
-    ***********************************
-                   Misc
-    ***********************************
-*/
-
-std::list<Params>& get_params()
-{
-    static std::list<Params> params;
-    return params;
-}
-
-std::list<Headers>& get_headers()
-{
-    static std::list<Headers> headers;
-    return headers;
-}
-
-std::list<Client>& get_clients()
-{
-    static std::list<Client> clients;
-    return clients;
-}
-
-UserType::ControlFuncs& get_cfs_client()
-{
-    static UserType::ControlFuncs cfs;
-    cfs.ostream_func = [](std::ostream& os, const UserType& a) -> std::ostream& {
-        os << "httpClient<0x" << a.data() << ">";
-        return os;
-    };
-    cfs.deleter = [](void* data) {
-        // get_clients().erase(data);  // TODO won't work asis
-    };
-    return cfs;
-}
-
-UserType::ControlFuncs& get_cfs_header()
-{
-    static UserType::ControlFuncs cfs;
-    cfs.ostream_func = [](std::ostream& os, const UserType& a) -> std::ostream& {
-        os << "httpHeaders<";
-        for (const auto& p : a.as<Headers>())
-            os << "\n\t" << p.first << " -> " << p.second;
-        os << ">";
-        return os;
-    };
-    cfs.deleter = [](void* data) {
-        // get_headers().erase(data);  // TODO won't work asis
-    };
-    return cfs;
-}
-
-UserType::ControlFuncs& get_cfs_param()
-{
-    static UserType::ControlFuncs cfs;
-    cfs.ostream_func = [](std::ostream& os, const UserType& a) -> std::ostream& {
-        os << "httpParams<";
-        for (const auto& p : a.as<Params>())
-            os << "\n\t" << p.first << " -> " << p.second;
-        os << ">";
-        return os;
-    };
-    cfs.deleter = [](void* data) {
-        // get_params().erase(data);  // TODO won't work asis
-    };
-    return cfs;
-}
 
 /*
     ***********************************
@@ -81,12 +11,11 @@ UserType::ControlFuncs& get_cfs_param()
 
 Value http_create_headers(std::vector<Value>& n, Ark::VM* vm)
 {
-    std::list<Headers>& h = get_headers();
-    h.emplace_back();
-    h.back().insert(std::pair<std::string, std::string>());
-
     if ((n.size() % 2) == 1)
         throw std::runtime_error("http:headers:create: needs an even number of arguments: [header -> value]");
+
+    std::vector<std::unique_ptr<Headers>>& h = get_headers();
+    h.emplace_back(std::make_unique<std::pair<std::string, std::string>>());
 
     std::string key = "";
     for (Value& v : n)
@@ -98,13 +27,13 @@ Value http_create_headers(std::vector<Value>& n, Ark::VM* vm)
             key = v.string_ref().toString();
         else
         {
-            h.back().insert(std::pair<std::string, std::string>(key, v.string_ref().toString()));
+            h.back()->insert(std::pair<std::string, std::string>(key, v.string_ref().toString()));
             key = "";
         }
     }
 
-    Value headers = Ark::Value(Ark::UserType(&h.back()));
-    headers.usertype_ref().setControlFuncs(&get_cfs_header());
+    Value headers = Ark::Value(Ark::UserType(h.back().get()));
+    headers.usertype_ref().setControlFuncs(get_cfs_header());
     return headers;
 }
 
@@ -117,11 +46,11 @@ Value http_create_client(std::vector<Value>& n, Ark::VM* vm)
     if (n[1].valueType() != ValueType::Number)
         throw Ark::TypeError("http:client:create: port must be a Number");
 
-    std::list<Client>& c = get_clients();
-    c.emplace_back(n[0].string_ref().toString(), static_cast<int>(n[1].number()));
+    std::vector<std::unique_ptr<Client>>& c = get_clients();
+    c.emplace_back(std::make_unique<Client>(n[0].string_ref().toString(), static_cast<int>(n[1].number())));
 
-    Value client = Ark::Value(Ark::UserType(&c.back()));
-    client.usertype_ref().setControlFuncs(&get_cfs_client());
+    Value client = Ark::Value(Ark::UserType(c.back().get()));
+    client.usertype_ref().setControlFuncs(get_cfs_client());
     return client;
 }
 
@@ -160,12 +89,11 @@ Value http_client_get(std::vector<Value>& n, Ark::VM* vm)
 
 Value http_create_params(std::vector<Value>& n, Ark::VM* vm)
 {
-    std::list<Params>& p = get_params();
-    p.emplace_back();
-    p.back().insert(std::pair<std::string, std::string>());
-
     if ((n.size() % 2) == 1)
         throw std::runtime_error("http:params:create: needs an even number of arguments: [key -> value]");
+
+    std::vector<std::unique_ptr<Params>>& p = get_params();
+    p.emplace_back(std::make_unique<Params>());
 
     std::string key = "";
     for (Value& v : n)
@@ -177,13 +105,13 @@ Value http_create_params(std::vector<Value>& n, Ark::VM* vm)
             key = v.string_ref().toString();
         else
         {
-            p.back().insert(std::pair<std::string, std::string>(key, v.string_ref().toString()));
+            p.back()->insert(std::pair<std::string, std::string>(key, v.string_ref().toString()));
             key = "";
         }
     }
 
-    Value params = Ark::Value(Ark::UserType(&p.back()));
-    params.usertype_ref().setControlFuncs(&get_cfs_param());
+    Value params = Ark::Value(Ark::UserType(p.back().get()));
+    params.usertype_ref().setControlFuncs(get_cfs_param());
     return params;
 }
 

@@ -8,7 +8,9 @@ ARK_API_EXPORT Mapping_t getFunctionsMapping()
     // Server
     map["http:server:create"] = http_create_server;
     map["http:server:get"] = http_server_get;
-    // TODO add http:server:post, http:server:put, http:server:delete
+    map["http:server:post"] = http_server_post;
+    map["http:server:put"] = http_server_put;
+    map["http:server:delete"] = http_server_delete;
     map["http:server:stop"] = http_server_stop;
     map["http:server:listen"] = http_server_listen;
     map["http:server:setMountPoint"] = http_server_set_mount_point;

@@ -2,6 +2,8 @@
 
 ## Functions
 
+Important note related to the routes: in case the given content argument doesn't return the wanted values, it will silently fail to avoid crashing the server.
+
 ### http:server:create
 
 Create a server.
@@ -16,14 +18,50 @@ Example:
 
 Create a route to answer GET requests.
 
-The route and the content should both be of type String.
+The route must be a String, the content can be either a String or a Function. If the content is a String, the mimetype will be set to `text/plain` or to the value of a fourth optional argument which must be a String.
+
+If the route accepts matches (eg `"/numbers/(\\d+)"`), the content must be a Function accepting arguments: matches and params.  
+If the route doesn't accept matches, it takes a single argument: params.  
+The function must return a list: `[status-code content type]`, with `type` being the mimetype of `content`.
+
+If no params were sent, then params will be `nil`.
 
 Example:
 
 ```clojure
 (let srv (http:server:create))
-(http:server:get srv "/hi" "this is my fabulous content")
+(http:server:get srv "/hi" "this is my fabulous content" "text/plain")
+
+(http:server:get srv "/numbers/(\\d+)" (fun (matches params) {
+    (print (len matches))  # 1
+    (let number (toNumber (@ matches 0)))
+    (print number)  # the matched number
+
+    # return the given number + 12 as a string
+    # (returned content must be a string)
+    [200 (toString (+ 12 number)) "text/plain"]
+}))
 ```
+
+### http:server:post
+
+Create a route to answer POST requests.
+
+The route must be a String, the content must be Function.
+
+If the route accepts matches (eg `"/numbers/(\\d+)"`), the content must be a Function accepting arguments: matches, body and params.  
+If the route doesn't accept matches, it takes only: body and params.  
+The function must return a list: `[status-code content type]`, with `type` being the mimetype of `content`.
+
+If no params were sent, then params will be `nil`.
+
+### http:server:put
+
+Works the same way as `http:server:post`.
+
+### http:server:delete
+
+Works the same way as `http:server:post`.
 
 ### http:server:stop
 
