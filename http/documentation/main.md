@@ -12,3 +12,4 @@ Disclaimer: this module does not handle
 * chunked transfer encoding
 * server-sent events
 * multiple servers per program
+* digest authentification (needs OpenSSL and libcrypto for that)

@@ -139,3 +139,75 @@ Example:
 (set output (http:client:get cli "/"))
 (print (@ output 0))  # status: 200
 ```
+
+### http:client:setConnectionTimeout
+
+Set the connection timeout.
+
+Takes two arguments: seconds and microseconds, which must be Numbers.
+
+Returns `nil`.
+
+### http:client:setReadTimeout
+
+Set the read timeout.
+
+Takes two arguments: seconds and microseconds, which must be Numbers.
+
+Returns `nil`.
+
+### http:client:setWriteTimeout
+
+Set the write timeout.
+
+Takes two arguments: seconds and microseconds, which must be Numbers.
+
+Returns `nil`.
+
+### http:client:setBasicAuth
+
+Set the basic authentification username and password for a client to use.
+
+Username and password must be Strings.
+
+Returns `nil`.
+
+### http:client:setBearerTokenAuth
+
+Set the basic bearer token authentification for a client to use.
+
+The token must be a String.
+
+Returns `nil`.
+
+### http:client:setKeepAlive
+
+Tell the server to keep the connection alive or not.
+
+Takes a Boolean.
+
+Returns `nil`.
+
+### http:client:setProxy
+
+Set the parameters (host and port) of a proxy, to be used by a client.
+
+The host must be a String, and the port a Number.
+
+Returns `nil`.
+
+### http:client:setProxyBasicAuth
+
+Set the basic proxy authentification username and password for a client to use.
+
+Username and password must be Strings.
+
+Returns `nil`.
+
+### http:client:setProxyBearerTokenAuth
+
+Set the basic proxy bearer token authentification for a client to use.
+
+The token must be a String.
+
+Returns `nil`.

@@ -48,12 +48,10 @@ Value http_client_set_co_timeout(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_set_read_timeout(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_set_write_timeout(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_set_basic_auth(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_set_digest_auth(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_set_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_set_keep_alive(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_set_proxy(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_set_proxy_basic_auth(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_set_proxy_digest_auth(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_set_proxy_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm);
 
 #endif

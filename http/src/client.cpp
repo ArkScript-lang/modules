@@ -359,3 +359,156 @@ Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm)
 
     return Nil;
 }
+
+Value http_client_set_co_timeout(std::vector<Value>& n, Ark::VM* vm)
+{
+    if (n.size() != 3)
+        throw std::runtime_error("http:client:setConnectionTimeout: needs 3 arguments: client, seconds, microseconds");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw Ark::TypeError("http:client:setConnectionTimeout: client must be an httpClient");
+    if (n[1].valueType() != ValueType::Number)
+        throw Ark::TypeError("http:client:setConnectionTimeout: seconds must be a Number");
+    if (n[2].valueType() != ValueType::Number)
+        throw Ark::TypeError("http:client:setConnectionTimeout: microseconds must be a Number");
+
+    n[0].usertype().as<Client>().set_connection_timeout(
+        static_cast<int>(n[1].number()),
+        static_cast<int>(n[2].number())
+    );
+
+    return Nil;
+}
+
+Value http_client_set_read_timeout(std::vector<Value>& n, Ark::VM* vm)
+{
+    if (n.size() != 3)
+        throw std::runtime_error("http:client:setReadTimeout: needs 3 arguments: client, seconds, microseconds");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw Ark::TypeError("http:client:setReadTimeout: client must be an httpClient");
+    if (n[1].valueType() != ValueType::Number)
+        throw Ark::TypeError("http:client:setReadTimeout: seconds must be a Number");
+    if (n[2].valueType() != ValueType::Number)
+        throw Ark::TypeError("http:client:setReadTimeout: microseconds must be a Number");
+
+    n[0].usertype().as<Client>().set_read_timeout(
+        static_cast<int>(n[1].number()),
+        static_cast<int>(n[2].number())
+    );
+
+    return Nil;
+}
+
+Value http_client_set_write_timeout(std::vector<Value>& n, Ark::VM* vm)
+{
+    if (n.size() != 3)
+        throw std::runtime_error("http:client:setWriteTimeout: needs 3 arguments: client, seconds, microseconds");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw Ark::TypeError("http:client:setWriteTimeout: client must be an httpClient");
+    if (n[1].valueType() != ValueType::Number)
+        throw Ark::TypeError("http:client:setWriteTimeout: seconds must be a Number");
+    if (n[2].valueType() != ValueType::Number)
+        throw Ark::TypeError("http:client:setWriteTimeout: microseconds must be a Number");
+
+    n[0].usertype().as<Client>().set_write_timeout(
+        static_cast<int>(n[1].number()),
+        static_cast<int>(n[2].number())
+    );
+
+    return Nil;
+}
+
+Value http_client_set_basic_auth(std::vector<Value>& n, Ark::VM* vm)
+{
+    if (n.size() != 3)
+        throw std::runtime_error("http:client:setBasicAuth: needs 3 arguments: client, username, password");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw Ark::TypeError("http:client:setBasicAuth: client must be an httpClient");
+    if (n[1].valueType() != ValueType::String)
+        throw Ark::TypeError("http:client:setBasicAuth: username must be a String");
+    if (n[2].valueType() != ValueType::String)
+        throw Ark::TypeError("http:client:setBasicAuth: password must be a String");
+
+    n[0].usertype().as<Client>().set_basic_auth(
+        n[1].string().c_str(),
+        n[2].string().c_str()
+    );
+
+    return Nil;
+}
+
+Value http_client_set_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm)
+{
+    if (n.size() != 2)
+        throw std::runtime_error("http:client:setBearerTokenAuth: needs 2 arguments: client, token");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw Ark::TypeError("http:client:setProxyBasicAuth: client must be an httpClient");
+    if (n[1].valueType() != ValueType::String)
+        throw Ark::TypeError("http:client:setProxyBasicAuth: token must be a String");
+
+    n[0].usertype().as<Client>().set_bearer_token_auth(n[1].string().c_str());
+
+    return Nil;
+}
+
+Value http_client_set_keep_alive(std::vector<Value>& n, Ark::VM* vm)
+{
+    if (n.size() != 2)
+        throw std::runtime_error("http:client:setKeepAlive: needs 2 arguments: client, toggle");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw Ark::TypeError("http:client:setKeepAlive: client must be an httpClient");
+    if (n[1] != Ark::True && n[1] != Ark::False)
+        throw Ark::TypeError("http:client:setKeepAlive: toggle must be a Boolean");
+
+    n[0].usertype().as<Client>().set_keep_alive(n[1] == Ark::True);
+
+    return Nil;
+}
+
+Value http_client_set_proxy(std::vector<Value>& n, Ark::VM* vm)
+{
+    if (n.size() != 3)
+        throw std::runtime_error("http:client:setProxy: needs 3 arguments: client, host, port");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw Ark::TypeError("http:client:setProxy: client must be an httpClient");
+    if (n[1].valueType() != ValueType::String)
+        throw Ark::TypeError("http:client:setProxy: host must be a String");
+    if (n[2].valueType() != ValueType::Number)
+        throw Ark::TypeError("http:client:setProxy: port must be a Number");
+
+    n[0].usertype().as<Client>().set_proxy(n[1].string().c_str(), static_cast<int>(n[2].number()));
+
+    return Nil;
+}
+
+Value http_client_set_proxy_basic_auth(std::vector<Value>& n, Ark::VM* vm)
+{
+    if (n.size() != 3)
+        throw std::runtime_error("http:client:setProxyBasicAuth: needs 3 arguments: client, username, password");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw Ark::TypeError("http:client:setProxyBasicAuth: client must be an httpClient");
+    if (n[1].valueType() != ValueType::String)
+        throw Ark::TypeError("http:client:setProxyBasicAuth: username must be a String");
+    if (n[2].valueType() != ValueType::String)
+        throw Ark::TypeError("http:client:setProxyBasicAuth: password must be a String");
+
+    n[0].usertype().as<Client>().set_proxy_basic_auth(
+        n[1].string().c_str(),
+        n[2].string().c_str()
+    );
+
+    return Nil;
+}
+
+Value http_client_set_proxy_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm)
+{
+    if (n.size() != 2)
+        throw std::runtime_error("http:client:setProxyBearerTokenAuth: needs 2 arguments: client, token");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw Ark::TypeError("http:client:setProxyBearerTokenAuth: client must be an httpClient");
+    if (n[1].valueType() != ValueType::String)
+        throw Ark::TypeError("http:client:setProxyBearerTokenAuth: token must be a String");
+
+    n[0].usertype().as<Client>().set_proxy_bearer_token_auth(n[1].string().c_str());
+
+    return Nil;
+}
