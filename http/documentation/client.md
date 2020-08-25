@@ -96,15 +96,26 @@ Works exactly like `http:client:post`.
 
 ### http:client:delete
 
-Make a DELETE request with either a String as the request's body or `httpParams` (request type would be `application/x-www-form-urlencoded`).
+Make a DELETE request with a String as the request's body.
 
-If the request's body is a String, you can pass an optional String argument `content-type` (defaults to `text/plain` when not given).
+You can pass an optional String argument `content-type` (defaults to `text/plain` when not given).
 
-A fifth (or fourth, depending on the form of the request) optional argument can be added: `headers`. They always come last.
+A fifth optional argument can be added: `headers`. They always come last.
 
 Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
 
-Works exactly like `http:client:post`.
+Example:
+
+```clojure
+(let cli (http:client:create "localhost" 1234))
+
+# the "text/plain" argument is optional here
+# if we were to add headers, they would come last
+(mut output (http:client:delete cli "/delete-me" "hello world!" "text/plain"))
+(if (nil? output)
+    (print "couldn't reach the server")
+    (print (@ output 0)))  # prints status of the request
+```
 
 ### http:params:create
 
