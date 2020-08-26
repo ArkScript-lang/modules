@@ -1,8 +1,4 @@
-#include <httplib.hpp>
 #include <http_module.hpp>
-#include <list>
-
-using namespace httplib;
 
 // we need [status-code, content, type]
 #define CHECK_FUNC_RETURN_VAL_FOR_REQ(val) (val.valueType() == ValueType::List && val.list().size() == 3 && \
@@ -34,10 +30,10 @@ Value http_server_get(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::String && !n[2].isFunction())
         throw Ark::TypeError("http:server:get: content must be a String or a Function");
 
-    Server& srv = n[0].usertype().as<Server>();
+    Server& srv = n[0].usertype_ref().as<Server>();
     srv.Get(n[1].string().c_str(), [n, vm](const Request& req, Response& res) {
         std::string content = (n[2].valueType() == ValueType::String) ? n[2].string().toString() : "";
-        std::string type = (n.size() == 4 && n[3].valueType() == ValueType::String) n[3].string().toString() ? "text/plain";
+        std::string type = (n.size() == 4 && n[3].valueType() == ValueType::String) ? n[3].string().toString() : "text/plain";
 
         if (n[2].isFunction())
         {
@@ -49,8 +45,7 @@ Value http_server_get(std::vector<Value>& n, Ark::VM* vm)
             {
                 Value matches(ValueType::List);
                 for (std::size_t i=0, end=req.matches.size(); i < end; ++i)
-                    // matches[i] is a string, we have implicit conversion to Value(ValueType::String here)
-                    matches.push_back(req.matches[i]);
+                    matches.push_back(Value(req.matches[i]));
 
                 if (req.params.size() == 0)
                 {
@@ -129,7 +124,7 @@ Value http_server_post(std::vector<Value>& n, Ark::VM* vm)
     if (!n[2].isFunction())
         throw Ark::TypeError("http:server:post: content must be a Function");
 
-    Server& srv = n[0].usertype().as<Server>();
+    Server& srv = n[0].usertype_ref().as<Server>();
     srv.Post(n[1].string().c_str(), [n, vm](const Request& req, Response& res) {
         std::string content;
         std::string type;
@@ -142,8 +137,7 @@ Value http_server_post(std::vector<Value>& n, Ark::VM* vm)
         {
             Value matches(ValueType::List);
             for (std::size_t i=0, end=req.matches.size(); i < end; ++i)
-                // matches[i] is a string, we have implicit conversion to Value(ValueType::String here)
-                matches.push_back(req.matches[i]);
+                matches.push_back(Value(req.matches[i]));
 
             if (req.params.size() == 0)
             {
@@ -221,7 +215,7 @@ Value http_server_put(std::vector<Value>& n, Ark::VM* vm)
     if (!n[2].isFunction())
         throw Ark::TypeError("http:server:put: content must be a Function");
 
-    Server& srv = n[0].usertype().as<Server>();
+    Server& srv = n[0].usertype_ref().as<Server>();
     srv.Put(n[1].string().c_str(), [n, vm](const Request& req, Response& res) {
         std::string content;
         std::string type;
@@ -234,8 +228,7 @@ Value http_server_put(std::vector<Value>& n, Ark::VM* vm)
         {
             Value matches(ValueType::List);
             for (std::size_t i=0, end=req.matches.size(); i < end; ++i)
-                // matches[i] is a string, we have implicit conversion to Value(ValueType::String here)
-                matches.push_back(req.matches[i]);
+                matches.push_back(Value(req.matches[i]));
 
             if (req.params.size() == 0)
             {
@@ -313,7 +306,7 @@ Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
     if (!n[2].isFunction())
         throw Ark::TypeError("http:server:delete: content must be a Function");
 
-    Server& srv = n[0].usertype().as<Server>();
+    Server& srv = n[0].usertype_ref().as<Server>();
     srv.Delete(n[1].string().c_str(), [n, vm](const Request& req, Response& res) {
         std::string content;
         std::string type;
@@ -326,8 +319,7 @@ Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
         {
             Value matches(ValueType::List);
             for (std::size_t i=0, end=req.matches.size(); i < end; ++i)
-                // matches[i] is a string, we have implicit conversion to Value(ValueType::String here)
-                matches.push_back(req.matches[i]);
+                matches.push_back(Value(req.matches[i]));
 
             if (req.params.size() == 0)
             {
@@ -401,7 +393,7 @@ Value http_server_stop(std::vector<Value>& n, Ark::VM* vm)
     if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Server>())
         throw Ark::TypeError("http:server:stop: server must be an httpServer");
 
-    n[0].usertype().as<Server>().stop();
+    n[0].usertype_ref().as<Server>().stop();
 
     return Nil;
 }
@@ -417,7 +409,7 @@ Value http_server_listen(std::vector<Value>& n, Ark::VM* vm)
     if (n.size() == 3 && n[1].string() == "0.0.0.0" && n[2].valueType() != ValueType::Number)
         throw Ark::TypeError("http:server:listen: port must be a Number, and is a mandatory argument when host is 0.0.0.0");
 
-    Server& srv = n[0].usertype().as<Server>();
+    Server& srv = n[0].usertype_ref().as<Server>();
 
     if (n[1].string() == "0.0.0.0")
     {
@@ -441,7 +433,7 @@ Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::String)
         throw Ark::TypeError("http:server:setMountPoint: destination must be a String");
 
-    auto ret = n[0].usertype().as<Server>().set_mount_point(n[1].string().c_str(), n[2].string().c_str());
+    auto ret = n[0].usertype_ref().as<Server>().set_mount_point(n[1].string().c_str(), n[2].string().c_str());
     if (!ret)
         return False;  // directory doesn't exist
     return True;
@@ -456,7 +448,7 @@ Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm)
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("http:server:rmMountPoint: folder must be a String");
 
-    auto ret =n[0].usertype().as<Server>().remove_mount_point(n[1].string().c_str());
+    auto ret = n[0].usertype_ref().as<Server>().remove_mount_point(n[1].string().c_str());
     if (!ret)
         return False;  // directory doesn't exist
     return True;
@@ -473,7 +465,7 @@ Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::String)
         throw Ark::TypeError("http:server:setFileExtAndMimetypeMapping: mimetype must be a String");
 
-    n[0].usertype().as<Server>().set_file_extension_and_mimetype_mapping(
+    n[0].usertype_ref().as<Server>().set_file_extension_and_mimetype_mapping(
         n[1].string().c_str(), n[2].string().c_str()
     );
     return Nil;

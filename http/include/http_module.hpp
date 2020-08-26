@@ -1,9 +1,11 @@
 #ifndef http_module
 #define http_module
 
+// must be included first, before any #include windows.h
+#include <httplib.hpp>
+
 #include <Ark/Module.hpp>
 
-#include <httplib.hpp>
 #include <vector>
 #include <memory>
 

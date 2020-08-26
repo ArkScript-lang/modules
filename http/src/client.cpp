@@ -1,7 +1,4 @@
-#include <httplib.hpp>
 #include <http_module.hpp>
-
-using namespace httplib;
 
 /*
     ***********************************
@@ -15,7 +12,7 @@ Value http_create_headers(std::vector<Value>& n, Ark::VM* vm)
         throw std::runtime_error("http:headers:create: needs an even number of arguments: [header -> value]");
 
     std::vector<std::unique_ptr<Headers>>& h = get_headers();
-    h.emplace_back(std::make_unique<std::pair<std::string, std::string>>());
+    h.emplace_back(std::make_unique<Headers>());
 
     std::string key = "";
     for (Value& v : n)
