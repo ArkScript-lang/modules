@@ -73,6 +73,32 @@ namespace json{
         return v;
     }
 
+    Value jsonToArk(nlohmann::basic_json& obj)
+    {
+        if (obj.is_null())
+            return Nil;
+        else if (obj.is_boolean())
+            return obj.get<bool>() ? True : False;
+        else if (obj.is_number())
+            return obj.get<double>();
+        else if (obj.is_array())
+        {
+            Value v(ValueType::List);
+            for (auto it=obj.begin(), end=obj.end(); it != end; ++it)
+                v.push_back(jsonToArk(*it));
+            return v;
+        }
+        else if (obj.is_string())
+            return obj.get<std::string>();
+        else  // is_object() == true
+        {
+            nlohmann::json* ptr = get_json_object().emplace_back(std::make_unique<nlohmann::json>(obj)).get();
+            Value v = Ark::Value(Ark::UserType(ptr));
+            v.usertype_ref().setControlFuncs(get_cfs());
+            return v;
+        }
+    }
+
     Value get(std::vector<Value>& args, Ark::VM* vm)
     {
         /*
@@ -88,7 +114,9 @@ namespace json{
             throw Ark::TypeError("json:get: key must be a String");
 
         nlohmann::json& json_object = args[0].usertype_ref().as<nlohmann::json>();  // conversion to json object to be able to get the result
-        return Value(json_object[args[1].string_ref().c_str()]);
+        nlohmann::basic_json& obj = json_object[args[1].string_ref().c_str()];
+
+        return jsonToArk(obj);
     }
 
     Value toString(std::vector<Value>& args, Ark::VM* vm)
@@ -193,7 +221,7 @@ namespace json{
 
             case ValueType::User:
             {
-                if (!args[2].is<nlohmann::json>())
+                if (!args[2].usertype().is<nlohmann::json>())
                     throw Ark::TypeError("json:set: couldn't parse the value, was given an unknown usertype");
 
                 nlohmann::json& json_to_push = args[2].usertype_ref().as<nlohmann::json>();
@@ -255,27 +283,27 @@ namespace json{
             switch (ark_list[i + 1].valueType())
             {
                 case ValueType::String:
-                    json_object[ark_list[i].string_ref().c_str()] = ark_list[i + 1].string_ref().c_str();
+                    (*ptr)[ark_list[i].string_ref().c_str()] = ark_list[i + 1].string_ref().c_str();
                     break;
 
                 case ValueType::Number:
-                    json_object[ark_list[i].string_ref().c_str()] = ark_list[i + 1].number();
+                    (*ptr)[ark_list[i].string_ref().c_str()] = ark_list[i + 1].number();
                     break;
 
                 case ValueType::True:
                 case ValueType::False:
-                    json_object[ark_list[i].string_ref().c_str()] = (ark_list[i + 1] == Ark::True);
+                    (*ptr)[ark_list[i].string_ref().c_str()] = (ark_list[i + 1] == Ark::True);
                     break;
 
                 case ValueType::List:
-                    json_object[ark_list[i].string_ref().c_str()] = listToJson(ark_list[i + 1].list());
+                    (*ptr)[ark_list[i].string_ref().c_str()] = listToJson(ark_list[i + 1].list());
                     break;
 
                 case ValueType::User:
                     if (!ark_list[i + 1].usertype().is<nlohmann::json>())
                         throw Ark::TypeError("json:fromList: value for key '" + ark_list[i].string_ref().toString() + "' isn't handled");
 
-                    json_object[ark_list[i].string_ref().c_str()] = ark_list[i + 1].usertype_ref().as<nlohmann::json>();
+                    (*ptr)[ark_list[i].string_ref().c_str()] = ark_list[i + 1].usertype_ref().as<nlohmann::json>();
                     break;
 
                 default:
