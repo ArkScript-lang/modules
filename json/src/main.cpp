@@ -1,273 +1,303 @@
 #include <Ark/Module.hpp>
 #include <nlohmann/json.hpp>
 #include <fstream>
+#include <memory>
 
 namespace json{
 
-	std::list<nlohmann::json>& get_json_object(){static std::list<nlohmann::json> jsonObject; return jsonObject;}
+    std::vector<std::unique_ptr<nlohmann::json>>& get_json_object()
+    {
+        static std::vector<std::unique_ptr<nlohmann::json>> jsonObject;
+        return jsonObject;
+    }
 
+    UserType::ControlFuncs* get_cfs()
+    {
+        static UserType::ControlFuncs cfs;
+        cfs.ostream_func = [](std::ostream& os, const UserType& a) -> std::ostream& {
+            os << a.as<nlohmann::json>();
+            return os;
+        };
+        cfs.deleter = [](void* data) {
+            std::vector<std::unique_ptr<nlohmann::json>>& jsons = get_json_object();
+            auto it = std::find_if(jsons.begin(), jsons.end(), [data](const auto& val) -> bool {
+                return val.get() == static_cast<nlohmann::json*>(data);
+            });
+            if (it != jsons.end())
+                jsons.erase(it);
+        };
+        return &cfs;
+    }
 
-	Value open(std::vector<Value>& args, Ark::VM* vm){
-		/*
-		args[0] -> filename to open
-		*/
-	
-		if (args.size() != 1){
-			throw std::runtime_error("ArgError : This function must have 1 argument");
-		}
-		if(args[0].valueType() != ValueType::String){
-			throw std::runtime_error("ArgError : This function take a String argument"); 
-		}
+    Value open(std::vector<Value>& args, Ark::VM* vm)
+    {
+        /*
+            args[0] -> filename to open
+        */
 
-		//open and read the file
-		const char* filename = args[0].string_ref().c_str();
-		std::ifstream file(filename);
-		std::string content((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
+        if (args.size() != 1)
+            throw std::runtime_error("json:open: needs 1 argument: filename");
+        if (args[0].valueType() != ValueType::String)
+            throw Ark::TypeError("json:open: filename must be a String"); 
 
-		//parsing
-		get_json_object().push_back(nlohmann::json::parse(content));
-		Ark::Value v = Ark::Value(Ark::UserType(&get_json_object().back()));
+        // open and read the file
+        const char* filename = args[0].string_ref().c_str();
+        std::ifstream file(filename);
+        std::string content((std::istreambuf_iterator<char>(file)), (std::istreambuf_iterator<char>()));
 
-		v.usertype_ref().setOStream([](std::ostream& os, const Ark::UserType& A) -> std::ostream& {
-			os << *static_cast<nlohmann::json*>(A.data());;
-			return os;
-		});
+        // parsing
+        nlohmann::json* ptr = get_json_object().emplace_back(std::make_unique<nlohmann::json>(nlohmann::json::parse(content))).get();
+        Value v = Ark::Value(Ark::UserType(ptr));
+        v.usertype_ref().setControlFuncs(get_cfs());
 
-		return v;
-	}
+        return v;
+    }
 
+    Value fromString(std::vector<Value>& args, Ark::VM* vm)
+    {
+        /*
+            args[0] -> json to deserialize
+        */
 
-	Value fromString(std::vector<Value>& args, Ark::VM* vm){
-		/*
-		args[0] -> json to deserialize
-		*/
+        if (args.size() != 1)
+            throw std::runtime_error("json:fromString: needs 1 argument: content");
+        if (args[0].valueType() != ValueType::String)
+            throw Ark::TypeError("json:fromString: content must be a String"); 
 
-		if (args.size() != 1){
-			throw std::runtime_error("ArgError : This function must have 1 argument");
-		}
-		if(args[0].valueType() != ValueType::String){
-			throw std::runtime_error("ArgError : This function take a String argument"); 
-		}
+        // parsing
+        nlohmann::json* ptr = get_json_object().emplace_back(
+            std::make_unique<nlohmann::json>(nlohmann::json::parse(args[0].string_ref().c_str()))).get();
 
-		//parsing
-		get_json_object().push_back(nlohmann::json::parse(args[0].string_ref().c_str()));
-		Ark::Value v = Ark::Value(Ark::UserType(&get_json_object().back()));
+        Value v = Ark::Value(Ark::UserType(ptr));
+        v.usertype_ref().setControlFuncs(get_cfs());
+        return v;
+    }
 
-		v.usertype_ref().setOStream([](std::ostream& os, const Ark::UserType& A) -> std::ostream& {
-			os << *static_cast<nlohmann::json*>(A.data());
-			return os;
-		});
+    Value get(std::vector<Value>& args, Ark::VM* vm)
+    {
+        /*
+            args[0] -> json_object
+            args[1] -> key
+        */
 
-		return v;
-	}
+        if (args.size() != 2)
+            throw std::runtime_error("json:get: needs 2 arguments: json and key");
+        if (args[0].valueType() != ValueType::User || !args[0].usertype().is<nlohmann::json>())
+            throw Ark::TypeError("json:get: json must be a jsonObject"); 
+        if (args[1].valueType() != ValueType::String)
+            throw Ark::TypeError("json:get: key must be a String");
 
+        nlohmann::json& json_object = args[0].usertype_ref().as<nlohmann::json>();  // conversion to json object to be able to get the result
+        return Value(json_object[args[1].string_ref().c_str()]);
+    }
 
-	Value get(std::vector<Value>& args, Ark::VM* vm){
-		/*
-		args[0] -> json_object
-		args[1] -> key
-		*/
+    Value toString(std::vector<Value>& args, Ark::VM* vm)
+    {
+        /*
+            args[0] -> json_object
+        */
+        if (args.size() != 1)
+            throw std::runtime_error("json:toString: needs 1 argument: json");
+        if (args[0].valueType() != ValueType::User)
+            throw Ark::TypeError("json:toString: json must be a jsonObject"); 
 
-		if (args.size() != 2){
-			throw std::runtime_error("ArgError : This function must have 2 arguments");
-		}
-		if(args[0].valueType() != ValueType::User && args[1].valueType() != ValueType::String){
-			throw std::runtime_error("ArgError : This function take jsonobject and a String arguments"); 
-		}
+        nlohmann::json& json_object = args[0].usertype_ref().as<nlohmann::json>();
+        return json_object.dump();
+    }
 
-		nlohmann::json json_object = *static_cast<nlohmann::json*>(args[0].usertype_ref().data()); //conversion to json object to be able to get the result
-		get_json_object().push_back(json_object[args[1].string_ref().c_str()]);
-		Ark::Value v = Ark::Value(Ark::UserType(&get_json_object().back()));
+    nlohmann::json listToJson(std::vector<Value>& arkList)
+    {
+        nlohmann::json json_list;
 
-		v.usertype_ref().setOStream([](std::ostream& os, const Ark::UserType& A) -> std::ostream& {
-			os << *static_cast<nlohmann::json*>(A.data());
-			return os;
-		});
+        for (auto& el : arkList)
+        {
+            switch (el.valueType())
+            {
+                case ValueType::String:
+                    json_list.emplace_back(el.string_ref().c_str());
+                    break;
 
-		return v;
-	}
+                case ValueType::Number:
+                    json_list.emplace_back(el.number());
+                    break;
 
+                case ValueType::True:
+                case ValueType::False:
+                {
+                    json_list.emplace_back(el == Ark::True);
+                    break;
+                }
 
-	Value toString(std::vector<Value>& args, Ark::VM* vm){
-		/*
-		args[0] -> json_object
-		*/
-		if(args.size() != 1){
-			throw std::runtime_error("ArgError : This function must have 1 arguments");
-		}
-		if(args[0].valueType() != ValueType::User){
-			throw std::runtime_error("ArgError : This function take a json object argument"); 
-		}
+                case ValueType::List:
+                    json_list.emplace_back(listToJson(el.list()));
+                    break;
 
-		nlohmann::json json_object = *static_cast<nlohmann::json*>(args[0].usertype_ref().data());
-		return json_object.dump();
-	}
+                case ValueType::User:
+                {
+                    nlohmann::json& json_object =  el.usertype_ref().as<nlohmann::json>();
+                    json_list.emplace_back(json_object);
+                    break;
+                }
 
+                default:
+                    throw Ark::TypeError("json module: Couldn't parse the provided json");
+            }
+        }
+        return json_list;
+    }
 
-	nlohmann::json listToJson(std::vector<Value>& arkList){
-		nlohmann::json json_list;
+    Value jset(std::vector<Value>& args, Ark::VM* vm)
+    {
+        /*
+            args[0] -> variable to edit (userType)
+            args[1] -> key (String)
+            args[2] -> object in value (userType, String, Number, Bool, List)
+        */
 
-		for(auto& el : arkList){
-			switch(el.valueType()){
-				case ValueType::String:
-					json_list.emplace_back(el.string_ref().c_str());
-					break;
-				case ValueType::Number:
-					json_list.emplace_back(el.number());
-					break;
-				case ValueType::True:
-				case ValueType::False:
-				{
-					bool value = (el == Ark::True);
-					json_list.emplace_back(value);
-					break;
-				}
-				case ValueType::List:
-					json_list.emplace_back(listToJson(el.list()));
-					break;
-				case ValueType::User:
-				{
-					nlohmann::json& json_object = *static_cast<nlohmann::json*>(el.usertype_ref().data());
-					json_list.emplace_back(json_object);
-					break;
-				}
-				default:
-					throw std::runtime_error("Cannot parse your json");
-			}
-		}
-		return json_list;
-	}
+        if (args.size() != 3)
+            throw std::runtime_error("json:set: needs 3 arguments: json, key and value");
+        if (args[0].valueType() != ValueType::User || args[0].usertype().is<nlohmann::json>())
+            throw Ark::TypeError("json:set: json must be a jsonObject");
+        if (args[1].valueType() != ValueType::String)
+            throw Ark::TypeError("json:set key must be a String");
 
+        nlohmann::json& json_object = args[0].usertype_ref().as<nlohmann::json>();
 
-	Value jset(std::vector<Value>& args, Ark::VM* vm){
-		/*
-		args[0] -> variable to edit (userType)
-		args[1] -> key (String)
-		args[2] -> object in value (userType, String, Number, Bool, List)
-		*/
+        // definition of the value according to the object type
+        switch (args[2].valueType())
+        {
+            case ValueType::String:
+            {
+                json_object[args[1].string_ref().c_str()] = args[2].string_ref().c_str();
+                break;
+            }
 
-		if (args.size() != 3){
-			throw std::runtime_error("ArgError : This function must have 3 arguments");
-		}
-		
-		if(args[0].valueType() != ValueType::User && args[1].valueType() != ValueType::String){
-			throw std::runtime_error("ArgError : the function take a json object, a String and a Value argument");
-		}
+            case ValueType::Number:
+            {
+                json_object[args[1].string_ref().c_str()] = args[2].number();
+                break;
+            }
 
-		nlohmann::json& json_object = *static_cast<nlohmann::json*>(args[0].usertype_ref().data());
+            case ValueType::False:
+            case ValueType::True:
+            {
+                json_object[args[1].string_ref().c_str()] = (args[2] == Ark::True);
+                break;
+            }
 
-		//definition of the value according to the object type
-		switch(args[2].valueType()){
-			case ValueType::String:
-			{
-				json_object[args[1].string_ref().c_str()] = args[2].string_ref().c_str();
-				break;
-			}
-			case ValueType::Number:
-			{
-				json_object[args[1].string_ref().c_str()] = args[2].number();
-				break;
-			}
-			case ValueType::False:
-			case ValueType::True:
-			{
-				json_object[args[1].string_ref().c_str()] = (args[2] == Ark::True);
-				break;
-			}
-			case ValueType::List:
-			{
-				json_object[args[1].string_ref().c_str()] = listToJson(args[2].list());
-				break;
-			}
-			case ValueType::User:
-			{
-				nlohmann::json& json_to_push = *static_cast<nlohmann::json*>(args[2].usertype_ref().data());
-				json_object[args[1].string_ref().c_str()] = json_to_push;
-				break;
-			}
-			default:
-			{
-				throw std::runtime_error("ArgError, cannot parse the value");
-			}
-		}
+            case ValueType::List:
+            {
+                json_object[args[1].string_ref().c_str()] = listToJson(args[2].list());
+                break;
+            }
 
-		return Nil;
-	}
+            case ValueType::User:
+            {
+                if (!args[2].is<nlohmann::json>())
+                    throw Ark::TypeError("json:set: couldn't parse the value, was given an unknown usertype");
 
+                nlohmann::json& json_to_push = args[2].usertype_ref().as<nlohmann::json>();
+                json_object[args[1].string_ref().c_str()] = json_to_push;
+                break;
+            }
 
-	Value write(std::vector<Value>& args, Ark::VM* vm){
-		/*
-		args[0] -> json_object
-		args[1] -> filename to write
-		*/
+            default:
+                throw Ark::TypeError("json:set: couldn't parse the value, the data type isn't handled");
+        }
 
-		std::ofstream file {args[1].string_ref().c_str()};
-		nlohmann::json& json_object = *static_cast<nlohmann::json*>(args[0].usertype_ref().data());
+        return Nil;
+    }
 
-		file << json_object.dump(4);
-		file.close();
-		return Nil;
-	}
+    Value write(std::vector<Value>& args, Ark::VM* vm)
+    {
+        /*
+            args[0] -> json_object
+            args[1] -> filename to write
+        */
+        if (args.size() != 2)
+            throw std::runtime_error("json:write: needs 2 arguments: json and filename");
+        if (args[0].valueType() != ValueType::User || !args[0].usertype().is<nlohmann::json>())
+            throw Ark::TypeError("json:write: json must be a jsonObject");
+        if (args[1].valueType() != ValueType::String)
+            throw Ark::TypeError("json:write: filename must be a String");
 
+        std::ofstream file(args[1].string_ref().c_str());
+        nlohmann::json& json_object = args[0].usertype_ref().as<nlohmann::json>();
 
-	Value fromList(std::vector<Value>& args, Ark::VM* vm){
-		/*
-		args[0] -> list
-		*/
+        file << json_object.dump(4);
+        file.close();
+        return Nil;
+    }
 
-		std::vector<Value>& ark_list = args[0].list();
-		get_json_object().push_back(nlohmann::json());
-		auto& json_object = get_json_object().back();
+    Value fromList(std::vector<Value>& args, Ark::VM* vm)
+    {
+        /*
+            args[0] -> list
+        */
+        if (args.size() != 1)
+            throw std::runtime_error("json:fromList: needs 1 argument: jsonAsList");
+        if (args[0].valueType() != ValueType::List)
+            throw Ark::TypeError("json:fromList: jsonAsList must be a List");
 
-		Ark::Value v = Ark::Value(Ark::UserType(&get_json_object().back()));
+        std::vector<Value>& ark_list = args[0].list();
+        if (ark_list.size() % 2 != 0)
+            throw std::runtime_error("json:fromList: the list must contain an even number of elements: even ones are the keys and odd ones are the values");
 
-		if(ark_list.size()%2!=0){
-			throw std::runtime_error("ArgError : An key doesn't have a value");
-		}
-		for(int i=0;i<ark_list.size();i+=2){
-			if(ark_list[i].valueType() != ValueType::String){
-				throw std::runtime_error("ArgError : something is not a correct type for a key");
-			}
-			switch(ark_list[i+1].valueType()){
-				case ValueType::String:
-					json_object[ark_list[i].string_ref().c_str()] = ark_list[i+1].string_ref().c_str();
-					break;
-				case ValueType::Number:
-					json_object[ark_list[i].string_ref().c_str()] = ark_list[i+1].number();
-					break;
-				case ValueType::True:
-				case ValueType::False:
-					json_object[ark_list[i].string_ref().c_str()] = (ark_list[i+1] == Ark::True);
-					break;
-				case ValueType::List:
-					json_object[ark_list[i].string_ref().c_str()] = listToJson(ark_list[i+1].list());
-					break;
-				case ValueType::User:
-					json_object[ark_list[i].string_ref().c_str()] = *static_cast<nlohmann::json*>(ark_list[i+1].usertype_ref().data());
-					break;
-			}
-		}
+        nlohmann::json* ptr = get_json_object().emplace_back(std::make_unique<nlohmann::json>()).get();
+        Value v = Ark::Value(Ark::UserType(ptr));
+        v.usertype_ref().setControlFuncs(get_cfs());
 
-		v.usertype_ref().setOStream([](std::ostream& os, const Ark::UserType& A) -> std::ostream& {
-			os << *static_cast<nlohmann::json*>(A.data());
-			return os;
-		});
+        for(std::size_t i=0, end=ark_list.size(); i < end; i += 2)
+        {
+            if (ark_list[i].valueType() != ValueType::String)
+                throw Ark::TypeError("json:fromList: keys need to be of type String");
 
-		return v;
-	}
+            switch (ark_list[i + 1].valueType())
+            {
+                case ValueType::String:
+                    json_object[ark_list[i].string_ref().c_str()] = ark_list[i + 1].string_ref().c_str();
+                    break;
+
+                case ValueType::Number:
+                    json_object[ark_list[i].string_ref().c_str()] = ark_list[i + 1].number();
+                    break;
+
+                case ValueType::True:
+                case ValueType::False:
+                    json_object[ark_list[i].string_ref().c_str()] = (ark_list[i + 1] == Ark::True);
+                    break;
+
+                case ValueType::List:
+                    json_object[ark_list[i].string_ref().c_str()] = listToJson(ark_list[i + 1].list());
+                    break;
+
+                case ValueType::User:
+                    if (!ark_list[i + 1].usertype().is<nlohmann::json>())
+                        throw Ark::TypeError("json:fromList: value for key '" + ark_list[i].string_ref().toString() + "' isn't handled");
+
+                    json_object[ark_list[i].string_ref().c_str()] = ark_list[i + 1].usertype_ref().as<nlohmann::json>();
+                    break;
+
+                default:
+                    throw Ark::TypeError("json:fromList: value for key '" + ark_list[i].string_ref().toString() + "' isn't handled");
+            }
+        }
+
+        return v;
+    }
 }
 
-ARK_API_EXPORT Mapping_t getFunctionsMapping(){
+ARK_API_EXPORT Mapping_t getFunctionsMapping()
+{
     Mapping_t map;
 
-	map["open"] = json::open;
-	map["get"] = json::get;
-	map["toString"] = json::toString;
-	map["fromString"] = json::fromString;
-	map["jset"] = json::jset;
-	map["write"] = json::write;
-	map["fromList"] = json::fromList;
-    
-	return map;
-}
+    map["json:open"] = json::open;
+    map["json:get"] = json::get;
+    map["json:toString"] = json::toString;
+    map["json:fromString"] = json::fromString;
+    map["json:set"] = json::jset;
+    map["json:write"] = json::write;
+    map["json:fromList"] = json::fromList;
 
+    return map;
+}
