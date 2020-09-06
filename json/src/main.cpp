@@ -73,7 +73,7 @@ namespace json{
         return v;
     }
 
-    Value jsonToArk(nlohmann::basic_json& obj)
+    Value jsonToArk(nlohmann::json& obj)
     {
         if (obj.is_null())
             return Nil;
@@ -114,7 +114,7 @@ namespace json{
             throw Ark::TypeError("json:get: key must be a String");
 
         nlohmann::json& json_object = args[0].usertype_ref().as<nlohmann::json>();  // conversion to json object to be able to get the result
-        nlohmann::basic_json& obj = json_object[args[1].string_ref().c_str()];
+        nlohmann::json& obj = json_object[args[1].string_ref().c_str()];
 
         return jsonToArk(obj);
     }
