@@ -1,35 +1,98 @@
-# json documentation module
+# JSON module
 
-We have an implementation of a json object. The possibility to print, read and write json in Arkscript with some functions : 
-- **open** : A function that take the filename and return the json object
-- **fromString** : A function that take a String and return the corresponding json object.
-- **get** : A function that take a json object and a String (the key) and return the value corresponding to the key
-- **toString** : A function that take a json object and return the serialized String
-- **jset** : A function that take a json Object, a key and a value. returning nothing.
-- **fromList** : A function that convert a list into a json object.
-- **write** : A function that take a json object and a filename. The function write the json object in a file.
+## Functions
 
-## Exemple 
+### json:open
+
+Open a file and read its content as JSON, then return it.
+
+Example:
 
 ```clojure
-{
-    (import "json.arkm")
+(let json (json:open "test.json"))
+```
 
-	(let json_object (open "test.json"))
+### json:fromString
 
-	(print json_object)
+Takes a String as an argument, representing a JSON object, and return it parsed as a jsonObject.
 
-	(let other_json_object (fromList [
-		"key" "value"
-    	"test" true
-		"nested" ["sd" json_object]
-		"nesd" (fromList ["a" "b"])
-	]))
+Example:
+```clojure
+(let json (json:fromString "{\"hello\": \"world\", \"key\": 12}"))
+```
 
-	(print (toString other_json_object))
+### json:get
 
-	(jset json_object "test" 123)
+Retrieve a value from a jsonObject by it's key (a String).
 
-	(write json_object "other_file.json")
-}
+Example:
+
+```clojure
+(let json (json:fromString "{\"hello\": \"world\", \"key\": 12}"))
+(print (json:get json "hello"))  # world
+```
+
+### json:toString
+
+Takes a jsonObject and transforms it into a String.
+
+Example:
+
+```clojure
+(let json (json:fromString "{\"hello\": \"world\", \"key\": 12}"))
+(print (json:toString json))  # {"hello": "world", "key": 12}
+```
+
+### json:set
+
+Modify a value in a jsonObject, given a key (String) and a new value.
+
+Return `nil`.
+
+Example:
+
+```clojure
+(let json (json:fromString "{\"hello\": \"world\", \"key\": 12}"))
+(json:set json "hello" 14)
+(print json)  # {"hello": 14, "key": 12}
+```
+
+### json:fromList
+
+Take a list of an even number of values, the even ones are the keys (String) and the odd ones the values, and build a jsonObject from it.
+
+Example:
+
+```clojure
+(let json (json:fromList [
+    "key" "value"
+    "keybis" 12
+    "this_is_an_array" [1 2 3]
+    "bool" true
+    "subobject" (json:fromList [
+        "a" 1
+        "b" 2
+    ])
+]))
+```
+
+### json:write
+
+Take a jsonObject and a filename (String), and write the jsonObject to the file. The file will be created if it doesn't exist, otherwise all the previous content will be wiped before writting to it.
+
+Example:
+
+```clojure
+(let json (json:fromList [
+    "key" "value"
+    "keybis" 12
+    "this_is_an_array" [1 2 3]
+    "bool" true
+    "subobject" (json:fromList [
+        "a" 1
+        "b" 2
+    ])
+]))
+
+(json:write json "filename.json")
 ```
