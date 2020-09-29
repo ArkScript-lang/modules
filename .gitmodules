@@ -3,4 +3,4 @@
 	url = https://github.com/msgpack/msgpack-c.git
 [submodule "submodules/json"]
 	path = submodules/json
-	url = git@github.com:ArkScript-lang/nlohmann-json.git
+	url = https://github.com/ArkScript-lang/nlohmann-json.git
