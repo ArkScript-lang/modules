@@ -2,7 +2,7 @@
 #define ARK_MSGPACK_OBJ_HPP
 
 #include <variant>
-#include <iostream> 
+#include <iostream>
 #include <sstream>
 #include <msgpack.hpp>
 #include <Ark/Module.hpp>

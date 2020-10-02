@@ -1,19 +1,19 @@
-#ifndef ARK_MSGPACK_ADAPTOR_HPP 
-#define ARK_MSGPACK_ADAPTOR_HPP 
+#ifndef ARK_MSGPACK_ADAPTOR_HPP
+#define ARK_MSGPACK_ADAPTOR_HPP
 
 #include <Ark/Module.hpp>
 #include <msgpack.hpp>
 
-namespace msgpack 
+namespace msgpack
 {
-	MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS) 
+	MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS)
 	{
-		namespace adaptor 
+		namespace adaptor
 		{
 			// convert ark value
-			template<> struct convert<Value> 
+			template<> struct convert<Value>
 			{
-				msgpack::object const& operator()(msgpack::object const& o, Value& v) const 
+				msgpack::object const& operator()(msgpack::object const& o, Value& v) const
 				{
 					if(o.type == type::NIL)
 					{
@@ -61,22 +61,22 @@ namespace msgpack
 							{
 								ark_object_v = Value(std::string {o.via.array.ptr[i].via.str.ptr});
 							}
-							
+
 							// TODO : sub list convert
 							lst_v.push_back(ark_object_v);
 						}
 
 						v = lst_v;
 					}
-					
+
 					return o;
 				}
 			};
 
 			// pack ark value
-			template<> struct pack<Value> 
+			template<> struct pack<Value>
 			{
-				template<typename Stream> packer<Stream>& operator()(msgpack::packer<Stream>& o, Value const& v) const 
+				template<typename Stream> packer<Stream>& operator()(msgpack::packer<Stream>& o, Value const& v) const
 				{
 					if(v.valueType() == ValueType::NFT)
 					{
@@ -96,7 +96,7 @@ namespace msgpack
 						std::string str {static_cast<Value>(v).string_ref()};
 						o.pack_str(str.size());
 						o.pack_str_body(str.c_str(), str.size());
-					} 
+					}
 					else
 					{
 						std::vector<Value> list {static_cast<Value>(v).list()};
@@ -111,4 +111,4 @@ namespace msgpack
 	}
 }
 
-#endif	
+#endif
