@@ -7,11 +7,11 @@ namespace ArkMsgpack
 	{
 		Value unpack(std::vector<Value> &args)
 		{
-			//unpack(Value packed(string or list)) and return an object unpacked 
+			//unpack(Value packed(string or list)) and return an object unpacked
 			if(args.size() != 1)
 				throw std::runtime_error("ArgError : This function must have 1 arguments");
 			if(args[0].valueType() != ValueType::String && args[0].valueType() != ValueType::List)
-				throw Ark::TypeError("The packed buffer must be a string or a list");    
+				throw Ark::TypeError("The packed buffer must be a string or a list");
 			Value dst;
 			bool ark_bool;
 			double ark_number;
@@ -32,7 +32,7 @@ namespace ArkMsgpack
 						deserialized.convert(ark_number);
 						dst = Value(ark_number);
 					}
-					catch(const std::bad_cast &e) 
+					catch(const std::bad_cast &e)
 					{
 						try
 						{
@@ -64,7 +64,7 @@ namespace ArkMsgpack
 			if(args[0].valueType() != ValueType::String && args[0].valueType() != ValueType::List)
 				throw Ark::TypeError("The packed buffer must be a string or a list");
 			Value msg_object_str;
-			std::ostringstream str_buffer; 
+			std::ostringstream str_buffer;
 			msgpack::object deserialized;
 
 			if(args[0].valueType() == ValueType::List)
@@ -79,7 +79,7 @@ namespace ArkMsgpack
 				str_buffer << deserialized;
 				msg_object_str = Value(str_buffer.str());
 			}
-		
+
 			return msg_object_str;
 		}
 
@@ -87,7 +87,7 @@ namespace ArkMsgpack
 		{
 			msgpack::object deserialized;
 			stream << '[';
- 
+
 			for(unsigned i {0}; i < buffer_list.size(); ++ i)
 			{
 				std::string buffer {static_cast<Value>(buffer_list[i]).string_ref()};
@@ -96,7 +96,7 @@ namespace ArkMsgpack
 					stream << ' ';
 				stream << deserialized;
 			}
-		
+
 			stream << ']';
 		}
 
@@ -120,18 +120,18 @@ namespace ArkMsgpack
 						deserialized.convert(ark_number);
 						list.push_back(Value(ark_number));
 					}
-					catch(const std::bad_cast &e) 
+					catch(const std::bad_cast &e)
 					{
 						try
 						{
 							deserialized.convert(ark_string);
-							list.push_back(Value(ark_string));                  
+							list.push_back(Value(ark_string));
 						}
 						catch(std::exception &e) {}
 					}
 				}
 			};
- 
+
 			for(unsigned i {0}; i < buffer_list.size(); ++ i)
 			{
 				std::string buffer {static_cast<Value>(buffer_list[i]).string_ref()};

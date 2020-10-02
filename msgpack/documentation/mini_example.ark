@@ -12,7 +12,7 @@
 	# getting deserialized object string
 	(let deserialized (msgpackMiniObjStr buffer))
 	(print "deserialized : " deserialized)
-	
-	# print unpacked 
+
+	# print unpacked
 	(print "unpacked result : " (msgpackMiniUnpack buffer))
 }

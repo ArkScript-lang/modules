@@ -21,7 +21,7 @@ CObject get_cobject(const Value &ark_object, ValueType type)
 		object = static_cast<Value>(ark_object).string_ref();
 	}
 	else
-	{	
+	{
 		object = static_cast<Value>(ark_object).list();
 	}
 	return object;

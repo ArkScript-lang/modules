@@ -4,7 +4,7 @@
 Now, we propose two ways to use msgpack in Ark, the minimalist msgpack (with limited background object manipulation) and a more realistic msgpack module (with msgpack objects use in Ark) .
 
 
-## **Minimal msgpack** 
+## **Minimal msgpack**
 
 
 + **msgpackMiniPack(object)** : data pack ;
@@ -18,7 +18,7 @@ Now, we propose two ways to use msgpack in Ark, the minimalist msgpack (with lim
 {
 	(import "msgpack.bin")
 
-	
+
 	# list source
 	(let lst (list 1 true "hello" 1.453))
 
@@ -29,8 +29,8 @@ Now, we propose two ways to use msgpack in Ark, the minimalist msgpack (with lim
 	# getting deserialized object string
 	(let deserialized (msgpackMiniObjStr buffer))
 	(print "deserialized : " deserialized)
-	
-	# print unpacked 
+
+	# print unpacked
 	(print "unpacked result : " (msgpackMiniUnpack buffer))
 }
 ```
@@ -61,7 +61,7 @@ Now, we propose two ways to use msgpack in Ark, the minimalist msgpack (with lim
 
 	# packing
 	(msgpackPack sbuf (list 1 2.45 "Yellow Bow !" true nil false))
-	
+
 	# unpacking
 	# msgpack object handle
 	(let oh (msgpackUnpack sbuf))

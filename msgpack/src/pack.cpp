@@ -7,14 +7,14 @@ namespace ArkMsgpack
 	{
 		Value pack(std::vector<Value> &args)
 		{
-			// pack(Value src) and return a buffer's string packed 
+			// pack(Value src) and return a buffer's string packed
 			if(args.size() != 1)
 				throw std::runtime_error("ArgError : This function must have 1 argument");
 			ValueType type {args[0].valueType()};
 			std::stringstream buffer;
 			CObject value_src {get_cobject(args[0], type)};
 			Value packed;
-		
+
 			buffer.seekg(0);
 			if(type == ValueType::NFT)
 			{
@@ -42,7 +42,7 @@ namespace ArkMsgpack
 
 			return packed;
 		}
-		
+
 		Value list_packing(std::vector<Value> &src_list)
 		{
 			std::vector<Value> list;
