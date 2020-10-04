@@ -5,7 +5,7 @@ namespace ArkMsgpack
 {
 	namespace Minimal
 	{
-		Value unpack(std::vector<Value> &args)
+		Value unpack(std::vector<Value> &args, Ark::VM* vm)
 		{
 			//unpack(Value packed(string or list)) and return an object unpacked
 			if(args.size() != 1)
@@ -57,7 +57,7 @@ namespace ArkMsgpack
 			return dst;
 		}
 
-		Value object_str(std::vector<Value> &args)
+		Value object_str(std::vector<Value> &args, Ark::VM* vm)
 		{
 			if(args.size() != 1)
 				throw std::runtime_error("ArgError : This function must have 1 argument");
@@ -83,7 +83,7 @@ namespace ArkMsgpack
 			return msg_object_str;
 		}
 
-		void list_unpacked_str(std::vector<Value> &buffer_list, std::ostringstream &stream)
+		void list_unpacked_str(std::vector<Value> &buffer_list, std::ostringstream &stream, Ark::VM* vm)
 		{
 			msgpack::object deserialized;
 			stream << '[';
@@ -100,7 +100,7 @@ namespace ArkMsgpack
 			stream << ']';
 		}
 
-		Value list_unpacking(std::vector<Value> &buffer_list)
+		Value list_unpacking(std::vector<Value> &buffer_list, Ark::VM* vm)
 		{
 			std::vector<Value> list;
 			bool ark_bool;
@@ -143,7 +143,7 @@ namespace ArkMsgpack
 		}
 	}
 
-	Value unpack(std::vector<Value> &args)
+	Value unpack(std::vector<Value> &args, Ark::VM* vm)
 	{
 		if(args.size() != 1)
 			throw std::runtime_error("ArgError : This function must have 1 argument");
@@ -155,7 +155,7 @@ namespace ArkMsgpack
 		return Value(UserType(&oh));
 	}
 
-	Value convert(std::vector<Value> &args)
+	Value convert(std::vector<Value> &args, Ark::VM* vm)
 	{
 		if(args.size() != 1)
 			throw std::runtime_error("ArgError : This function must have 1 arguments");

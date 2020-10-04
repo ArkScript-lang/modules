@@ -11,10 +11,10 @@ using CObject = std::variant<bool, double, std::string, std::vector<Value>>;
 extern CObject get_cobject(const Value &ark_object, ValueType type);
 namespace ArkMsgpack
 {
-	extern Value msgpack_obj_handle(std::vector<Value> &args);
-	extern Value msgpack_sbuffer(std::vector<Value> &args);
-	extern Value msgpack_obj(std::vector<Value> &args);
-	extern Value print_msgpack_o(std::vector<Value> &args);
+	extern Value msgpack_obj_handle(std::vector<Value> &args, Ark::VM* vm);
+	extern Value msgpack_sbuffer(std::vector<Value> &args, Ark::VM* vm);
+	extern Value msgpack_obj(std::vector<Value> &args, Ark::VM* vm);
+	extern Value print_msgpack_o(std::vector<Value> &args, Ark::VM* vm);
 }
 
 #endif

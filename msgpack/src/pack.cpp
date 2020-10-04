@@ -5,7 +5,7 @@ namespace ArkMsgpack
 {
 	namespace Minimal
 	{
-		Value pack(std::vector<Value> &args)
+		Value pack(std::vector<Value> &args, Ark::VM* vm)
 		{
 			// pack(Value src) and return a buffer's string packed
 			if(args.size() != 1)
@@ -43,7 +43,7 @@ namespace ArkMsgpack
 			return packed;
 		}
 
-		Value list_packing(std::vector<Value> &src_list)
+		Value list_packing(std::vector<Value> &src_list, Ark::VM* vm)
 		{
 			std::vector<Value> list;
 			std::stringstream buffer;
@@ -80,7 +80,7 @@ namespace ArkMsgpack
 		}
 	}
 
-	Value pack(std::vector<Value> &args)
+	Value pack(std::vector<Value> &args, Ark::VM* vm)
 	{
 		if(args.size() != 2)
 			throw std::runtime_error("ArgError : This function must have 2 arguments");
