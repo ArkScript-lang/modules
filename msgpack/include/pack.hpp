@@ -3,9 +3,6 @@
 
 #include <object.hpp>
 
-namespace ArkMsgpack
-{
-	extern Value pack(std::vector<Value> &args, VM* vm);
-}
+extern Value msgpack_pack(std::vector<Value> &args, VM* vm);
 
 #endif

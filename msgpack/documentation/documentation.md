@@ -1,43 +1,40 @@
-# Msgpack module documentation
+# msgpack module documentation
+
+A module for **msgpack**, an efficient binary serialization format like JSON, but smaller and faster .
+
+## **msgpack**
 
 
-Now, we propose two ways to use msgpack in Ark, the minimalist msgpack (with limited background object manipulation) and a more realistic msgpack module (with msgpack objects use in Ark) .
-
-## **Msgpack**
-
-
-+ **msgpackSBuffer()** : construct the buffer that must containes packed data ;
-+ **msgpackObjHandle(sbuf)** : construct a msgpack::object_handle. It must manage and return msgpack::object ;
-+ **msgpackObj(msgpack_object_handle)** : construct the msgpack::object. It must containe the unpacked object ;
-+ **msgpackPack(sbuf object)** : data packing ;
-+ **msgpackUnpack** : for data unpacking ;
-+ **printO(msgpack_object)** : print msgpack::object ;
-+ **msgpackConvert** : convert msgpack::object to ark usable object .
++ **msgpack:sbuffer()** : construct the buffer that must containes packed data ;
++ **msgpack:objectHandle(sbuf)** : construct a msgpack::object_handle. It must manage and return msgpack::object ;
++ **msgpack:object(msgpack_object_handle)** : construct the msgpack::object. It must containe the unpacked object ;
++ **msgpack:pack(sbuf object)** : data packing ;
++ **msgpack:unpack** : for data unpacking ;
++ **msgpack:convert** : convert msgpack::object to ark usable object .
 
 
 
 ### Example
 
 ``` clojure
-	(import "msgpack.bin")
+	(import "msgpack.arkm")
 
 
 	# sbuffer
-	(let sbuf (msgpackSBuffer))
+	(let sbuf (msgpack:sbuffer))
 
 	# packing
-	(msgpackPack sbuf (list 1 2.45 "Yellow Bow !" true nil false))
+	(msgpack:pack sbuf (list 1 2.45 "Yellow Bow !" true nil false))
 
 	# unpacking
 	# msgpack object handle
-	(let oh (msgpackUnpack sbuf))
+	(let oh (msgpack:unpack sbuf))
 
 	# msgpack object
-	(let o (msgpackObj oh))
-	(printO o)
+	(let o (msgpack:object oh))
 
 	# convert msgpackObj to ark object
-	(mut dst (msgpackConvert o))
+	(mut dst (msgpack:convert o))
 	(print "dst : " dst)
 ```
 

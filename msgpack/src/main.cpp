@@ -4,17 +4,15 @@ ARK_API_EXPORT Mapping_t getFunctionsMapping()
 {
 	Mapping_t map;
 
-	/* Msgpack */
 	// msgpack objects constructors
-	map["msgpackSBuffer"] = ArkMsgpack::msgpack_sbuffer;
-	map["msgpackObjHandle"] = ArkMsgpack::msgpack_obj_handle;
-	map["msgpackObj"] = ArkMsgpack::msgpack_obj;
+	map["msgpack:sbuffer"] = msgpack_sbuffer;
+	map["msgpack:objectHandle"] = msgpack_obj_handle;
+	map["msgpack:object"] = msgpack_obj;
 
-	// msgpack objets functions
-	//map["printO"] = ArkMsgpack::print_msgpack_o;
-	map["msgpackPack"] = ArkMsgpack::pack;
-	map["msgpackUnpack"] = ArkMsgpack::unpack;
-	map["msgpackConvert"] = ArkMsgpack::convert;
+	// msgpack operations
+	map["msgpack:pack"] = msgpack_pack;
+	map["msgpack:unpack"] = msgpack_unpack;
+	map["msgpack:convert"] = msgpack_convert;
 
 	return map;
 }
