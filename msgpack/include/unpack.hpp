@@ -5,8 +5,8 @@
 
 namespace ArkMsgpack
 {
-	extern Value unpack(std::vector<Value> &args, Ark::VM* vm);
-	extern Value convert(std::vector<Value> &args, Ark::VM* vm);
+	extern Value unpack(std::vector<Value> &args, VM* vm);
+	extern Value convert(std::vector<Value> &args, VM* vm);
 }
 
 #endif

@@ -36,9 +36,9 @@ namespace msgpack
 					}
 					else
 					{
-						Value lst_v {ValueType::List};
+						Value lst_v  = ValueType::List;
 
-						for(unsigned i {0}; i < o.via.array.size; ++ i)
+						for(unsigned i  = 0; i < o.via.array.size; ++ i)
 						{
 							Value ark_object_v;
 
@@ -59,7 +59,7 @@ namespace msgpack
 							}
 							else if(o.via.array.ptr[i].type == type::STR)
 							{
-								ark_object_v = Value(std::string {o.via.array.ptr[i].via.str.ptr});
+								ark_object_v = Value(std::string { o.via.array.ptr[i].via.str.ptr });
 							}
 
 							// TODO : sub list convert
@@ -105,7 +105,7 @@ namespace msgpack
 					{
 						std::vector<Value> list { static_cast<Value>(v).list() };
 						o.pack_array(list.size());
-						for(unsigned i {0}; i < list.size(); ++ i) { o.pack(list[i]); }
+						for(unsigned i = 0; i < list.size(); ++ i) { o.pack(list[i]); }
 					}
 
 					return o;
