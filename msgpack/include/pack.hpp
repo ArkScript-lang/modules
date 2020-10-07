@@ -5,12 +5,6 @@
 
 namespace ArkMsgpack
 {
-	namespace Minimal
-	{
-		extern Value list_packing(std::vector<Value> &list, Ark::VM* vm);
-    	extern Value pack(std::vector<Value> &args, Ark::VM* vm);
-	}
-
 	extern Value pack(std::vector<Value> &args, Ark::VM* vm);
 }
 

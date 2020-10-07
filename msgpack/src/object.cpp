@@ -5,25 +5,25 @@ CObject get_cobject(const Value &ark_object, ValueType type)
 {
 	CObject object;
 
-	if(type == ValueType::NFT)
+	switch(type)
 	{
-		if(ark_object == Ark::True)
+		case ValueType::True:
 			object = true;
-		else if(ark_object == Ark::False)
+			break;
+		case ValueType::False:
 			object = false;
+			break;
+		case ValueType::Number:
+			object = ark_object.number();
+			break;
+		case ValueType::String:
+			object = const_cast<Value&>(ark_object).string_ref().toString();
+			break;
+		case ValueType::List:
+			object = const_cast<Value&>(ark_object).list();
+			break;
 	}
-	else if(type == ValueType::Number)
-	{
-		object = static_cast<Value>(ark_object).number();
-	}
-	else if(type == ValueType::String)
-	{
-		object = static_cast<Value>(ark_object).string_ref();
-	}
-	else
-	{
-		object = static_cast<Value>(ark_object).list();
-	}
+
 	return object;
 }
 
@@ -44,12 +44,12 @@ namespace ArkMsgpack
 	{
 		if(args.size() != 1)
 			throw std::runtime_error("ArgError : This function must have 1 argument");
-		if(args[0].valueType() != ValueType::User || args[0].usertype().type_id() != std::type_index(typeid(msgpack::sbuffer)))
+		if(args[0].valueType() != ValueType::User || !(args[0].usertype().is<msgpack::sbuffer>()))
 			throw Ark::TypeError("The packed buffer must be a msgpack::sbuffer");
 		static msgpack::object_handle oh;
 
-		msgpack::sbuffer* sbuf {static_cast<msgpack::sbuffer*>((args[0]).usertype().data())};
-		oh = msgpack::unpack(sbuf->data(), sbuf->size());
+		msgpack::sbuffer& sbuf = args[0].usertype_ref().as<msgpack::sbuffer>();
+		oh = msgpack::unpack(sbuf.data(), sbuf.size());
 
 		return Value(UserType(&oh));
 	}
@@ -58,16 +58,17 @@ namespace ArkMsgpack
 	{
 		if(args.size() != 1)
 			throw std::runtime_error("ArgError : This function must have 1 argument");
-		if(args[0].valueType() != ValueType::User || args[0].usertype().type_id() != std::type_index(typeid(msgpack::object_handle)))
+		if(args[0].valueType() != ValueType::User || !(args[0].usertype().is<msgpack::object_handle>()))
 			throw Ark::TypeError("The packed buffer must be a msgpack::object_handle");
 		static msgpack::object o;
 
-		msgpack::object_handle* oh {static_cast<msgpack::object_handle*>((args[0]).usertype().data())};
-		o = oh->get();
+		msgpack::object_handle& oh = args[0].usertype_ref().as<msgpack::object_handle>();
+		o = oh.get();
 
 		return Value(UserType(&o));
 	}
 
+	/*
 	Value print_msgpack_o(std::vector<Value> &args)
 	{
 		if(args.size() != 1)
@@ -78,4 +79,5 @@ namespace ArkMsgpack
 
 		return Ark::Nil;
 	}
+	*/
 }

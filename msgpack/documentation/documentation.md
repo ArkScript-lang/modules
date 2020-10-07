@@ -3,39 +3,6 @@
 
 Now, we propose two ways to use msgpack in Ark, the minimalist msgpack (with limited background object manipulation) and a more realistic msgpack module (with msgpack objects use in Ark) .
 
-
-## **Minimal msgpack**
-
-
-+ **msgpackMiniPack(object)** : data pack ;
-+ **msgpackMiniUnpack(buffer)** : data unpack ;
-+ **msgpackMiniObjectStr(buffer)** : return deserialized msgpack::object as a string .
-
-
-### Example
-
-``` clojure
-{
-	(import "msgpack.bin")
-
-
-	# list source
-	(let lst (list 1 true "hello" 1.453))
-
-	# list packing
-	(let buffer (msgpackMiniPack lst))
-	(print "buffer : " buffer)
-
-	# getting deserialized object string
-	(let deserialized (msgpackMiniObjStr buffer))
-	(print "deserialized : " deserialized)
-
-	# print unpacked
-	(print "unpacked result : " (msgpackMiniUnpack buffer))
-}
-```
-
-
 ## **Msgpack**
 
 
@@ -52,7 +19,6 @@ Now, we propose two ways to use msgpack in Ark, the minimalist msgpack (with lim
 ### Example
 
 ``` clojure
-{
 	(import "msgpack.bin")
 
 
@@ -73,7 +39,6 @@ Now, we propose two ways to use msgpack in Ark, the minimalist msgpack (with lim
 	# convert msgpackObj to ark object
 	(mut dst (msgpackConvert o))
 	(print "dst : " dst)
-}
 ```
 
 

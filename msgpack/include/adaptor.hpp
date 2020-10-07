@@ -26,7 +26,7 @@ namespace msgpack
 						else
 							v = Ark::False;
 					}
-					else if(o.type == type::FLOAT64)
+					else if(o.type == type::FLOAT)
 					{
 						v = Value(o.via.f64);
 					}
@@ -53,7 +53,7 @@ namespace msgpack
 								else
 									ark_object_v = Ark::False;
 							}
-							else if(o.via.array.ptr[i].type == type::FLOAT64)
+							else if(o.via.array.ptr[i].type == type::FLOAT)
 							{
 								ark_object_v = Value(o.via.array.ptr[i].via.f64);
 							}
@@ -78,14 +78,18 @@ namespace msgpack
 			{
 				template<typename Stream> packer<Stream>& operator()(msgpack::packer<Stream>& o, Value const& v) const
 				{
-					if(v.valueType() == ValueType::NFT)
+
+					if(v.valueType() == ValueType::Nil)
 					{
-						if(v == Ark::Nil)
-							o.pack_nil();
-						else if(v == Ark::True)
-							o.pack_true();
-						else if(v == Ark::False)
-							o.pack_false();
+						o.pack_nil();
+					}
+					else if(v.valueType() == ValueType::True)
+					{
+						o.pack_true();
+					}
+					else if(v.valueType() == ValueType::False)
+					{
+						o.pack_false();
 					}
 					else if(v.valueType() == ValueType::Number)
 					{
@@ -93,15 +97,15 @@ namespace msgpack
 					}
 					else if(v.valueType() == ValueType::String)
 					{
-						std::string str {static_cast<Value>(v).string_ref()};
+						std::string str { static_cast<Value>(v).string_ref().toString() };
 						o.pack_str(str.size());
 						o.pack_str_body(str.c_str(), str.size());
 					}
 					else
 					{
-						std::vector<Value> list {static_cast<Value>(v).list()};
+						std::vector<Value> list { static_cast<Value>(v).list() };
 						o.pack_array(list.size());
-						for(unsigned i {0}; i < list.size(); ++ i) {o.pack(list[i]);}
+						for(unsigned i {0}; i < list.size(); ++ i) { o.pack(list[i]); }
 					}
 
 					return o;
