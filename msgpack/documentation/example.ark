@@ -1,21 +1,18 @@
-{
-	(import "msgpack.arkm")
+(import "msgpack.arkm")
 
-	# buffer
-	(let sbuf (msgpackSBuffer))
+# buffer
+(let sbuf (msgpack:sbuffer))
 
-	# packing
-	(msgpackPack sbuf (list 1 2.45 "Yellow Bow !" true nil false))
+# packing
+(msgpack:pack sbuf (list 1 2.45 "Yellow Bow !" true nil false))
 
-	# unpacking
-	# msgpack object handle
-	(let oh (msgpackUnpack sbuf))
+# unpacking
+# msgpack object handle
+(let oh (msgpack:unpack sbuf))
 
-	# msgpack object
-	(let o (msgpackObj oh))
-	(printO o)
+# msgpack object
+(let o (msgpack:object oh))
 
-	# convert msgpackObj to ark object
-	(mut dst (msgpackConvert o))
-	(print "dst : " dst)
-}
+# convert msgpackObj to ark object
+(mut dst (msgpack:convert o))
+(print "dst : " dst)
