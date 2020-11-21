@@ -53,7 +53,7 @@ namespace ArkMsgpack
             }
         }
 
-        return list;
+        return Value(std::move(list));
     }
 
     Value list_unpacking(std::vector<Value> &buffer_list)
@@ -95,7 +95,7 @@ namespace ArkMsgpack
             each_to_value();
         }
 
-        return list;
+        return Value(std::move(list));
     }
 
     void list_unpacked_str(std::vector<Value> &buffer_list, std::ostringstream &stream)

@@ -80,7 +80,7 @@ namespace json{
         else if (obj.is_boolean())
             return obj.get<bool>() ? True : False;
         else if (obj.is_number())
-            return obj.get<double>();
+            return Value(obj.get<double>());
         else if (obj.is_array())
         {
             Value v(ValueType::List);
@@ -89,7 +89,7 @@ namespace json{
             return v;
         }
         else if (obj.is_string())
-            return obj.get<std::string>();
+            return Value(obj.get<std::string>());
         else  // is_object() == true
         {
             nlohmann::json* ptr = get_json_object().emplace_back(std::make_unique<nlohmann::json>(obj)).get();
@@ -130,7 +130,7 @@ namespace json{
             throw Ark::TypeError("json:toString: json must be a jsonObject"); 
 
         nlohmann::json& json_object = args[0].usertype_ref().as<nlohmann::json>();
-        return json_object.dump();
+        return Value(json_object.dump());
     }
 
     nlohmann::json listToJson(std::vector<Value>& arkList)
