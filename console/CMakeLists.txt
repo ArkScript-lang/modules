@@ -20,8 +20,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${PROJECT_SOURCE_DIR}/include
-    ${Ark_SOURCE_DIR}/thirdparty
-    ${Ark_SOURCE_DIR}/include
+    ${ark_SOURCE_DIR}/thirdparty
+    ${ark_SOURCE_DIR}/include
 )
 
 file(GLOB_RECURSE SOURCE_FILES
