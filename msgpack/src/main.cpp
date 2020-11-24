@@ -119,13 +119,13 @@ namespace ArkMsgpack
     }
 }
 
-ARK_API_EXPORT Mapping_t getFunctionsMapping()
+ARK_API_EXPORT mapping* getFunctionsMapping()
 {
-    Mapping_t map;
+    mapping* map = mapping_create(3);
 
-    map["msgPack"] = ArkMsgpack::pack;
-    map["msgUnpack"] = ArkMsgpack::unpack;
-    map["msgObjectStr"] = ArkMsgpack::object_str;
+    mapping_add(map[0], "msgPack", ArkMsgpack::pack);
+    mapping_add(map[1], "msgUnpack", ArkMsgpack::unpack);
+    mapping_add(map[2], "msgObjectStr", ArkMsgpack::object_str);
 
     return map;
 }

@@ -28,11 +28,11 @@ namespace ArkRandom
     }
 }
 
-ARK_API_EXPORT Mapping_t getFunctionsMapping()
+ARK_API_EXPORT mapping* getFunctionsMapping()
 {
-    Mapping_t map;
-    map["random"] = ArkRandom::random;
-    map["rand10"] = ArkRandom::random_10;
+    mapping* map = mapping_create(2);
+    mapping_add(map[0], "random", ArkRandom::random);
+    mapping_add(map[1], "rand10", ArkRandom::random_10);
 
     return map;
 }

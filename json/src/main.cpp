@@ -315,17 +315,17 @@ namespace json{
     }
 }
 
-ARK_API_EXPORT Mapping_t getFunctionsMapping()
+ARK_API_EXPORT mapping* getFunctionsMapping()
 {
-    Mapping_t map;
+    mapping* map = mapping_create(7);
 
-    map["json:open"] = json::open;
-    map["json:get"] = json::get;
-    map["json:toString"] = json::toString;
-    map["json:fromString"] = json::fromString;
-    map["json:set"] = json::jset;
-    map["json:write"] = json::write;
-    map["json:fromList"] = json::fromList;
+    mapping_add(map[0], "json:open", json::open);
+    mapping_add(map[1], "json:get", json::get);
+    mapping_add(map[2], "json:toString", json::toString);
+    mapping_add(map[3], "json:fromString", json::fromString);
+    mapping_add(map[4], "json:set", json::jset);
+    mapping_add(map[5], "json:write", json::write);
+    mapping_add(map[6], "json:fromList", json::fromList);
 
     return map;
 }
