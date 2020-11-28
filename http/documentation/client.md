@@ -76,7 +76,7 @@ Example:
     "note" "coder"
 ))
 # here, no need to add the content-type because we are sending parameters
-(set output (http:client:post "/form-bis" params))
+(set output (http:client:post cli "/form-bis" params))
 (if (nil? output)
     (print "couldn't reach the server")
     (print (@ output 0)))  # prints status of the request
