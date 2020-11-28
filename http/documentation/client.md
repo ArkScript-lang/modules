@@ -22,6 +22,8 @@ Create an http client to query a server.
 
 Must give an host (String) and a port number.
 
+**Important**: you must not put the protocol `http://` nor `https://`
+
 Example:
 
 ```clojure
