@@ -8,13 +8,14 @@
 
 #include <vector>
 #include <memory>
+#include <list>
 
 using namespace httplib;
 
 // utils
-std::vector<std::unique_ptr<Params>>& get_params();
-std::vector<std::unique_ptr<Headers>>& get_headers();
-std::vector<std::unique_ptr<Client>>& get_clients();
+std::list<Params>& get_params();
+std::list<Headers>& get_headers();
+std::list<Client>& get_clients();
 int& get_logger_level();
 bool& get_error_handler();
 Server& create_server();

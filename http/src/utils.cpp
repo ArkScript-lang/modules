@@ -1,6 +1,7 @@
 #include <httplib.hpp>
 #include <http_module.hpp>
 #include <algorithm>
+#include <list>
 
 using namespace httplib;
 
@@ -10,21 +11,21 @@ using namespace httplib;
     ***********************************
 */
 
-std::vector<std::unique_ptr<Params>>& get_params()
+std::list<Params>& get_params()
 {
-    static std::vector<std::unique_ptr<Params>> params;
+    static std::list<Params> params;
     return params;
 }
 
-std::vector<std::unique_ptr<Headers>>& get_headers()
+std::list<Headers>& get_headers()
 {
-    static std::vector<std::unique_ptr<Headers>> headers;
+    static std::list<Headers> headers;
     return headers;
 }
 
-std::vector<std::unique_ptr<Client>>& get_clients()
+std::list<Client>& get_clients()
 {
-    static std::vector<std::unique_ptr<Client>> clients;
+    static std::list<Client> clients;
     return clients;
 }
 
@@ -71,12 +72,15 @@ UserType::ControlFuncs* get_cfs_client()
         return os;
     };
     cfs.deleter = [](void* data) {
-        std::vector<std::unique_ptr<Client>>& clients = get_clients();
-        auto it = std::find_if(clients.begin(), clients.end(), [data](const auto& val) -> bool {
-            return val.get() == static_cast<Client*>(data);
-        });
-        if (it != clients.end())
-            clients.erase(it);
+        std::list<Client>& clients = get_clients();
+        for (auto it=clients.begin(), end=clients.end(); it != end; ++it)
+        {
+            if (&(*it) == data)
+            {
+                clients.erase(it);
+                break;
+            }
+        }
     };
     return &cfs;
 }
@@ -92,12 +96,15 @@ UserType::ControlFuncs* get_cfs_header()
         return os;
     };
     cfs.deleter = [](void* data) {
-        std::vector<std::unique_ptr<Headers>>& headers = get_headers();
-        auto it = std::find_if(headers.begin(), headers.end(), [data](const auto& val) -> bool {
-            return val.get() == static_cast<Headers*>(data);
-        });
-        if (it != headers.end())
-            headers.erase(it);
+        std::list<Headers>& headers = get_headers();
+        for (auto it=headers.begin(), end=headers.end(); it != end; ++it)
+        {
+            if (&(*it) == data)
+            {
+                headers.erase(it);
+                break;
+            }
+        }
     };
     return &cfs;
 }
@@ -113,12 +120,15 @@ UserType::ControlFuncs* get_cfs_param()
         return os;
     };
     cfs.deleter = [](void* data) {
-        std::vector<std::unique_ptr<Params>>& params = get_params();
-        auto it = std::find_if(params.begin(), params.end(), [data](const auto& val) -> bool {
-            return val.get() == static_cast<Params*>(data);
-        });
-        if (it != params.end())
-            params.erase(it);
+        std::list<Params>& params = get_params();
+        for (auto it=params.begin(), end=params.end(); it != end; ++it)
+        {
+            if (&(*it) == data)
+            {
+                params.erase(it);
+                break;
+            }
+        }
     };
     return &cfs;
 }

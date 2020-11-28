@@ -60,10 +60,10 @@ Value http_server_get(std::vector<Value>& n, Ark::VM* vm)
                 else
                 {
                     // craft params
-                    std::vector<std::unique_ptr<Params>>& p = get_params();
-                    p.emplace_back(std::make_unique<Params>(req.params));
+                    std::list<Params>& p = get_params();
+                    p.emplace_back(req.params);
 
-                    Value params = Ark::Value(Ark::UserType(p.back().get()));
+                    Value params = Ark::Value(Ark::UserType(&p.back()));
                     params.usertype_ref().setControlFuncs(get_cfs_param());
 
                     Value r = vm->resolve(&n[2], matches, params);
@@ -79,10 +79,10 @@ Value http_server_get(std::vector<Value>& n, Ark::VM* vm)
             else if (req.params.size() != 0)
             {
                 // craft params
-                std::vector<std::unique_ptr<Params>>& p = get_params();
-                p.emplace_back(std::make_unique<Params>(req.params));
+                std::list<Params>& p = get_params();
+                p.emplace_back(req.params);
 
-                Value params = Ark::Value(Ark::UserType(p.back().get()));
+                Value params = Ark::Value(Ark::UserType(&p.back()));
                 params.usertype_ref().setControlFuncs(get_cfs_param());
 
                 Value r = vm->resolve(&n[2], params);
@@ -152,10 +152,10 @@ Value http_server_post(std::vector<Value>& n, Ark::VM* vm)
             else
             {
                 // craft params
-                std::vector<std::unique_ptr<Params>>& p = get_params();
-                p.emplace_back(std::make_unique<Params>(req.params));
+                std::list<Params>& p = get_params();
+                p.emplace_back(req.params);
 
-                Value params = Ark::Value(Ark::UserType(p.back().get()));
+                Value params = Ark::Value(Ark::UserType(&p.back()));
                 params.usertype_ref().setControlFuncs(get_cfs_param());
 
                 Value r = vm->resolve(&n[2], matches, req.body, params);
@@ -171,10 +171,10 @@ Value http_server_post(std::vector<Value>& n, Ark::VM* vm)
         else if (req.params.size() != 0)
         {
             // craft params
-            std::vector<std::unique_ptr<Params>>& p = get_params();
-            p.emplace_back(std::make_unique<Params>(req.params));
+            std::list<Params>& p = get_params();
+            p.emplace_back(req.params);
 
-            Value params = Ark::Value(Ark::UserType(p.back().get()));
+            Value params = Ark::Value(Ark::UserType(&p.back()));
             params.usertype_ref().setControlFuncs(get_cfs_param());
 
             Value r = vm->resolve(&n[2], req.body, params);
@@ -243,10 +243,10 @@ Value http_server_put(std::vector<Value>& n, Ark::VM* vm)
             else
             {
                 // craft params
-                std::vector<std::unique_ptr<Params>>& p = get_params();
-                p.emplace_back(std::make_unique<Params>(req.params));
+                std::list<Params>& p = get_params();
+                p.emplace_back(req.params);
 
-                Value params = Ark::Value(Ark::UserType(p.back().get()));
+                Value params = Ark::Value(Ark::UserType(&p.back()));
                 params.usertype_ref().setControlFuncs(get_cfs_param());
 
                 Value r = vm->resolve(&n[2], matches, req.body, params);
@@ -262,10 +262,10 @@ Value http_server_put(std::vector<Value>& n, Ark::VM* vm)
         else if (req.params.size() != 0)
         {
             // craft params
-            std::vector<std::unique_ptr<Params>>& p = get_params();
-            p.emplace_back(std::make_unique<Params>(req.params));
+            std::list<Params>& p = get_params();
+            p.emplace_back(req.params);
 
-            Value params = Ark::Value(Ark::UserType(p.back().get()));
+            Value params = Ark::Value(Ark::UserType(&p.back()));
             params.usertype_ref().setControlFuncs(get_cfs_param());
 
             Value r = vm->resolve(&n[2], req.body, params);
@@ -334,10 +334,10 @@ Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
             else
             {
                 // craft params
-                std::vector<std::unique_ptr<Params>>& p = get_params();
-                p.emplace_back(std::make_unique<Params>(req.params));
+                std::list<Params>& p = get_params();
+                p.emplace_back(req.params);
 
-                Value params = Ark::Value(Ark::UserType(p.back().get()));
+                Value params = Ark::Value(Ark::UserType(&p.back()));
                 params.usertype_ref().setControlFuncs(get_cfs_param());
 
                 Value r = vm->resolve(&n[2], matches, req.body, params);
@@ -353,10 +353,10 @@ Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
         else if (req.params.size() != 0)
         {
             // craft params
-            std::vector<std::unique_ptr<Params>>& p = get_params();
-            p.emplace_back(std::make_unique<Params>(req.params));
+            std::list<Params>& p = get_params();
+            p.emplace_back(req.params);
 
-            Value params = Ark::Value(Ark::UserType(p.back().get()));
+            Value params = Ark::Value(Ark::UserType(&p.back()));
             params.usertype_ref().setControlFuncs(get_cfs_param());
 
             Value r = vm->resolve(&n[2], req.body, params);
