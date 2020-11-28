@@ -30,11 +30,11 @@ namespace ArkHash
     }
 }
 
-ARK_API_EXPORT Mapping_t getFunctionsMapping()
+ARK_API_EXPORT mapping* getFunctionsMapping()
 {
-    Mapping_t map;
-    map["hash:sha256"] = ArkHash::sha2;
-    map["hash:md5"] = ArkHash::md5;
+    mapping* map = mapping_create(2);
+    mapping_add(map[0], "hash:sha256", ArkHash::sha2);
+    mapping_add(map[1], "hash:md5", ArkHash::md5);
 
     return map;
 }
