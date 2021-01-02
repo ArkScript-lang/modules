@@ -27,6 +27,6 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 
 ## Copyright and Licence information
 
-Copyright (c) 2019-2020 Alexandre Plateau. All rights reserved.
+Copyright (c) 2019-2021 Alexandre Plateau. All rights reserved.
 
 This ArkScript distribution contains no GNU GPL code, which means it can be used in proprietary projects.
