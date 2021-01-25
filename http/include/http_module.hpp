@@ -2,6 +2,7 @@
 #define http_module
 
 // must be included first, before any #include windows.h
+#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include <httplib.hpp>
 
 #include <Ark/Module.hpp>
