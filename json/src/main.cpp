@@ -105,18 +105,30 @@ namespace json{
             args[0] -> json_object
             args[1] -> key
         */
-
         if (args.size() != 2)
             throw std::runtime_error("json:get: needs 2 arguments: json and key");
         if (args[0].valueType() != ValueType::User || !args[0].usertype().is<nlohmann::json>())
             throw Ark::TypeError("json:get: json must be a jsonObject"); 
-        if (args[1].valueType() != ValueType::String)
-            throw Ark::TypeError("json:get: key must be a String");
-
-        nlohmann::json& json_object = args[0].usertype_ref().as<nlohmann::json>();  // conversion to json object to be able to get the result
-        nlohmann::json& obj = json_object[args[1].string_ref().c_str()];
-
-        return jsonToArk(obj);
+        if(args[0].usertype_ref().as<nlohmann::json>().is_array()){
+            if(args[1].valueType() != ValueType::Number)
+                throw Ark::TypeError("json:get: list key must be a Number");
+            
+            nlohmann::json& json_object = args[0].usertype_ref().as<nlohmann::json>();  // conversion to json object to be able to get the result
+            nlohmann::json& obj = json_object[static_cast<unsigned>(args[1].number())];
+            
+            return jsonToArk(obj);
+        }
+        else if(args[0].usertype_ref().as<nlohmann::json>().is_object()){
+            if (args[1].valueType() != ValueType::String)
+                throw Ark::TypeError("json:get: object key must be a String");
+            
+            nlohmann::json& json_object = args[0].usertype_ref().as<nlohmann::json>();  // conversion to json object to be able to get the result
+            nlohmann::json& obj = json_object[args[1].string_ref().c_str()];
+            
+            return jsonToArk(obj);
+        }
+        else
+            throw Ark::TypeError("json:get: json must be an jsonObject or a jsonList");
     }
 
     Value toString(std::vector<Value>& args, Ark::VM* vm)
