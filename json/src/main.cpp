@@ -325,11 +325,25 @@ namespace json{
 
         return v;
     }
+
+
+    Value len(std::vector<Value>& args, Ark::VM *vm){
+        /*
+            args[0] -> json_object
+        */
+
+        if (args.size() != 1)
+            throw std::runtime_error("json:len: needs 1 argument: jsonAsList or jsonAsObject");
+        if (args[0].usertype_ref().as<nlohmann::json>().is_array() || args[0].usertype_ref().as<nlohmann::json>().is_object())
+            return Value(static_cast<int>(args[0].usertype_ref().as<nlohmann::json>().size()));
+        else
+            throw std::runtime_error("json:len: json must be a jsonAsList or a jsonAsObject");
+    }
 }
 
 ARK_API_EXPORT mapping* getFunctionsMapping()
 {
-    mapping* map = mapping_create(7);
+    mapping* map = mapping_create(8);
 
     mapping_add(map[0], "json:open", json::open);
     mapping_add(map[1], "json:get", json::get);
@@ -338,6 +352,7 @@ ARK_API_EXPORT mapping* getFunctionsMapping()
     mapping_add(map[4], "json:set", json::jset);
     mapping_add(map[5], "json:write", json::write);
     mapping_add(map[6], "json:fromList", json::fromList);
+    mapping_add(map[7], "json:len", json::len);
 
     return map;
 }
