@@ -1,4 +1,5 @@
 #include <http_module.hpp>
+#include <iostream>
 
 // we need [status-code, content, type]
 #define CHECK_FUNC_RETURN_VAL_FOR_REQ(val) (val.valueType() == ValueType::List && val.list().size() == 3 && \
@@ -41,10 +42,10 @@ Value http_server_get(std::vector<Value>& n, Ark::VM* vm)
             // so, don't DRY but WET
 
             // checking for req.matches
-            if (req.matches.size() != 0)
+            if (req.matches.size() > 0)
             {
                 Value matches(ValueType::List);
-                for (std::size_t i=0, end=req.matches.size(); i < end; ++i)
+                for (std::size_t i=1, end=req.matches.size(); i < end; ++i)
                     matches.push_back(Value(req.matches[i]));
 
                 if (req.params.size() == 0)
@@ -133,10 +134,10 @@ Value http_server_post(std::vector<Value>& n, Ark::VM* vm)
         // so, don't DRY but WET
 
         // checking for req.matches
-        if (req.matches.size() != 0)
+        if (req.matches.size() > 0)
         {
             Value matches(ValueType::List);
-            for (std::size_t i=0, end=req.matches.size(); i < end; ++i)
+            for (std::size_t i=1, end=req.matches.size(); i < end; ++i)
                 matches.push_back(Value(req.matches[i]));
 
             if (req.params.size() == 0)
@@ -224,10 +225,10 @@ Value http_server_put(std::vector<Value>& n, Ark::VM* vm)
         // so, don't DRY but WET
 
         // checking for req.matches
-        if (req.matches.size() != 0)
+        if (req.matches.size() > 0)
         {
             Value matches(ValueType::List);
-            for (std::size_t i=0, end=req.matches.size(); i < end; ++i)
+            for (std::size_t i=1, end=req.matches.size(); i < end; ++i)
                 matches.push_back(Value(req.matches[i]));
 
             if (req.params.size() == 0)
@@ -315,10 +316,10 @@ Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
         // so, don't DRY but WET
 
         // checking for req.matches
-        if (req.matches.size() != 0)
+        if (req.matches.size() > 0)
         {
             Value matches(ValueType::List);
-            for (std::size_t i=0, end=req.matches.size(); i < end; ++i)
+            for (std::size_t i=1, end=req.matches.size(); i < end; ++i)
                 matches.push_back(Value(req.matches[i]));
 
             if (req.params.size() == 0)
