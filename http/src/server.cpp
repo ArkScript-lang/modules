@@ -42,7 +42,7 @@ Value http_server_get(std::vector<Value>& n, Ark::VM* vm)
             // so, don't DRY but WET
 
             // checking for req.matches
-            if (req.matches.size() > 0)
+            if (req.matches.size() > 1)
             {
                 Value matches(ValueType::List);
                 for (std::size_t i=1, end=req.matches.size(); i < end; ++i)
@@ -134,7 +134,7 @@ Value http_server_post(std::vector<Value>& n, Ark::VM* vm)
         // so, don't DRY but WET
 
         // checking for req.matches
-        if (req.matches.size() > 0)
+        if (req.matches.size() > 1)
         {
             Value matches(ValueType::List);
             for (std::size_t i=1, end=req.matches.size(); i < end; ++i)
@@ -225,7 +225,7 @@ Value http_server_put(std::vector<Value>& n, Ark::VM* vm)
         // so, don't DRY but WET
 
         // checking for req.matches
-        if (req.matches.size() > 0)
+        if (req.matches.size() > 1)
         {
             Value matches(ValueType::List);
             for (std::size_t i=1, end=req.matches.size(); i < end; ++i)
@@ -316,7 +316,7 @@ Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
         // so, don't DRY but WET
 
         // checking for req.matches
-        if (req.matches.size() > 0)
+        if (req.matches.size() > 1)
         {
             Value matches(ValueType::List);
             for (std::size_t i=1, end=req.matches.size(); i < end; ++i)

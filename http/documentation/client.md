@@ -134,6 +134,10 @@ Example:
 ))
 ```
 
+### http:params:toList
+
+Convert an `httpParams` to an ArkScript readable list.
+
 ### http:client:setFollowLocation
 
 Choose if the request should follow the redirection or not.

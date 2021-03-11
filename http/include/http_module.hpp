@@ -43,6 +43,7 @@ Value http_create_headers(std::vector<Value>& n, Ark::VM* vm);
 Value http_create_client(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_get(std::vector<Value>& n, Ark::VM* vm);
 Value http_create_params(std::vector<Value>& n, Ark::VM* vm);
+Value http_params_tolist(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_post(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_put(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_delete(std::vector<Value>& n, Ark::VM* vm);

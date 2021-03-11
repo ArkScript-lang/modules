@@ -112,6 +112,25 @@ Value http_create_params(std::vector<Value>& n, Ark::VM* vm)
     return params;
 }
 
+Value http_params_tolist(std::vector<Value>& n, Ark::VM * vm)
+{
+    if (n.size() != 1)
+        throw std::runtime_error("http:params:toList: needs 1 argument: params");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Params>())
+        throw Ark::TypeError("http:params:toList: params must be an httpParam");
+
+    Value lst(ValueType::List);
+    for (auto& s : n[0].usertype_ref().as<Params>())
+    {
+        Value inner(ValueType::List);
+        inner.push_back(Value(s.first));
+        inner.push_back(Value(s.second));
+        lst.push_back(inner);
+    }
+
+    return lst;
+}
+
 Value http_client_post(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() < 3 || n.size() > 5)
