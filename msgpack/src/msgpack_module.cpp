@@ -13,7 +13,7 @@ namespace ArkMsgpack
         else if(type == ValueType::Number)
             object = static_cast<Value>(ark_object).number();
         else if(type == ValueType::String)
-            object = static_cast<Value>(ark_object).string_ref().toString();
+            object = static_cast<Value>(ark_object).stringRef().toString();
         else
             object = static_cast<Value>(ark_object).list();
 
@@ -90,7 +90,7 @@ namespace ArkMsgpack
  
         for(unsigned i {0}; i < buffer_list.size(); ++ i)
         {
-            std::string buffer {static_cast<Value>(buffer_list[i]).string_ref().toString()};
+            std::string buffer {static_cast<Value>(buffer_list[i]).stringRef().toString()};
             deserialized = msgpack::unpack(buffer.data(), buffer.size()).get();
             each_to_value();
         }
@@ -105,7 +105,7 @@ namespace ArkMsgpack
  
         for(unsigned i {0}; i < buffer_list.size(); ++ i)
         {
-            std::string buffer {static_cast<Value>(buffer_list[i]).string_ref().toString()};
+            std::string buffer {static_cast<Value>(buffer_list[i]).stringRef().toString()};
             deserialized = msgpack::unpack(buffer.data(), buffer.size()).get();
             if(i > 0)
                 stream << ' ';

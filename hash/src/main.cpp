@@ -12,7 +12,7 @@ namespace ArkHash
         if (n[0].valueType() != ValueType::String)
             throw std::runtime_error("hash:sha256: data must be a String");
 
-        std::string src = n[0].string_ref().toString();
+        std::string src = n[0].stringRef().toString();
         std::string output = "";
         picosha2::hash256_hex_string(src, output);
 
@@ -26,7 +26,7 @@ namespace ArkHash
         if (n[0].valueType() != ValueType::String)
             throw std::runtime_error("hash:md5: data must be a String");
 
-        return Value(md5::md5(n[0].string_ref().toString()));
+        return Value(md5::md5(n[0].stringRef().toString()));
     }
 }
 

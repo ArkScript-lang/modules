@@ -21,16 +21,16 @@ Value http_create_headers(std::vector<Value>& n, Ark::VM* vm)
             throw Ark::TypeError("http:headers:create: takes only String as argument");
 
         if (key == "")
-            key = v.string_ref().toString();
+            key = v.stringRef().toString();
         else
         {
-            h.back().insert(std::pair<std::string, std::string>(key, v.string_ref().toString()));
+            h.back().insert(std::pair<std::string, std::string>(key, v.stringRef().toString()));
             key = "";
         }
     }
 
     Value headers = Ark::Value(Ark::UserType(&h.back()));
-    headers.usertype_ref().setControlFuncs(get_cfs_header());
+    headers.usertypeRef().setControlFuncs(get_cfs_header());
     return headers;
 }
 
@@ -44,10 +44,10 @@ Value http_create_client(std::vector<Value>& n, Ark::VM* vm)
         throw Ark::TypeError("http:client:create: port must be a Number");
 
     std::list<Client>& c = get_clients();
-    c.emplace_back(n[0].string_ref().toString(), static_cast<int>(n[1].number()));
+    c.emplace_back(n[0].stringRef().toString(), static_cast<int>(n[1].number()));
 
     Value client = Ark::Value(Ark::UserType(&c.back()));
-    client.usertype_ref().setControlFuncs(get_cfs_client());
+    client.usertypeRef().setControlFuncs(get_cfs_client());
     return client;
 }
 
@@ -67,11 +67,11 @@ Value http_client_get(std::vector<Value>& n, Ark::VM* vm)
         if (n[2].valueType() != ValueType::User || !n[2].usertype().is<Headers>())
             throw Ark::TypeError("http:client:get: headers must be httpHeaders");
         else
-            headers = &n[2].usertype_ref().as<Headers>();
+            headers = &n[2].usertypeRef().as<Headers>();
     }
 
-    Client& c = n[0].usertype_ref().as<Client>();
-    std::string route = n[1].string_ref().toString();
+    Client& c = n[0].usertypeRef().as<Client>();
+    std::string route = n[1].stringRef().toString();
     auto res = (headers == nullptr) ? c.Get(route.c_str()) : c.Get(route.c_str(), *headers);
 
     if (!res)
@@ -99,16 +99,16 @@ Value http_create_params(std::vector<Value>& n, Ark::VM* vm)
             throw Ark::TypeError("http:params:create: takes only String as arguments");
 
         if (key == "")
-            key = v.string_ref().toString();
+            key = v.stringRef().toString();
         else
         {
-            p.back().insert(std::pair<std::string, std::string>(key, v.string_ref().toString()));
+            p.back().insert(std::pair<std::string, std::string>(key, v.stringRef().toString()));
             key = "";
         }
     }
 
     Value params = Ark::Value(Ark::UserType(&p.back()));
-    params.usertype_ref().setControlFuncs(get_cfs_param());
+    params.usertypeRef().setControlFuncs(get_cfs_param());
     return params;
 }
 
@@ -120,7 +120,7 @@ Value http_params_tolist(std::vector<Value>& n, Ark::VM * vm)
         throw Ark::TypeError("http:params:toList: params must be an httpParam");
 
     Value lst(ValueType::List);
-    for (auto& s : n[0].usertype_ref().as<Params>())
+    for (auto& s : n[0].usertypeRef().as<Params>())
     {
         Value inner(ValueType::List);
         inner.push_back(Value(s.first));
@@ -143,8 +143,8 @@ Value http_client_post(std::vector<Value>& n, Ark::VM* vm)
             (n[2].valueType() != ValueType::User || !n[2].usertype().is<Params>()))
         throw Ark::TypeError("http:client:post: parameters must be a String or httpParams");
 
-    Client& c = n[0].usertype_ref().as<Client>();
-    std::string route = n[1].string_ref().toString();
+    Client& c = n[0].usertypeRef().as<Client>();
+    std::string route = n[1].stringRef().toString();
 
     Headers* headers = nullptr;
 
@@ -154,14 +154,14 @@ Value http_client_post(std::vector<Value>& n, Ark::VM* vm)
         if (n[4].valueType() != ValueType::User || !n[4].usertype().is<Headers>())
             throw Ark::TypeError("http:client:post: headers must be httpHeaders");
         else
-            headers = &n[4].usertype_ref().as<Headers>();
+            headers = &n[4].usertypeRef().as<Headers>();
     }
     else if (n[2].valueType() != ValueType::String && n.size() == 4)
     {
         if (n[3].valueType() != ValueType::User || !n[3].usertype().is<Headers>())
             throw Ark::TypeError("http:client:post: headers must be httpHeaders");
         else
-            headers = &n[3].usertype_ref().as<Headers>();
+            headers = &n[3].usertypeRef().as<Headers>();
     }
 
     if (n[2].valueType() == ValueType::String && n.size() >= 4 && n[3].valueType() == ValueType::String)
@@ -220,8 +220,8 @@ Value http_client_put(std::vector<Value>& n, Ark::VM* vm)
             (n[2].valueType() != ValueType::User || !n[2].usertype().is<Params>()))
         throw Ark::TypeError("http:client:put: parameters must be a String or httpParams");
 
-    Client& c = n[0].usertype_ref().as<Client>();
-    std::string route = n[1].string_ref().toString();
+    Client& c = n[0].usertypeRef().as<Client>();
+    std::string route = n[1].stringRef().toString();
 
     Headers* headers = nullptr;
 
@@ -231,14 +231,14 @@ Value http_client_put(std::vector<Value>& n, Ark::VM* vm)
         if (n[4].valueType() != ValueType::User || !n[4].usertype().is<Headers>())
             throw Ark::TypeError("http:client:put: headers must be httpHeaders");
         else
-            headers = &n[4].usertype_ref().as<Headers>();
+            headers = &n[4].usertypeRef().as<Headers>();
     }
     else if (n[2].valueType() != ValueType::String && n.size() == 4)
     {
         if (n[3].valueType() != ValueType::User || !n[3].usertype().is<Headers>())
             throw Ark::TypeError("http:client:put: headers must be httpHeaders");
         else
-            headers = &n[3].usertype_ref().as<Headers>();
+            headers = &n[3].usertypeRef().as<Headers>();
     }
 
     if (n[2].valueType() == ValueType::String && n.size() >= 4 && n[3].valueType() == ValueType::String)
@@ -296,8 +296,8 @@ Value http_client_delete(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::String)
         throw Ark::TypeError("http:client:delete: body must be a String");
 
-    Client& c = n[0].usertype_ref().as<Client>();
-    std::string route = n[1].string_ref().toString();
+    Client& c = n[0].usertypeRef().as<Client>();
+    std::string route = n[1].stringRef().toString();
 
     Headers* headers = nullptr;
 
@@ -307,7 +307,7 @@ Value http_client_delete(std::vector<Value>& n, Ark::VM* vm)
         if (n[4].valueType() != ValueType::User || !n[4].usertype().is<Headers>())
             throw Ark::TypeError("http:client:delete: headers must be httpHeaders");
         else
-            headers = &n[4].usertype_ref().as<Headers>();
+            headers = &n[4].usertypeRef().as<Headers>();
     }
 
     if (n.size() >= 4 && n[3].valueType() == ValueType::String)
@@ -349,7 +349,7 @@ Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm)
     if (n[1] != Ark::True && n[1] != Ark::False)
         throw Ark::TypeError("http:client:setFollowLocation: value must be a Boolean");
 
-    n[0].usertype_ref().as<Client>().set_follow_location(n[1] == True);
+    n[0].usertypeRef().as<Client>().set_follow_location(n[1] == True);
 
     return Nil;
 }
@@ -365,7 +365,7 @@ Value http_client_set_co_timeout(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::Number)
         throw Ark::TypeError("http:client:setConnectionTimeout: microseconds must be a Number");
 
-    n[0].usertype_ref().as<Client>().set_connection_timeout(
+    n[0].usertypeRef().as<Client>().set_connection_timeout(
         static_cast<int>(n[1].number()),
         static_cast<int>(n[2].number())
     );
@@ -384,7 +384,7 @@ Value http_client_set_read_timeout(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::Number)
         throw Ark::TypeError("http:client:setReadTimeout: microseconds must be a Number");
 
-    n[0].usertype_ref().as<Client>().set_read_timeout(
+    n[0].usertypeRef().as<Client>().set_read_timeout(
         static_cast<int>(n[1].number()),
         static_cast<int>(n[2].number())
     );
@@ -403,7 +403,7 @@ Value http_client_set_write_timeout(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::Number)
         throw Ark::TypeError("http:client:setWriteTimeout: microseconds must be a Number");
 
-    n[0].usertype_ref().as<Client>().set_write_timeout(
+    n[0].usertypeRef().as<Client>().set_write_timeout(
         static_cast<int>(n[1].number()),
         static_cast<int>(n[2].number())
     );
@@ -422,7 +422,7 @@ Value http_client_set_basic_auth(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::String)
         throw Ark::TypeError("http:client:setBasicAuth: password must be a String");
 
-    n[0].usertype_ref().as<Client>().set_basic_auth(
+    n[0].usertypeRef().as<Client>().set_basic_auth(
         n[1].string().c_str(),
         n[2].string().c_str()
     );
@@ -439,7 +439,7 @@ Value http_client_set_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm)
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("http:client:setProxyBasicAuth: token must be a String");
 
-    n[0].usertype_ref().as<Client>().set_bearer_token_auth(n[1].string().c_str());
+    n[0].usertypeRef().as<Client>().set_bearer_token_auth(n[1].string().c_str());
 
     return Nil;
 }
@@ -453,7 +453,7 @@ Value http_client_set_keep_alive(std::vector<Value>& n, Ark::VM* vm)
     if (n[1] != Ark::True && n[1] != Ark::False)
         throw Ark::TypeError("http:client:setKeepAlive: toggle must be a Boolean");
 
-    n[0].usertype_ref().as<Client>().set_keep_alive(n[1] == Ark::True);
+    n[0].usertypeRef().as<Client>().set_keep_alive(n[1] == Ark::True);
 
     return Nil;
 }
@@ -469,7 +469,7 @@ Value http_client_set_proxy(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::Number)
         throw Ark::TypeError("http:client:setProxy: port must be a Number");
 
-    n[0].usertype_ref().as<Client>().set_proxy(n[1].string().c_str(), static_cast<int>(n[2].number()));
+    n[0].usertypeRef().as<Client>().set_proxy(n[1].string().c_str(), static_cast<int>(n[2].number()));
 
     return Nil;
 }
@@ -485,7 +485,7 @@ Value http_client_set_proxy_basic_auth(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::String)
         throw Ark::TypeError("http:client:setProxyBasicAuth: password must be a String");
 
-    n[0].usertype_ref().as<Client>().set_proxy_basic_auth(
+    n[0].usertypeRef().as<Client>().set_proxy_basic_auth(
         n[1].string().c_str(),
         n[2].string().c_str()
     );
@@ -502,7 +502,7 @@ Value http_client_set_proxy_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("http:client:setProxyBearerTokenAuth: token must be a String");
 
-    n[0].usertype_ref().as<Client>().set_proxy_bearer_token_auth(n[1].string().c_str());
+    n[0].usertypeRef().as<Client>().set_proxy_bearer_token_auth(n[1].string().c_str());
 
     return Nil;
 }

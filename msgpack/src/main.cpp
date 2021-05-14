@@ -53,7 +53,7 @@ namespace ArkMsgpack
         std::string ark_string;
         msgpack::object deserialized;
         auto type_test = [&](void) {
-            std::string packed {static_cast<Value>(args[0]).string_ref().toString()};
+            std::string packed {static_cast<Value>(args[0]).stringRef().toString()};
             deserialized = msgpack::unpack(packed.data(), packed.size()).get();
             try
             {
@@ -109,7 +109,7 @@ namespace ArkMsgpack
         }
         else
         {
-            std::string packed {static_cast<Value>(args[0]).string_ref().toString()};
+            std::string packed {static_cast<Value>(args[0]).stringRef().toString()};
             deserialized =  msgpack::unpack(packed.data(), packed.size()).get();
             str_buffer << deserialized;
             msg_object_str = Value(str_buffer.str());
