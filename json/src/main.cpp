@@ -335,7 +335,7 @@ namespace json{
         if (args.size() != 1)
             throw std::runtime_error("json:len: needs 1 argument: jsonAsList or jsonAsObject");
         if (args[0].usertypeRef().as<nlohmann::json>().is_array() || args[0].usertypeRef().as<nlohmann::json>().is_object())
-            return Value(static_cast<long>(args[0].usertypeRef().as<nlohmann::json>().size()));
+            return Value(static_cast<double>(args[0].usertypeRef().as<nlohmann::json>().size()));
         else
             throw std::runtime_error("json:len: json must be a jsonAsList or a jsonAsObject");
     }
