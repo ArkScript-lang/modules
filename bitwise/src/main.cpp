@@ -10,10 +10,29 @@ namespace ArkBitwise
         return bitsetObject;
     }
 
+    UserType::ControlFuncs* getCfs()
+    {
+        static UserType::ControlFuncs cfs;
+        cfs.ostream_func = [](std::ostream& os, const UserType& a) -> std::ostream& {
+            os << a.as<std::bitset<8>>();
+            return os;
+        };
+        cfs.deleter = [](void* data) {
+            std::vector<std::unique_ptr<std::bitset<8>>>& bitsets = getBitwiseObject();
+            auto it = std::find_if(bitsets.begin(), bitsets.end(), [data](const auto& val) -> bool {
+                return val.get() == static_cast<std::bitset<8>*>(data);
+            });
+            if (it != bitsets.end())
+                bitsets.erase(it);
+        };
+        return &cfs;
+    }
+
     Ark::Value convert2Bitset(unsigned long long val)
     {
         std::bitset<8>* ptr = getBitwiseObject().emplace_back(std::make_unique<std::bitset<8>>(val)).get();
         Value v = Ark::Value(Ark::UserType(ptr));
+        v.usertypeRef().setControlFuncs(getCfs());
         return v;
     }
 
@@ -23,6 +42,7 @@ namespace ArkBitwise
     {
         std::bitset<8>* ptr = getBitwiseObject().emplace_back(std::make_unique<std::bitset<8>>(val, pos, len)).get();
         Value v = Ark::Value(Ark::UserType(ptr));
+        v.usertypeRef().setControlFuncs(getCfs());
         return v;
     }
 
@@ -30,6 +50,8 @@ namespace ArkBitwise
     {
         if (n.size() < 1)
             throw std::runtime_error("bitwise:makeBitset need at least a single argument: data");
+        else if (n.size() > 3)
+            throw std::runtime_error("bitwise:makeBitset can only take up to 3 arguments");
         Ark::Value v;
         ValueType nType = n[0].valueType();
         if (nType != ValueType::String || nType != ValueType::Number)
@@ -58,7 +80,6 @@ namespace ArkBitwise
                     len = static_cast<long>(n[2].number());
                     v = convert2Bitset(src, pos, len);
                 }
-
                 return v;
             }
             catch (const std::out_of_range e)
