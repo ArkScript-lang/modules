@@ -80,15 +80,17 @@ namespace ArkBitwise
                     len = static_cast<long>(n[2].number());
                     v = convert2Bitset(src, pos, len);
                 }
-                return v;
             }
             catch (const std::out_of_range e)
             {
                 throw std::runtime_error("bitwise:makeBitset: ");
             }
+        } 
+        else
+        {
+            return Ark::Nil;
         }
-
-        return Ark::Nil;
+        return v;
     }
 
     Value rshift(std::vector<Value> &n, Ark::VM *vm)
@@ -101,9 +103,7 @@ namespace ArkBitwise
 ARK_API_EXPORT mapping *getFunctionsMapping()
 {
     mapping *map = mapping_create(2);
-    /*
-    mapping_add(map[0], "hash:sha256", ArkHash::sha2);
-    mapping_add(map[1], "hash:md5", ArkHash::md5);
-    */
+    mapping_add(map[0], "bitwise:make-bitset", ArkBitwise::makeBitset);
+    mapping_add(map[1], "bitwise:rshift", ArkBitwise::rshift);
     return map;
 }
