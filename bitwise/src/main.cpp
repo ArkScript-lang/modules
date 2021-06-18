@@ -36,6 +36,14 @@ namespace ArkBitwise
         return v;
     }
 
+    Ark::Value bitset2Ark(std::bitset<8>& bitset)
+    {
+        std::bitset<8>* ptr = getBitwiseObject().emplace_back(std::make_unique<std::bitset<8>>(bitset)).get();
+        Value v = Ark::Value(Ark::UserType(ptr));
+        v.usertypeRef().setControlFuncs(getCfs());
+        return v;
+    }
+
     Ark::Value convert2Bitset(std::string val,
                                    unsigned long long pos = NULL,
                                    unsigned long long len = NULL)
@@ -95,7 +103,19 @@ namespace ArkBitwise
 
     Value rshift(std::vector<Value> &n, Ark::VM *vm)
     {
-        return Ark::Nil;
+        if (n.size() != 2)
+            throw std::runtime_error("bitwise:rshift need at least 2 arguments: bitset, pos");
+
+        if (n[0].valueType() != ValueType::User ||
+                !n[0].usertype().is<std::bitset<8>>() )
+            throw std::runtime_error("bitwise:rshift the first argument can only be a bitset");
+
+        if (n[1].valueType() != ValueType::Number)
+            throw std::runtime_error("bitwise:rshift the second argument can only be a Number");
+
+        std::bitset<8>& bitsetObj = n[0].usertypeRef().as<std::bitset<8>>();
+        std::bitset<8>& shifted = bitsetObj >> n[1].number();
+        return bitset2Ark(shifted);
     }
 
 }
