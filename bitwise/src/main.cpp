@@ -102,7 +102,7 @@ namespace ArkBitwise
         return v;
     }
 
-    Value rshift(std::vector<Value> &n, Ark::VM *vm)
+    Value rshift(std::vector<Value>& n, Ark::VM* vm)
     {
         if (n.size() != 2)
             throw std::runtime_error("bitwise:rshift need at least 2 arguments: bitset, pos");
@@ -119,12 +119,30 @@ namespace ArkBitwise
         return bitset2Ark(shifted);
     }
 
+    Value lshift(std::vector<Value>& n, Ark::VM* vm)
+    {
+        if (n.size() != 2)
+            throw std::runtime_error("bitwise:lshift need at least 2 arguments: bitset, pos");
+
+        if (n[0].valueType() != ValueType::User ||
+                !n[0].usertype().is<std::bitset<8>>() )
+            throw std::runtime_error("bitwise:lshift the first argument can only be a bitset");
+
+        if (n[1].valueType() != ValueType::Number)
+            throw std::runtime_error("bitwise:rshift the second argument can only be a Number");
+
+        std::bitset<8>& bitsetObj = n[0].usertypeRef().as<std::bitset<8>>();
+        std::bitset<8>& shifted = bitsetObj << n[1].number();
+        return bitset2Ark(shifted);
+    }
+
 }
 
 ARK_API_EXPORT mapping *getFunctionsMapping()
 {
-    mapping *map = mapping_create(2);
+    mapping *map = mapping_create(3);
     mapping_add(map[0], "bitwise:make-bitset", ArkBitwise::makeBitset);
     mapping_add(map[1], "bitwise:rshift", ArkBitwise::rshift);
+    mapping_add(map[2], "bitwise:lshift", ArkBitwise::lshift);
     return map;
 }
