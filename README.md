@@ -6,6 +6,11 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 
 ## Included modules
 
+## Create new modules
+* Run the following command
+	`sh create-module.sh <module-name>`
+	This creates a module with the structure configured in `shell/module_structure.json` (This structure can be customised)
+
 ### Terminal related
 
 * `console` to change text color when using `print`
@@ -24,6 +29,7 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 * C++17
 * CMake >= 3.12
 * Visual Studio >= 11 (on Windows)
+* Python >= 2.7
 
 ## Copyright and Licence information
 
