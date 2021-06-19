@@ -45,8 +45,8 @@ namespace ArkBitwise
     }
 
     Ark::Value convert2Bitset(std::string val,
-                                   unsigned long long pos = NULL,
-                                   unsigned long long len = NULL)
+                                   unsigned long long pos = 0,
+                                   unsigned long long len = 0)
     {
         std::bitset<8>* ptr = getBitwiseObject().emplace_back(std::make_unique<std::bitset<8>>(val, pos, len)).get();
         Value v = Ark::Value(Ark::UserType(ptr));
