@@ -1,0 +1,38 @@
+[
+	{
+		"name": "documentation",
+		"type": "directory",
+		"contents": [
+			{
+				"name": "README.md",
+				"type": "file"
+			}
+		]
+	},
+	{
+		"name": "tests",
+		"type": "directory",
+		"contents": [
+			{
+				"name": "main.ark",
+				"type": "file"
+			}
+		]	
+	},
+	{
+		"name": "include",
+		"type": "directory"
+	},
+	{
+		"name": "src",
+		"type": "directory"
+	},
+	{
+		"name": "CMakeLists.txt",
+		"type": "file"
+	},
+	{
+		"name": "README.md",
+		"type": "file"
+	}
+]
