@@ -28,17 +28,17 @@ namespace ArkBitwise
         return &cfs;
     }
 
-    Ark::Value convert2Bitset(unsigned long long val)
+    Ark::Value bitset2Ark(std::bitset<8>& bitset)
     {
-        std::bitset<8>* ptr = getBitwiseObject().emplace_back(std::make_unique<std::bitset<8>>(val)).get();
+        std::bitset<8>* ptr = getBitwiseObject().emplace_back(std::make_unique<std::bitset<8>>(bitset)).get();
         Value v = Ark::Value(Ark::UserType(ptr));
         v.usertypeRef().setControlFuncs(getCfs());
         return v;
     }
 
-    Ark::Value bitset2Ark(std::bitset<8>& bitset)
+    Ark::Value convert2Bitset(unsigned long long val)
     {
-        std::bitset<8>* ptr = getBitwiseObject().emplace_back(std::make_unique<std::bitset<8>>(bitset)).get();
+        std::bitset<8>* ptr = getBitwiseObject().emplace_back(std::make_unique<std::bitset<8>>(val)).get();
         Value v = Ark::Value(Ark::UserType(ptr));
         v.usertypeRef().setControlFuncs(getCfs());
         return v;
@@ -54,7 +54,7 @@ namespace ArkBitwise
         return v;
     }
 
-    Ark::Value makeBitset(std::vector<Value> &n, Ark::VM *vm)
+    Ark::Value makeBitset(std::vector<Value>& n, Ark::VM* vm)
     {
         if (n.size() < 1)
             throw std::runtime_error("bitwise:makeBitset need at least a single argument: data");
@@ -62,13 +62,14 @@ namespace ArkBitwise
             throw std::runtime_error("bitwise:makeBitset can only take up to 3 arguments");
         Ark::Value v;
         ValueType nType = n[0].valueType();
-        if (nType != ValueType::String || nType != ValueType::Number)
+        /*
+        if (nType != ValueType::String && nType != ValueType::Number)
             throw std::runtime_error("bitwise:makeBitset: the first argument can only be a String or a Number");
-
+*/
         if (nType == ValueType::Number)
         {
             unsigned long long num = static_cast<long>(n[0].number());
-            v = Ark::Value(Ark::UserType(&convert2Bitset(num)));
+            v  = convert2Bitset(num);
         }
         else if (nType == ValueType::String)
         {
