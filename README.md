@@ -8,7 +8,7 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 
 ## Create new modules
 * Run the following command
-	`sh create-module.sh <module-name>`
+	`python shell/createmodules/create.py <module-name>`
 	This creates a module with the structure configured in `shell/module_structure.json` (This structure can be customised)
 
 ### Terminal related
