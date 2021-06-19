@@ -17,7 +17,7 @@ CObject get_cobject(const Value &ark_object, ValueType type)
 			object = ark_object.number();
 			break;
 		case ValueType::String:
-			object = const_cast<Value&>(ark_object).string_ref().toString();
+			object = const_cast<Value&>(ark_object).stringRef().toString();
 			break;
 		case ValueType::List:
 			object = const_cast<Value&>(ark_object).list();
@@ -48,7 +48,7 @@ Value msgpack_obj_handle(std::vector<Value> &args, VM* vm)
 
 	static msgpack::object_handle oh;
 
-	msgpack::sbuffer& sbuf = args[0].usertype_ref().as<msgpack::sbuffer>();
+	msgpack::sbuffer& sbuf = args[0].usertypeRef().as<msgpack::sbuffer>();
 	oh = msgpack::unpack(sbuf.data(), sbuf.size());
 
 	return Value(UserType(&oh));
@@ -63,7 +63,7 @@ Value msgpack_obj(std::vector<Value> &args, VM* vm)
 
 	static msgpack::object o;
 
-	msgpack::object_handle& oh = args[0].usertype_ref().as<msgpack::object_handle>();
+	msgpack::object_handle& oh = args[0].usertypeRef().as<msgpack::object_handle>();
 	o = oh.get();
 
 	return Value(UserType(&o));
