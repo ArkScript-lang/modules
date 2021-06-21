@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
-project(console)
+project(hash)
 
 # set debug compilation flags
 get_property(DebugFlags GLOBAL PROPERTY ArkDebugFlags)

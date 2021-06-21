@@ -91,11 +91,11 @@ namespace ArkConsole
     }
 }
 
-ARK_API_EXPORT Mapping_t getFunctionsMapping()
+ARK_API_EXPORT mapping* getFunctionsMapping()
 {
-    Mapping_t map;
-    map["console:clear"] = ArkConsole::clear;
-    map["console:color"] = ArkConsole::color;
+    mapping* map = mapping_create(2);
+    mapping_add(map[0], "console:clear", ArkConsole::clear);
+    mapping_add(map[1], "console:color", ArkConsole::color);
 
     return map;
 }
