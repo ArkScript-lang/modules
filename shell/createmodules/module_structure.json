@@ -29,7 +29,8 @@
 	},
 	{
 		"name": "CMakeLists.txt",
-		"type": "file"
+		"type": "file",
+		"is-template": true
 	},
 	{
 		"name": "README.md",
