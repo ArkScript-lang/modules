@@ -13,12 +13,11 @@ def buildStructure(rootDirectory, content):
 	'''
 
 	contentType = content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_TYPE"]]
-	contentName = content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_NAME"]]
 	
 	if contentType == cs.DIRECTORY:
-		rootDirectory = createDirectory(rootDirectory, contentName)
+		rootDirectory = createDirectory(rootDirectory, content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_NAME"]])
 	elif contentType == cs.FILE:
-		createFile(rootDirectory, contentName)
+		createFile(rootDirectory, content)
 
 	if cs.MODULE_STRUCTURE_KEYS["DIR_CONTENTS"] not in content:
 		return
@@ -32,7 +31,7 @@ def createDirectory(rootDirectory, directoryName):
 	
 	Parameters:
 	rootDirectory (string): The parent directory under which the sub directory should be created
-	directoryName (string): the name of the directory
+	content (dict): the definition of the directories/files that should be created under the root
 
 	Returns:
 	string: path of the current root directory
@@ -42,16 +41,67 @@ def createDirectory(rootDirectory, directoryName):
 
 	return path
 
-def createFile(rootDirectory, fileName):
+def isTemplateFile(content):
+	'''
+	Checks if a given file should be copied from a template file
+	
+	Parameters:
+	content (dict): the definition of the directories/files that should be created under the root
+
+	Returns:
+	boolean: true if template file is available else false
+	'''
+	isTemplateKey = cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_IS_TEMPLATE"]
+
+	return (isTemplateKey in content and content[isTemplateKey])
+
+def readTemplateFile(fileName):
+	'''
+	Reads the contents of the given template file
+	
+	Parameters:
+	fileName (string): file name to be created
+
+	Returns:
+	string: contents of the corresponding template file
+	'''
+	templateFileName = cs.TEMPLATE_FILE_NAME_PREFIX + fileName
+	path = os.path.join(cs.MODULE_CREATION_SHELL_DIR, templateFileName)
+
+	return open(path, cs.FILE_READ_PERMISSION).read()
+
+def writeContentsToFile(file, content, rootDirectory):
+	'''
+	Copies content from template file and writes to given file
+	
+	Parameters:
+	file (File object): the new file to which the contents of the template are copied
+	content (dict): the definition of the directories/files that should be created under the root
+	rootDirectory (string): name of the directory under which the file is created
+
+	Returns:
+	boolean: true if template file is available else false
+	'''
+	moduleName = rootDirectory.split(os.path.sep)[-1]
+
+	templateFileContents = readTemplateFile(content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_NAME"]])
+	file.write(templateFileContents.replace(cs.MODULE_NAME_PLACEHOLDER, moduleName))
+
+
+def createFile(rootDirectory, content):
 	'''
 	Creates a file under the given root
 	
 	Parameters:
 	rootDirectory (string): The parent directory under which the file should be created
-	directoryName (string): the name of the directory
+	content (dict): the definition of the directories/files that should be created under the root
 	'''
+	fileName = content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_NAME"]]
 	path = os.path.join(rootDirectory, fileName)
-	file = open(path, cs.FILE_PERMISSION)
+	file = open(path, "w+")
+
+	if isTemplateFile(content):
+		writeContentsToFile(file, content, rootDirectory)
 
 def getModuleName():
 	'''
@@ -81,6 +131,8 @@ def getDirectoryStructure():
 	return directoryStructure
 
 if __name__ == "__main__":
+	# print(cs)
+
 	moduleName = getModuleName()
 	directoryStructure = getDirectoryStructure()
 	
