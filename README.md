@@ -27,7 +27,7 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 ## Dependencies
 
 * C++17
-* CMake >= 3.12
+* CMake >= 3.8
 * Visual Studio >= 11 (on Windows)
 * Python >= 2.7
 
