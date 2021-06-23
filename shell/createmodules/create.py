@@ -131,8 +131,6 @@ def getDirectoryStructure():
 	return directoryStructure
 
 if __name__ == "__main__":
-	# print(cs)
-
 	moduleName = getModuleName()
 	directoryStructure = getDirectoryStructure()
 	
