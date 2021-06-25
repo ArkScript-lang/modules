@@ -47,13 +47,46 @@ namespace ArkBitwise
         int shifted = num ^ shift;
         return Value(shifted);
     }
+
+    Value or(std::vector<Value>& n, Ark::VM* vm)
+    {
+
+        if (n.size() != 2)
+            throw std::runtime_error("bitwise:xor: needs 1 argument: number");
+        if (n[0].valueType() != ValueType::Number 
+            && n[1].valueType() != ValueType::Number)
+            throw Ark::TypeError("bitwise:xor the 2 arguments must be numbers"); 
+
+        int num = static_cast<int>(n[0].number());
+        int shift = static_cast<int>(n[1].number());
+        int shifted = num | shift;
+        return Value(shifted);
+    }
+
+    Value and(std::vector<Value>& n, Ark::VM* vm)
+    {
+
+        if (n.size() != 2)
+            throw std::runtime_error("bitwise:xor: needs 1 argument: number");
+        if (n[0].valueType() != ValueType::Number 
+            && n[1].valueType() != ValueType::Number)
+            throw Ark::TypeError("bitwise:xor the 2 arguments must be numbers"); 
+
+        int num = static_cast<int>(n[0].number());
+        int shift = static_cast<int>(n[1].number());
+        int shifted = num & shift;
+        return Value(shifted);
+    }
 }
 
 ARK_API_EXPORT mapping *getFunctionsMapping()
 {
-    mapping *map = mapping_create(3);
+    mapping *map = mapping_create(5);
     mapping_add(map[0], "bitwise:rshift", ArkBitwise::rshift);
     mapping_add(map[1], "bitwise:lshift", ArkBitwise::lshift);
     mapping_add(map[2], "bitwise:xor", ArkBitwise::xor);
+    mapping_add(map[3], "bitwise:or", ArkBitwise::or);
+    mapping_add(map[4], "bitwise:and", ArkBitwise::and);
+
     return map;
 }
