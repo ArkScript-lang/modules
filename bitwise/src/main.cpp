@@ -29,7 +29,6 @@ namespace ArkBitwise
 
         int num = static_cast<int>(n[0].number());
         int shift = static_cast<int>(n[1].number());
-        std::clog << num << std::endl;
         int shifted = num << shift;
         return Value(shifted);
     }
