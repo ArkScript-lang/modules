@@ -14,7 +14,7 @@ namespace ArkBitwise
         long num = static_cast<long>(n[0].number());
         long shift = static_cast<long>(n[1].number());
         long shifted = num >> shift;
-        return Value(shifted);
+        return Value(static_cast<double>(shifted));
     }
 
     Value lshift(std::vector<Value>& n, Ark::VM* vm)
@@ -28,7 +28,7 @@ namespace ArkBitwise
         long num = static_cast<long>(n[0].number());
         long shift = static_cast<long>(n[1].number());
         long shifted = num << shift;
-        return Value(shifted);
+        return Value(static_cast<double>(shifted));
     }
     
     Value xor_(std::vector<Value>& n, Ark::VM* vm)
@@ -42,7 +42,7 @@ namespace ArkBitwise
         long num = static_cast<long>(n[0].number());
         long mask = static_cast<long>(n[1].number());
         long masked = num ^ mask;
-        return Value(masked);
+        return Value(static_cast<double>(masked));
     }
 
     Value or_(std::vector<Value>& n, Ark::VM* vm)
@@ -56,7 +56,7 @@ namespace ArkBitwise
         long num = static_cast<long>(n[0].number());
         long mask = static_cast<long>(n[1].number());
         long masked = num | mask;
-        return Value(masked);
+        return Value(static_cast<double>(masked));
     }
 
     Value and_(std::vector<Value>& n, Ark::VM* vm)
@@ -70,7 +70,7 @@ namespace ArkBitwise
         long num = static_cast<long>(n[0].number());
         long mask = static_cast<long>(n[1].number());
         long masked = num & mask;
-        return Value(masked);
+        return Value(static_cast<double>(masked));
     }
 }
 
