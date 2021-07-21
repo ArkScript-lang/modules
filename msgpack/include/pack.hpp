@@ -3,6 +3,6 @@
 
 #include <object.hpp>
 
-extern Value msgpack_pack(std::vector<Value> &args, VM* vm);
+extern Value msgpack_pack(std::vector<Value>& args, VM* vm);
 
 #endif

@@ -2,7 +2,7 @@
 #include <adaptor.hpp>
 
 
-Value msgpack_pack(std::vector<Value> &args, VM* vm)
+Value msgpack_pack(std::vector<Value>& args, VM* vm)
 {
     if(args.size() != 2)
         throw std::runtime_error("ArgError : This function must have 2 arguments");
