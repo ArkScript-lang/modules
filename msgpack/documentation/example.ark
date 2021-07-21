@@ -8,7 +8,9 @@
 
 # unpacking
 # msgpack object handle
-(let oh (msgpack:unpack sbuf))
+(mut oh (msgpack:objectHandle))
+
+(msgpack:unpack sbuf oh)
 
 # msgpack object
 (let o (msgpack:object oh))
