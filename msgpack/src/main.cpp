@@ -3,6 +3,7 @@
 ARK_API_EXPORT mapping* getFunctionsMapping()
 {
     mapping* map = mapping_create(6);
+
     // msgpack objects constructors
     mapping_add(map[0], "msgpack:sbuffer", msgpack_sbuffer);
     mapping_add(map[1], "msgpack:objectHandle", msgpack_obj_handle);
