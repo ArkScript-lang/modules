@@ -24,7 +24,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/include
     ${Ark_SOURCE_DIR}/thirdparty
     ${Ark_SOURCE_DIR}/include
-    ${Modules_SOURCE_DIR}/submodules/msgpack-cpp/include
+    ${Modules_SOURCE_DIR}/submodules/msgpack-c/include
 )
 
 file(GLOB_RECURSE SOURCE_FILES
