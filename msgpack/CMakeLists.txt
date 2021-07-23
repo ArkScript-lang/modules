@@ -2,22 +2,19 @@ cmake_minimum_required(VERSION 3.8)
 
 project(msgpack)
 
-# set debug compilation flags
-get_property(DebugFlags GLOBAL PROPERTY ArkDebugFlags)
-if (DebugFlags)
-    set(CMAKE_CXX_FLAGS_DEBUG "${DebugFlags}" CACHE STRING "Debug compilation options" FORCE)
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg -g -no-pie")
+    set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3 -s")
+elseif (MSVC)
+    set(CMAKE_CXX_FLAGS_DEBUG "/DWIN32 /D_WINDOWS /W3 /GR /EHa /MDd" CACHE STRING "Debug compilation options" FORCE)
+    set(CMAKE_CXX_FLAGS_RELEASE "/DWIN32 /D_WINDOWS /W3 /GR /EHa /Ox /Ob2 /Oi /Ot /Oy /MD" CACHE STRING "Release compilation options" FORCE)
 endif()
 
-# set release compilation flags
-get_property(ReleaseFlags GLOBAL PROPERTY ArkReleaseFlags)
-if (ReleaseFlags)
-    set(CMAKE_CXX_FLAGS_RELEASE "${ReleaseFlags}" CACHE STRING "Release compilation options" FORCE)
-endif()
-
-# set linker flags
-get_property(LinkerFlags GLOBAL PROPERTY ArkLinkerFlags)
-if (LinkerFlags)
-    set(CMAKE_EXE_LINKER_FLAGS "${LinkerFlags}" CACHE STRING "Linker options" FORCE)
+if (CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,-rpath,/usr/local/lib")
+elseif (CMAKE_COMPILER_IS_CLANG)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++ -v")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
 endif()
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -25,8 +22,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../include
     ${PROJECT_SOURCE_DIR}/include
-    ${ark_SOURCE_DIR}/thirdparty
-    ${ark_SOURCE_DIR}/include
+    ${Ark_SOURCE_DIR}/thirdparty
+    ${Ark_SOURCE_DIR}/include
     ${Modules_SOURCE_DIR}/submodules/msgpack-c/include
 )
 
