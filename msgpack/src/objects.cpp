@@ -116,33 +116,31 @@ CObject get_cobject(Value& ark_object, ValueType type)
 
 /*              Objects constructors                   */
 
-// msgpack::sbuffer
+// msgpack:sbuffer
 Value msgpack_sbuffer(std::vector<Value>& args, VM* vm)
 {
     if (args.size() != 0)
         throw std::runtime_error("msgpack:sbuffer does not require any arguments");
 
-    get_sbuffers().emplace_back(std::make_unique<msgpack::sbuffer>());
-    Value sbuffer = Value(UserType(get_sbuffers().back().get()));
+    Value sbuffer = Value(UserType(get_sbuffers().emplace_back(std::make_unique<msgpack::sbuffer>()).get()));
     sbuffer.usertypeRef().setControlFuncs(get_cfs_sbuffers());
 
     return sbuffer;
 }
 
-// msgpack::object_handle
+// msgpack:object_handle
 Value msgpack_obj_handle(std::vector<Value>& args, VM* vm)
 {
     if (args.size() != 0)
         throw std::runtime_error("msgpack:objectHandle does not require any arguments");
 
-    get_obj_handlers().emplace_back(std::make_unique<msgpack::object_handle>());
-    Value object_handle = Value(UserType(get_obj_handlers().back().get()));
+    Value object_handle = Value(UserType(get_obj_handlers().emplace_back(std::make_unique<msgpack::object_handle>()).get()));
     object_handle.usertypeRef().setControlFuncs(get_cfs_obj_handlers());
 
     return object_handle;
 }
 
-// msgpack::object
+// msgpack:object
 Value msgpack_obj(std::vector<Value>& args, VM* vm)
 {
     if (args.size() != 1)
@@ -151,9 +149,9 @@ Value msgpack_obj(std::vector<Value>& args, VM* vm)
         throw Ark::TypeError("msgpack:object: packed object must be a msgpack::object_handle");
 
     msgpack::object_handle& oh = args[0].usertypeRef().as<msgpack::object_handle>();
-    get_objects().emplace_back(std::make_unique<msgpack::object>(oh.get()));
+    ;
 
-    Value object = Value(UserType(get_objects().back().get()));
+    Value object = Value(UserType(get_objects().emplace_back(std::make_unique<msgpack::object>(oh.get())).get()));
     object.usertypeRef().setControlFuncs(get_cfs_objects());
 
     return object;
