@@ -29,7 +29,7 @@ include_directories(
 
 file(GLOB_RECURSE SOURCE_FILES
     ${PROJECT_SOURCE_DIR}/src/*.cpp
-    ${Modules_SOURCE_DIR}/submodules/msgpack-cpp/src/*.c
+    ${Modules_SOURCE_DIR}/submodules/msgpack-c/src/*.c
 )
 
 list(REMOVE_ITEM SOURCE_FILES "${PROJECT_SOURCE_DIR}/../../src/main.cpp")
