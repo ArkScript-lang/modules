@@ -1,6 +1,7 @@
 #ifndef ARK_MSGPACK_ADAPTOR_HPP
 #define ARK_MSGPACK_ADAPTOR_HPP
 
+#include <Ark/String.hpp>
 #include <Ark/Module.hpp>
 #include <msgpack.hpp>
 
@@ -86,7 +87,7 @@ namespace msgpack
                         o.pack_double(static_cast<Value>(v).number());
                     else if(v.valueType() == ValueType::String)
                     {
-                        std::string str = static_cast<Value>(v).string().toString();
+                        String str = static_cast<Value>(v).string();
                         o.pack_str(str.size());
                         o.pack_str_body(str.c_str(), str.size());
                     }

@@ -120,7 +120,7 @@ CObject get_cobject(Value& ark_object, ValueType type)
 Value msgpack_sbuffer(std::vector<Value>& args, VM* vm)
 {
     if (args.size() != 0)
-        throw std::runtime_error("ArgError: No arguments necessary for this function");
+        throw std::runtime_error("msgpack:sbuffer does not require any arguments");
 
     get_sbuffers().emplace_back(std::make_unique<msgpack::sbuffer>());
     Value sbuffer = Value(UserType(get_sbuffers().back().get()));
@@ -133,7 +133,7 @@ Value msgpack_sbuffer(std::vector<Value>& args, VM* vm)
 Value msgpack_obj_handle(std::vector<Value>& args, VM* vm)
 {
     if (args.size() != 0)
-        throw std::runtime_error("ArgError: No arguments necessary for this function");
+        throw std::runtime_error("msgpack:objectHandle does not require any arguments");
 
     get_obj_handlers().emplace_back(std::make_unique<msgpack::object_handle>());
     Value object_handle = Value(UserType(get_obj_handlers().back().get()));
@@ -146,7 +146,7 @@ Value msgpack_obj_handle(std::vector<Value>& args, VM* vm)
 Value msgpack_obj(std::vector<Value>& args, VM* vm)
 {
     if (args.size() != 1)
-        throw std::runtime_error("ArgError: this function must have 1 argument");
+        throw std::runtime_error("msgpack:object require one argument, msgpack:object_handle for convert");
     if (args[0].valueType() != ValueType::User || !(args[0].usertype().is<msgpack::object_handle>()))
         throw Ark::TypeError("msgpack:object: packed object must be a msgpack::object_handle");
 
