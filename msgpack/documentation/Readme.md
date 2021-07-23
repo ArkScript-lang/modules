@@ -4,13 +4,12 @@ A module for **msgpack**, an efficient binary serialization format like JSON, bu
 
 ## **msgpack**
 
-
-+ **msgpack:sbuffer()** : construct the buffer that must containes packed data ;
-+ **msgpack:objectHandle()** : construct a msgpack::object_handle. It must manage and return msgpack::object ;
-+ **msgpack:object(msgpack_object_handle)** : construct the msgpack::object. It must containe the unpacked object ;
-+ **msgpack:pack(sbuf object)** : data packing ;
-+ **msgpack:unpack()** : for data unpacking ;
-+ **msgpack:convert()** : convert msgpack::object to ark usable object .
++ **(msgpack:sbuffer)** : construct the buffer that must contain packed data ;
++ **(msgpack:objectHandle)** : construct a msgpack::object_handle. It must manage and return msgpack::object ;
++ **(msgpack:object msgpack_object_handle)** : construct the msgpack::object. It must contain the unpacked object ;
++ **(msgpack:pack sbuffer ark_object)** : data packing ;
++ **(msgpack:unpack sbuffer msgpack_object_handle)** : for data unpacking ;
++ **(msgpack:convert msgpack_object)** : convert msgpack::object to ark usable object .
 
 
 
@@ -39,7 +38,6 @@ A module for **msgpack**, an efficient binary serialization format like JSON, bu
 (print "dst : " dst)
 ```
 
+### Coming soon
 
-### Comming soon
-
-+ Map pack, unpack and convert .
++ Map pack, unpack and convert.
