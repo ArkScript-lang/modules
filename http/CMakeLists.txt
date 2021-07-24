@@ -27,6 +27,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/include
     ${ark_SOURCE_DIR}/thirdparty
     ${ark_SOURCE_DIR}/include
+    ${Modules_SOURCE_DIR}/submodules/cpp-httplib/
 )
 
 file(GLOB_RECURSE SOURCE_FILES
