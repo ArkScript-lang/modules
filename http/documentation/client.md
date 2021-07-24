@@ -96,6 +96,18 @@ Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
 
 Works exactly like `http:client:post`.
 
+### http:client:patch
+
+Make a PATCH request with a String as the request's body.
+
+You can pass an optional String argument `content-type` (defaults to `text/plain` when not given).
+
+A fifth (or fourth, depending on the form of the request) optional argument can be added: `headers`. They always come last.
+
+Returns a list if the request succeeded: `[status, body]`, otherwise `nil`.
+
+Works exactly like `http:client:post`.
+
 ### http:client:delete
 
 Make a DELETE request with a String as the request's body.

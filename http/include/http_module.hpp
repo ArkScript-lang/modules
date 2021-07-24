@@ -3,7 +3,7 @@
 
 // must be included first, before any #include windows.h
 #define CPPHTTPLIB_OPENSSL_SUPPORT
-#include <httplib.hpp>
+#include <httplib.h>
 
 #include <Ark/Module.hpp>
 
@@ -45,6 +45,7 @@ Value http_client_get(std::vector<Value>& n, Ark::VM* vm);
 Value http_create_params(std::vector<Value>& n, Ark::VM* vm);
 Value http_params_tolist(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_post(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_patch(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_put(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_delete(std::vector<Value>& n, Ark::VM* vm);
 Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm);

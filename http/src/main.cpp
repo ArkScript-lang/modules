@@ -3,7 +3,7 @@
 // module functions mapping
 ARK_API_EXPORT mapping* getFunctionsMapping()
 {
-    mapping* map = mapping_create(29);
+    mapping* map = mapping_create(30);
 
     // Server
     mapping_add(map[0], "http:server:create", http_create_server);
@@ -25,20 +25,21 @@ ARK_API_EXPORT mapping* getFunctionsMapping()
     mapping_add(map[14], "http:params:create", http_create_params);
     mapping_add(map[15], "http:params:toList", http_params_tolist);
     mapping_add(map[16], "http:client:post", http_client_post);
-    mapping_add(map[17], "http:client:put", http_client_put);
-    mapping_add(map[18], "http:client:delete", http_client_delete);
-    mapping_add(map[19], "http:client:setFollowLocation", http_client_set_follow_location);
+    mapping_add(map[17], "http:client:patch", http_client_patch);
+    mapping_add(map[18], "http:client:put", http_client_put);
+    mapping_add(map[19], "http:client:delete", http_client_delete);
+    mapping_add(map[20], "http:client:setFollowLocation", http_client_set_follow_location);
 
     // Client
-    mapping_add(map[20], "http:client:setConnectionTimeout", http_client_set_co_timeout);
-    mapping_add(map[21], "http:client:setReadTimeout", http_client_set_read_timeout);
-    mapping_add(map[22], "http:client:setWriteTimeout", http_client_set_write_timeout);
-    mapping_add(map[23], "http:client:setBasicAuth", http_client_set_basic_auth);
-    mapping_add(map[24], "http:client:setBearerTokenAuth", http_client_set_bearer_token_auth);
-    mapping_add(map[25], "http:client:setKeepAlive", http_client_set_keep_alive);
-    mapping_add(map[26], "http:client:setProxy", http_client_set_proxy);
-    mapping_add(map[27], "http:client:setProxyBasicAuth", http_client_set_proxy_basic_auth);
-    mapping_add(map[28], "http:client:setProxyBearerTokenAuth", http_client_set_proxy_bearer_token_auth);
+    mapping_add(map[21], "http:client:setConnectionTimeout", http_client_set_co_timeout);
+    mapping_add(map[22], "http:client:setReadTimeout", http_client_set_read_timeout);
+    mapping_add(map[23], "http:client:setWriteTimeout", http_client_set_write_timeout);
+    mapping_add(map[24], "http:client:setBasicAuth", http_client_set_basic_auth);
+    mapping_add(map[25], "http:client:setBearerTokenAuth", http_client_set_bearer_token_auth);
+    mapping_add(map[26], "http:client:setKeepAlive", http_client_set_keep_alive);
+    mapping_add(map[27], "http:client:setProxy", http_client_set_proxy);
+    mapping_add(map[28], "http:client:setProxyBasicAuth", http_client_set_proxy_basic_auth);
+    mapping_add(map[29], "http:client:setProxyBearerTokenAuth", http_client_set_proxy_bearer_token_auth);
 
     return map;
 }

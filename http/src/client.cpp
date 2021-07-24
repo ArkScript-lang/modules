@@ -24,7 +24,7 @@ Value http_create_headers(std::vector<Value>& n, Ark::VM* vm)
             key = v.stringRef().toString();
         else
         {
-            h.back()->emplace(key, v.stringRef().c_str());
+            h.back().emplace(key, v.stringRef().c_str());
             key = "";
         }
     }
@@ -131,16 +131,21 @@ Value http_client_get(std::vector<Value>& n, Ark::VM* vm)
     return data;
 }
 
-using Proxy_t = std::function<Result(Client&, Headers*, Params*, const char* /* route */, const char* /* body */, const char* /* content type */)>;
+using Proxy_t = std::function<Result(Client&, const Headers*, const Params*, const char* /* route */, const char* /* body */, const char* /* content type */)>;
 #define HTTP_MAKE_PROXY_FOR(method) \
-    [](Client& c, Headers* h, Params* p, const char* route, const char* body, const char* content) -> Result {  \
-        if (p == nullptr) {                                                                                     \
-            if (h == nullptr) c.method(route, *h, body, content);                                               \
-            else              c.method(route, body, content);                                                   \
-        } else {                                                                                                \
-            if (h == nullptr) c.method(route, *p);                                                              \
-            else              c.method(route, *h, *p);                                                          \
-        }                                                                                                       \
+    [](Client& c, const Headers* h, const Params* p, const char* route, const char* body, const char* content) -> Result {  \
+        if (p == nullptr) {                                                                                                 \
+            if (h == nullptr) return c.method(route, *h, body, content);                                                    \
+            else              return c.method(route, body, content);                                                        \
+        } else {                                                                                                            \
+            if (h == nullptr) return c.method(route, *p);                                                                   \
+            else              return c.method(route, *h, *p);                                                               \
+        }                                                                                                                   \
+    }
+#define HTTP_MAKE_PROXY_NO_PARAMS(method) \
+    [](Client& c, const Headers* h, const Params* p, const char* route, const char* body, const char* content) -> Result {  \
+        if (h == nullptr) return c.method(route, *h, body, content);                                                        \
+        else              return c.method(route, body, content);                                                            \
     }
 
 Value http_client_generic(const std::string& func_name, Proxy_t&& proxy, std::vector<Value>& n, Ark::VM* vm)
@@ -192,7 +197,14 @@ Value http_client_generic(const std::string& func_name, Proxy_t&& proxy, std::ve
     }
     else
     {
-        auto res = proxy(client, headers, &n[2].usertype().as<Params>(), route.c_str(), nullptr, nullptr, nullptr);
+        auto res = proxy(
+            client,
+            const_cast<const Headers*>(headers),
+            &n[2].usertype().as<const Params>(),
+            route.c_str(),
+            nullptr,
+            nullptr
+        );
         if (!res)
             return Nil;
 
@@ -217,6 +229,21 @@ Value http_client_post(std::vector<Value>& n, Ark::VM* vm)
         throw Ark::TypeError("http:client:post: parameters must be a String or httpParams");
 
     return http_client_generic("http:client:post", HTTP_MAKE_PROXY_FOR(Post), n, vm);
+}
+
+Value http_client_patch(std::vector<Value>& n, Ark::VM* vm)
+{
+    if (n.size() < 3 || n.size() > 5)
+        throw std::runtime_error("http:client:patch: needs 3 to 5 arguments: client, route, parameters, [content-type], [headers]");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw Ark::TypeError("http:client:patch: client must be an httpClient");
+    if (n[1].valueType() != ValueType::String)
+        throw Ark::TypeError("http:client:patch: route must be a String");
+    if (n[2].valueType() != ValueType::String ||
+            (n[2].valueType() != ValueType::User || !n[2].usertype().is<Params>()))
+        throw Ark::TypeError("http:client:patch: parameters must be a String or httpParams");
+
+    return http_client_generic("http:client:patch", HTTP_MAKE_PROXY_NO_PARAMS(Patch), n, vm);
 }
 
 Value http_client_put(std::vector<Value>& n, Ark::VM* vm)
@@ -245,7 +272,7 @@ Value http_client_delete(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::String)
         throw Ark::TypeError("http:client:delete: body must be a String");
 
-    return http_client_generic("http:client:delete", HTTP_MAKE_PROXY_FOR(Delete), n, vm);
+    return http_client_generic("http:client:delete", HTTP_MAKE_PROXY_NO_PARAMS(Delete), n, vm);
 }
 
 Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm)

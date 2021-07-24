@@ -37,12 +37,12 @@ Value http_create_server(std::vector<Value>& n, Ark::VM* vm)
     return server;
 }
 
-void http_server_generic(void Server::*proxy(const char*, Handler), std::vector<Value>& n, Ark::VM* vm)
+void http_server_generic(Server& (Server::*proxy)(const std::string&, Server::Handler), std::vector<Value>& n, Ark::VM* vm)
 {
     Server& srv = create_server();
     String route = n[0].string();
 
-    srv.*proxy(route.c_str(), [n, vm](const Request& req, Response& res) {
+    (srv.*proxy)(route.c_str(), [n, vm](const Request& req, Response& res) {
         std::string content = (n[1].valueType() == ValueType::String) ? n[1].string().c_str() : "";
         std::string type = (n.size() == 3 && n[2].valueType() == ValueType::String) ? n[2].string().toString() : "text/plain";
 
