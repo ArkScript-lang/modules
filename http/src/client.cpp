@@ -51,39 +51,6 @@ Value http_create_client(std::vector<Value>& n, Ark::VM* vm)
     return client;
 }
 
-Value http_client_get(std::vector<Value>& n, Ark::VM* vm)
-{
-    if (n.size() < 2 || n.size() > 3)
-        throw std::runtime_error("http:client:get: needs 2 to 3 arguments: client, route, [headers]");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw Ark::TypeError("http:client:get: client must be an httpClient");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:client:get: route must be a String");
-
-    Headers* headers = nullptr;
-
-    if (n.size() == 3)
-    {
-        if (n[2].valueType() != ValueType::User || !n[2].usertype().is<Headers>())
-            throw Ark::TypeError("http:client:get: headers must be httpHeaders");
-        else
-            headers = &n[2].usertypeRef().as<Headers>();
-    }
-
-    Client& c = n[0].usertypeRef().as<Client>();
-    std::string route = n[1].stringRef().toString();
-    auto res = (headers == nullptr) ? c.Get(route.c_str()) : c.Get(route.c_str(), *headers);
-
-    if (!res)
-        return Nil;
-
-    Value data = Value(ValueType::List);
-    data.push_back(Value(res->status));
-    data.push_back(Value(res->body));
-
-    return data;
-}
-
 Value http_create_params(std::vector<Value>& n, Ark::VM* vm)
 {
     if ((n.size() % 2) == 1)
@@ -131,6 +98,112 @@ Value http_params_tolist(std::vector<Value>& n, Ark::VM * vm)
     return lst;
 }
 
+Value http_client_get(std::vector<Value>& n, Ark::VM* vm)
+{
+    if (n.size() < 2 || n.size() > 3)
+        throw std::runtime_error("http:client:get: needs 2 to 3 arguments: client, route, [headers]");
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw Ark::TypeError("http:client:get: client must be an httpClient");
+    if (n[1].valueType() != ValueType::String)
+        throw Ark::TypeError("http:client:get: route must be a String");
+
+    Headers* headers = nullptr;
+
+    if (n.size() == 3)
+    {
+        if (n[2].valueType() != ValueType::User || !n[2].usertype().is<Headers>())
+            throw Ark::TypeError("http:client:get: headers must be httpHeaders");
+        else
+            headers = &n[2].usertypeRef().as<Headers>();
+    }
+
+    Client& c = n[0].usertypeRef().as<Client>();
+    std::string route = n[1].stringRef().toString();
+    auto res = (headers == nullptr) ? c.Get(route.c_str()) : c.Get(route.c_str(), *headers);
+
+    if (!res)
+        return Nil;
+
+    Value data = Value(ValueType::List);
+    data.push_back(Value(res->status));
+    data.push_back(Value(res->body));
+
+    return data;
+}
+
+using Proxy_t = std::function<Result(Client&, Headers*, Params*, const char* /* route */, const char* /* body */, const char* /* content type */)>;
+#define HTTP_MAKE_PROXY_FOR(method) \
+    [](Client& c, Headers* h, Params* p, const char* route, const char* body, const char* content) -> Result {  \
+        if (p == nullptr) {                                                                                     \
+            if (h == nullptr) c.method(route, *h, body, content);                                               \
+            else              c.method(route, body, content);                                                   \
+        } else {                                                                                                \
+            if (h == nullptr) c.method(route, *p);                                                              \
+            else              c.method(route, *h, *p);                                                          \
+        }                                                                                                       \
+    }
+
+Value http_client_generic(const std::string& func_name, Proxy_t&& proxy, std::vector<Value>& n, Ark::VM* vm)
+{
+    Client& client = n[0].usertypeRef().as<Client>();
+    std::string route = n[1].stringRef().toString();
+
+    Headers* headers = nullptr;
+
+    // if params is a string, headers come last
+    if (n.size() == 5 && n[2].valueType() == ValueType::String)
+    {
+        if (n[4].valueType() != ValueType::User || !n[4].usertype().is<Headers>())
+            throw Ark::TypeError(func_name + ": headers must be httpHeaders");
+        else
+            headers = &n[4].usertypeRef().as<Headers>();
+    }
+    else if (n[2].valueType() != ValueType::String && n.size() == 4)
+    {
+        if (n[3].valueType() != ValueType::User || !n[3].usertype().is<Headers>())
+            throw Ark::TypeError(func_name + ": headers must be httpHeaders");
+        else
+            headers = &n[3].usertypeRef().as<Headers>();
+    }
+
+    if (n[2].valueType() == ValueType::String && n.size() >= 4 && n[3].valueType() == ValueType::String)
+    {
+        auto res = proxy(client, headers, nullptr, route.c_str(), /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
+        if (!res)
+            return Nil;
+
+        Value data = Value(ValueType::List);
+        data.push_back(Value(res->status));
+        data.push_back(Value(res->body));
+
+        return data;
+    }
+    else if (n[2].valueType() == ValueType::String && n.size() == 3)
+    {
+        auto res = proxy(client, headers, nullptr, route.c_str(), /* body */ n[2].string().c_str(), /* content type */ "text/plain");
+        if (!res)
+            return Nil;
+
+        Value data = Value(ValueType::List);
+        data.push_back(Value(res->status));
+        data.push_back(Value(res->body));
+
+        return data;
+    }
+    else
+    {
+        auto res = proxy(client, headers, &n[2].usertype().as<Params>(), route.c_str(), nullptr, nullptr, nullptr);
+        if (!res)
+            return Nil;
+
+        Value data = Value(ValueType::List);
+        data.push_back(Value(res->status));
+        data.push_back(Value(res->body));
+
+        return data;
+    }
+}
+
 Value http_client_post(std::vector<Value>& n, Ark::VM* vm)
 {
     if (n.size() < 3 || n.size() > 5)
@@ -143,69 +216,7 @@ Value http_client_post(std::vector<Value>& n, Ark::VM* vm)
             (n[2].valueType() != ValueType::User || !n[2].usertype().is<Params>()))
         throw Ark::TypeError("http:client:post: parameters must be a String or httpParams");
 
-    Client& c = n[0].usertypeRef().as<Client>();
-    std::string route = n[1].stringRef().toString();
-
-    Headers* headers = nullptr;
-
-    // if params is a string, headers come last
-    if (n.size() == 5 && n[2].valueType() == ValueType::String)
-    {
-        if (n[4].valueType() != ValueType::User || !n[4].usertype().is<Headers>())
-            throw Ark::TypeError("http:client:post: headers must be httpHeaders");
-        else
-            headers = &n[4].usertypeRef().as<Headers>();
-    }
-    else if (n[2].valueType() != ValueType::String && n.size() == 4)
-    {
-        if (n[3].valueType() != ValueType::User || !n[3].usertype().is<Headers>())
-            throw Ark::TypeError("http:client:post: headers must be httpHeaders");
-        else
-            headers = &n[3].usertypeRef().as<Headers>();
-    }
-
-    if (n[2].valueType() == ValueType::String && n.size() >= 4 && n[3].valueType() == ValueType::String)
-    {
-        auto res = headers != nullptr ? 
-              c.Post(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
-            : c.Post(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
-    else if (n[2].valueType() == ValueType::String && n.size() == 3)
-    {
-        auto res = headers != nullptr ? 
-              c.Post(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
-            : c.Post(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ "text/plain");
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
-    else
-    {
-        auto res = headers != nullptr ?
-              c.Post(route.c_str(), *headers, n[2].usertype().as<Params>())
-            : c.Post(route.c_str(),           n[2].usertype().as<Params>());
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
+    return http_client_generic("http:client:post", HTTP_MAKE_PROXY_FOR(Post), n, vm);
 }
 
 Value http_client_put(std::vector<Value>& n, Ark::VM* vm)
@@ -220,69 +231,7 @@ Value http_client_put(std::vector<Value>& n, Ark::VM* vm)
             (n[2].valueType() != ValueType::User || !n[2].usertype().is<Params>()))
         throw Ark::TypeError("http:client:put: parameters must be a String or httpParams");
 
-    Client& c = n[0].usertypeRef().as<Client>();
-    std::string route = n[1].stringRef().toString();
-
-    Headers* headers = nullptr;
-
-    // if params is a string, headers come last
-    if (n.size() == 5 && n[2].valueType() == ValueType::String)
-    {
-        if (n[4].valueType() != ValueType::User || !n[4].usertype().is<Headers>())
-            throw Ark::TypeError("http:client:put: headers must be httpHeaders");
-        else
-            headers = &n[4].usertypeRef().as<Headers>();
-    }
-    else if (n[2].valueType() != ValueType::String && n.size() == 4)
-    {
-        if (n[3].valueType() != ValueType::User || !n[3].usertype().is<Headers>())
-            throw Ark::TypeError("http:client:put: headers must be httpHeaders");
-        else
-            headers = &n[3].usertypeRef().as<Headers>();
-    }
-
-    if (n[2].valueType() == ValueType::String && n.size() >= 4 && n[3].valueType() == ValueType::String)
-    {
-        auto res = headers != nullptr ? 
-              c.Put(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
-            : c.Put(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
-    else if (n[2].valueType() == ValueType::String && n.size() == 3)
-    {
-        auto res = headers != nullptr ? 
-              c.Put(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
-            : c.Put(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ "text/plain");
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
-    else
-    {
-        auto res = headers != nullptr ?
-              c.Put(route.c_str(), *headers, n[2].usertype().as<Params>())
-            : c.Put(route.c_str(),           n[2].usertype().as<Params>());
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
+    return http_client_generic("http:client:put", HTTP_MAKE_PROXY_FOR(Put), n, vm);
 }
 
 Value http_client_delete(std::vector<Value>& n, Ark::VM* vm)
@@ -296,48 +245,7 @@ Value http_client_delete(std::vector<Value>& n, Ark::VM* vm)
     if (n[2].valueType() != ValueType::String)
         throw Ark::TypeError("http:client:delete: body must be a String");
 
-    Client& c = n[0].usertypeRef().as<Client>();
-    std::string route = n[1].stringRef().toString();
-
-    Headers* headers = nullptr;
-
-    // if params is a string, headers come last
-    if (n.size() == 5)
-    {
-        if (n[4].valueType() != ValueType::User || !n[4].usertype().is<Headers>())
-            throw Ark::TypeError("http:client:delete: headers must be httpHeaders");
-        else
-            headers = &n[4].usertypeRef().as<Headers>();
-    }
-
-    if (n.size() >= 4 && n[3].valueType() == ValueType::String)
-    {
-        auto res = headers != nullptr ? 
-              c.Delete(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
-            : c.Delete(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
-    else
-    {
-        auto res = headers != nullptr ? 
-              c.Delete(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
-            : c.Delete(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ "text/plain");
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
+    return http_client_generic("http:client:delete", HTTP_MAKE_PROXY_FOR(Delete), n, vm);
 }
 
 Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm)
