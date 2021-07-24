@@ -44,23 +44,6 @@ bool& get_error_handler()
 Server& create_server()
 {
     static Server srv;
-
-    // TODO make the logger great again
-    if (get_logger_level() > 0)
-        srv.set_logger([](const auto& req, const auto& res) {
-            std::cout << "got request\n";
-            std::cout << "method " << req.method << ", path " << req.path << ", body " << req.body << "\n";
-            std::cout << "status " << res.status << "\n";
-            std::cout << "==================\n\n";
-        });
-
-    if (get_error_handler())
-        srv.set_error_handler([](const auto& req, const auto& res) {
-            std::cout << "ERROR???\n";
-            std::cout << "status " << res.status << "\n";
-            std::cout << "==================\n\n";
-        });
-
     return srv;
 }
 
