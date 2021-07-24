@@ -30,9 +30,9 @@ Example:
 
 ```clojure
 (let srv (http:server:create))
-(http:server:get srv "/hi" "this is my fabulous content" "text/plain")
+(http:server:get "/hi" "this is my fabulous content" "text/plain")
 
-(http:server:get srv "/numbers/(\\d+)" (fun (matches params) {
+(http:server:get "/numbers/(\\d+)" (fun (matches params) {
     (print (len matches))  # 1
     (let number (toNumber (@ matches 0)))
     (print number)  # the matched number
@@ -72,7 +72,7 @@ Returns `nil`.
 Example:
 
 ```clojure
-(http:server:stop srv)
+(http:server:stop)
 ```
 
 ### http:server:listen
@@ -88,10 +88,10 @@ Example:
 ```clojure
 (let srv (http:server:create))
 
-(http:server:get srv "/hi" "this is my fabulous content")
+(http:server:get "/hi" "this is my fabulous content")
 # more routes...
 
-(http:server:listen srv "localhost" 1234)
+(http:server:listen "localhost" 1234)
 ```
 
 ### http:server:setMountPoint
@@ -108,11 +108,11 @@ Example:
 (let srv (http:server:create))
 
 # mount / to ./www
-(http:server:setMountPoint srv "/" "./www")
+(http:server:setMountPoint "/" "./www")
 
 # mount /public to ./www1 and ./www2 directories
-(http:server:setMountPoint srv "/public" "/www1")  # 1st order to search
-(http:server:setMountPoint srv "/public" "/www2")  # 2nd order to search
+(http:server:setMountPoint "/public" "/www1")  # 1st order to search
+(http:server:setMountPoint "/public" "/www2")  # 2nd order to search
 ```
 
 ### http:server:rmMountPoint
@@ -125,14 +125,14 @@ Example:
 (let srv (http:server:create))
 
 # mount / to ./www
-(http:server:setMountPoint srv "/" "./www")
+(http:server:setMountPoint "/" "./www")
 
 # mount /public to ./www1 and ./www2 directories
-(http:server:setMountPoint srv "/public" "/www1")  # 1st order to search
-(http:server:setMountPoint srv "/public" "/www2")  # 2nd order to search
+(http:server:setMountPoint "/public" "/www1")  # 1st order to search
+(http:server:setMountPoint "/public" "/www2")  # 2nd order to search
 
 # remove mount /
-(http:server:rmMountPoint srv "/")
+(http:server:rmMountPoint "/")
 ```
 
 ### http:server:setFileExtAndMimetypeMapping
@@ -145,25 +145,25 @@ Built-in mappings:
 
 Extension | MIME Type
 --------- | ---------
-txt | text/plain
+txt       | text/plain
 html, htm | text/html
-css | text/css
+css       | text/css
 jpeg, jpg | image/jpg
-png | image/png
-gif | image/gif
-svg | image/svg+xml
-ico | image/x-icon
-json | application/json
-pdf | application/pdf
-js | application/javascript
-wasm | application/wasm
-xml | application/xml
-xhtml | application/xhtml+xml
+png       | image/png
+gif       | image/gif
+svg       | image/svg+xml
+ico       | image/x-icon
+json      | application/json
+pdf       | application/pdf
+js        | application/javascript
+wasm      | application/wasm
+xml       | application/xml
+xhtml     | application/xhtml+xml
 
 Example:
 
 ```clojure
-(http:server:setFileExtAndMimetypeMapping srv "cc" "text/x-c")
+(http:server:setFileExtAndMimetypeMapping "cc" "text/x-c")
 ```
 
 ### http:server:enableLogger
