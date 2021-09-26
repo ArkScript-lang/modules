@@ -1,7 +1,7 @@
 #include <string>
 #include <random>
 #include <chrono>
-#include <termcolor.hpp>
+#include <termcolor/termcolor.hpp>
 
 #include <Ark/Module.hpp>
 
@@ -91,7 +91,7 @@ namespace ArkConsole
     }
 }
 
-ARK_API_EXPORT mapping* getFunctionsMapping()
+ARK_API mapping* getFunctionsMapping()
 {
     mapping* map = mapping_create(2);
     mapping_add(map[0], "console:clear", ArkConsole::clear);

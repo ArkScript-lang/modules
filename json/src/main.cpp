@@ -341,7 +341,7 @@ namespace json{
     }
 }
 
-ARK_API_EXPORT mapping* getFunctionsMapping()
+ARK_API mapping* getFunctionsMapping()
 {
     mapping* map = mapping_create(8);
 

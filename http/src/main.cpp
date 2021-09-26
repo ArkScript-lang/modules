@@ -1,7 +1,7 @@
 #include <http_module.hpp>
 
 // module functions mapping
-ARK_API_EXPORT mapping* getFunctionsMapping()
+ARK_API mapping* getFunctionsMapping()
 {
     mapping* map = mapping_create(29);
 

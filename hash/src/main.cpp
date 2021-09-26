@@ -30,7 +30,7 @@ namespace ArkHash
     }
 }
 
-ARK_API_EXPORT mapping* getFunctionsMapping()
+ARK_API mapping* getFunctionsMapping()
 {
     mapping* map = mapping_create(2);
     mapping_add(map[0], "hash:sha256", ArkHash::sha2);
