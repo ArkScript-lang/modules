@@ -1,4 +1,4 @@
-#include <picosha2.hpp>
+#include <picosha2.h>
 #include <md5.hpp>
 
 #include <Ark/Module.hpp>
