@@ -2,7 +2,7 @@
 #define ark_module
 
 #include <Ark/VM/VM.hpp>
-#include <Ark/Config.hpp>
+#include <Ark/Platform.hpp>
 
 using namespace Ark;
 
