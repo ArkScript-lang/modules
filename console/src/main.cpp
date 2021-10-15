@@ -7,7 +7,7 @@
 
 namespace ArkConsole
 {
-    Value clear(std::vector<Value>& n, Ark::VM* vm)
+    Value clear(std::vector<Value>& n [[maybe_unused]], Ark::VM* vm [[maybe_unused]])
     {
     #if defined(OS_WINDOWS)
         COORD topLeft  = { 0, 0 };
@@ -30,7 +30,7 @@ namespace ArkConsole
         return Nil;
     }
 
-    Value color(std::vector<Value>& n, Ark::VM* vm)
+    Value color(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
         if (n.size() != 1)
             throw std::runtime_error("console:color need a single argument, a string representing the color to apply");

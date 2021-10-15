@@ -1,7 +1,7 @@
 #include <unpack.hpp>
 #include <adaptor.hpp>
 
-Value msgpack_unpack(std::vector<Value>& args, VM* vm)
+Value msgpack_unpack(std::vector<Value>& args, VM* vm [[maybe_unused]])
 {
     if(args.size() != 2)
         throw std::runtime_error("msgpack:unpack require two arguments, first a msgpack:sbuffer and last  msgpack:object_handle");
@@ -18,7 +18,7 @@ Value msgpack_unpack(std::vector<Value>& args, VM* vm)
     return Value(Ark::Nil);
 }
 
-Value msgpack_convert(std::vector<Value>& args, VM* vm)
+Value msgpack_convert(std::vector<Value>& args, VM* vm [[maybe_unused]])
 {
     if(args.size() != 1)
         throw std::runtime_error("msgpack:convert requires one argument, a msgpack:object to convert to a usable ark object");

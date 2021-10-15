@@ -3,7 +3,7 @@
 
 namespace ArkBitwise
 {
-    Value rshift(std::vector<Value>& n, Ark::VM* vm)
+    Value rshift(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
         if (n.size() != 2)
             throw std::runtime_error("bitwise:rshift: needs  2 arguments, number and shift");
@@ -17,7 +17,7 @@ namespace ArkBitwise
         return Value(static_cast<double>(shifted));
     }
 
-    Value lshift(std::vector<Value>& n, Ark::VM* vm)
+    Value lshift(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
         if (n.size() != 2)
             throw std::runtime_error("bitwise:lshift: needs  2 arguments, number and shift");
@@ -31,7 +31,7 @@ namespace ArkBitwise
         return Value(static_cast<double>(shifted));
     }
     
-    Value xor_(std::vector<Value>& n, Ark::VM* vm)
+    Value xor_(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
         if (n.size() != 2)
             throw std::runtime_error("bitwise:xor: needs  2 numbers as arguments, number and mask");
@@ -45,7 +45,7 @@ namespace ArkBitwise
         return Value(static_cast<double>(masked));
     }
 
-    Value or_(std::vector<Value>& n, Ark::VM* vm)
+    Value or_(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
         if (n.size() != 2)
             throw std::runtime_error("bitwise:or : needs  2 numbers as arguments, number and mask");
@@ -59,7 +59,7 @@ namespace ArkBitwise
         return Value(static_cast<double>(masked));
     }
 
-    Value and_(std::vector<Value>& n, Ark::VM* vm)
+    Value and_(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
         if (n.size() != 2)
             throw std::runtime_error("bitwise:and : needs  2 numbers as arguments, number and mask");
