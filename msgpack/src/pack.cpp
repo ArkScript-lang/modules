@@ -2,7 +2,7 @@
 #include <adaptor.hpp>
 
 
-Value msgpack_pack(std::vector<Value>& args, VM* vm)
+Value msgpack_pack(std::vector<Value>& args, VM* vm [[maybe_unused]])
 {
     if(args.size() != 2)
         throw std::runtime_error("msgpack:pack require two arguments, first the msgpack:sbuffer and last an ark object");

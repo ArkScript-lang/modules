@@ -29,7 +29,7 @@ namespace json{
         return &cfs;
     }
 
-    Value open(std::vector<Value>& args, Ark::VM* vm)
+    Value open(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
     {
         /*
             args[0] -> filename to open
@@ -53,7 +53,7 @@ namespace json{
         return v;
     }
 
-    Value fromString(std::vector<Value>& args, Ark::VM* vm)
+    Value fromString(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
     {
         /*
             args[0] -> json to deserialize
@@ -99,7 +99,7 @@ namespace json{
         }
     }
 
-    Value get(std::vector<Value>& args, Ark::VM* vm)
+    Value get(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
     {
         /*
             args[0] -> json_object
@@ -131,7 +131,7 @@ namespace json{
             throw Ark::TypeError("json:get: json must be an jsonObject or a jsonList");
     }
 
-    Value toString(std::vector<Value>& args, Ark::VM* vm)
+    Value toString(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
     {
         /*
             args[0] -> json_object
@@ -186,7 +186,7 @@ namespace json{
         return json_list;
     }
 
-    Value jset(std::vector<Value>& args, Ark::VM* vm)
+    Value jset(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
     {
         /*
             args[0] -> variable to edit (userType)
@@ -248,7 +248,7 @@ namespace json{
         return Nil;
     }
 
-    Value write(std::vector<Value>& args, Ark::VM* vm)
+    Value write(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
     {
         /*
             args[0] -> json_object
@@ -269,7 +269,7 @@ namespace json{
         return Nil;
     }
 
-    Value fromList(std::vector<Value>& args, Ark::VM* vm)
+    Value fromList(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
     {
         /*
             args[0] -> list
@@ -327,7 +327,7 @@ namespace json{
     }
 
 
-    Value len(std::vector<Value>& args, Ark::VM *vm){
+    Value len(std::vector<Value>& args, Ark::VM *vm [[maybe_unused]]){
         /*
             args[0] -> json_object
         */

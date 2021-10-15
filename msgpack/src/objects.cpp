@@ -117,7 +117,7 @@ CObject get_cobject(Value& ark_object, ValueType type)
 /*              Objects constructors                   */
 
 // msgpack:sbuffer
-Value msgpack_sbuffer(std::vector<Value>& args, VM* vm)
+Value msgpack_sbuffer(std::vector<Value>& args, VM* vm [[maybe_unused]])
 {
     if (args.size() != 0)
         throw std::runtime_error("msgpack:sbuffer does not require any arguments");
@@ -129,7 +129,7 @@ Value msgpack_sbuffer(std::vector<Value>& args, VM* vm)
 }
 
 // msgpack:object_handle
-Value msgpack_obj_handle(std::vector<Value>& args, VM* vm)
+Value msgpack_obj_handle(std::vector<Value>& args, VM* vm [[maybe_unused]])
 {
     if (args.size() != 0)
         throw std::runtime_error("msgpack:objectHandle does not require any arguments");
@@ -141,7 +141,7 @@ Value msgpack_obj_handle(std::vector<Value>& args, VM* vm)
 }
 
 // msgpack:object
-Value msgpack_obj(std::vector<Value>& args, VM* vm)
+Value msgpack_obj(std::vector<Value>& args, VM* vm [[maybe_unused]])
 {
     if (args.size() != 1)
         throw std::runtime_error("msgpack:object require one argument, msgpack:object_handle for convert");

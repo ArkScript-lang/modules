@@ -6,7 +6,7 @@
     ***********************************
 */
 
-Value http_create_headers(std::vector<Value>& n, Ark::VM* vm)
+Value http_create_headers(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if ((n.size() % 2) == 1)
         throw std::runtime_error("http:headers:create: needs an even number of arguments: [header -> value]");
@@ -34,7 +34,7 @@ Value http_create_headers(std::vector<Value>& n, Ark::VM* vm)
     return headers;
 }
 
-Value http_create_client(std::vector<Value>& n, Ark::VM* vm)
+Value http_create_client(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 2)
         throw std::runtime_error("http:client:create: needs 2 arguments: host and port");
@@ -51,7 +51,7 @@ Value http_create_client(std::vector<Value>& n, Ark::VM* vm)
     return client;
 }
 
-Value http_client_get(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_get(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() < 2 || n.size() > 3)
         throw std::runtime_error("http:client:get: needs 2 to 3 arguments: client, route, [headers]");
@@ -84,7 +84,7 @@ Value http_client_get(std::vector<Value>& n, Ark::VM* vm)
     return data;
 }
 
-Value http_create_params(std::vector<Value>& n, Ark::VM* vm)
+Value http_create_params(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if ((n.size() % 2) == 1)
         throw std::runtime_error("http:params:create: needs an even number of arguments: [key -> value]");
@@ -112,7 +112,7 @@ Value http_create_params(std::vector<Value>& n, Ark::VM* vm)
     return params;
 }
 
-Value http_params_tolist(std::vector<Value>& n, Ark::VM * vm)
+Value http_params_tolist(std::vector<Value>& n, Ark::VM * vm [[maybe_unused]])
 {
     if (n.size() != 1)
         throw std::runtime_error("http:params:toList: needs 1 argument: params");
@@ -131,7 +131,7 @@ Value http_params_tolist(std::vector<Value>& n, Ark::VM * vm)
     return lst;
 }
 
-Value http_client_post(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_post(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() < 3 || n.size() > 5)
         throw std::runtime_error("http:client:post: needs 3 to 5 arguments: client, route, parameters, [content-type], [headers]");
@@ -208,7 +208,7 @@ Value http_client_post(std::vector<Value>& n, Ark::VM* vm)
     }
 }
 
-Value http_client_put(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_put(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() < 3 || n.size() > 5)
         throw std::runtime_error("http:client:put: needs 3 to 5 arguments: client, route, parameters, [content-type], [headers]");
@@ -285,7 +285,7 @@ Value http_client_put(std::vector<Value>& n, Ark::VM* vm)
     }
 }
 
-Value http_client_delete(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_delete(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() < 3 || n.size() > 5)
         throw std::runtime_error("http:client:delete: needs 3 to 5 arguments: client, route, body, [content-type], [headers]");
@@ -340,7 +340,7 @@ Value http_client_delete(std::vector<Value>& n, Ark::VM* vm)
     }
 }
 
-Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 2)
         throw std::runtime_error("http:client:setFollowLocation: needs 2 arguments: client, value");
@@ -354,7 +354,7 @@ Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_client_set_co_timeout(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_set_co_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 3)
         throw std::runtime_error("http:client:setConnectionTimeout: needs 3 arguments: client, seconds, microseconds");
@@ -373,7 +373,7 @@ Value http_client_set_co_timeout(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_client_set_read_timeout(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_set_read_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 3)
         throw std::runtime_error("http:client:setReadTimeout: needs 3 arguments: client, seconds, microseconds");
@@ -392,7 +392,7 @@ Value http_client_set_read_timeout(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_client_set_write_timeout(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_set_write_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 3)
         throw std::runtime_error("http:client:setWriteTimeout: needs 3 arguments: client, seconds, microseconds");
@@ -411,7 +411,7 @@ Value http_client_set_write_timeout(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_client_set_basic_auth(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_set_basic_auth(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 3)
         throw std::runtime_error("http:client:setBasicAuth: needs 3 arguments: client, username, password");
@@ -430,7 +430,7 @@ Value http_client_set_basic_auth(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_client_set_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_set_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 2)
         throw std::runtime_error("http:client:setBearerTokenAuth: needs 2 arguments: client, token");
@@ -444,7 +444,7 @@ Value http_client_set_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_client_set_keep_alive(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_set_keep_alive(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 2)
         throw std::runtime_error("http:client:setKeepAlive: needs 2 arguments: client, toggle");
@@ -458,7 +458,7 @@ Value http_client_set_keep_alive(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_client_set_proxy(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_set_proxy(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 3)
         throw std::runtime_error("http:client:setProxy: needs 3 arguments: client, host, port");
@@ -474,7 +474,7 @@ Value http_client_set_proxy(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_client_set_proxy_basic_auth(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_set_proxy_basic_auth(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 3)
         throw std::runtime_error("http:client:setProxyBasicAuth: needs 3 arguments: client, username, password");
@@ -493,7 +493,7 @@ Value http_client_set_proxy_basic_auth(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_client_set_proxy_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm)
+Value http_client_set_proxy_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 2)
         throw std::runtime_error("http:client:setProxyBearerTokenAuth: needs 2 arguments: client, token");

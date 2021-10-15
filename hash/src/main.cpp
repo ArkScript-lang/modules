@@ -5,7 +5,7 @@
 
 namespace ArkHash
 {
-    Value sha2(std::vector<Value>& n, Ark::VM* vm)
+    Value sha2(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
         if (n.size() != 1)
             throw std::runtime_error("hash:sha256 need a single argument: data");
@@ -19,7 +19,7 @@ namespace ArkHash
         return Value(output);
     }
 
-    Value md5(std::vector<Value>& n, Ark::VM* vm)
+    Value md5(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
         if (n.size() != 1)
             throw std::runtime_error("hash:md5 need a single argument: data");
