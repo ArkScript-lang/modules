@@ -13,7 +13,7 @@
     ***********************************
 */
 
-Value http_create_server(std::vector<Value>& n, Ark::VM* vm)
+Value http_create_server(std::vector<Value>& n [[maybe_unused]], Ark::VM* vm [[maybe_unused]])
 {
     Value server = Ark::Value(Ark::UserType(&create_server()));
     server.usertypeRef().setControlFuncs(get_cfs_server());
@@ -387,7 +387,7 @@ Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_server_stop(std::vector<Value>& n, Ark::VM* vm)
+Value http_server_stop(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 1)
         throw std::runtime_error("http:server:stop: needs a single argument: server");
@@ -399,7 +399,7 @@ Value http_server_stop(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_server_listen(std::vector<Value>& n, Ark::VM* vm)
+Value http_server_listen(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() < 2 || n.size() > 3)
         throw std::runtime_error("http:server:listen: needs 2 to 3 arguments: server, host, [port]");
@@ -423,7 +423,7 @@ Value http_server_listen(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm)
+Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 3)
         throw std::runtime_error("http:server:setMountPoint: needs 3 arguments: server, folder, destination");
@@ -440,7 +440,7 @@ Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm)
     return True;
 }
 
-Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm)
+Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 2)
         throw std::runtime_error("http:server:rmMountPoint: needs 2 arguments: server, folder");
@@ -455,7 +455,7 @@ Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm)
     return True;
 }
 
-Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm)
+Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 3)
         throw std::runtime_error("http:server:setFileExtAndMimetypeMapping: needs 3 arguments: server, ext, mimetype");
@@ -472,7 +472,7 @@ Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm)
     return Nil;
 }
 
-Value http_server_enable_logger(std::vector<Value>& n, Ark::VM* vm)
+Value http_server_enable_logger(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() > 1)
         throw std::runtime_error("http:server:enableLogger: needs 0 or 1 argument: [level=1]");

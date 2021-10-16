@@ -109,6 +109,19 @@ CObject get_cobject(Value& ark_object, ValueType type)
         case ValueType::List:
             object = ark_object.list();
             break;
+        // The following types deliberately have no action.
+        case ValueType::PageAddr:
+        case ValueType::CProc:
+        case ValueType::Closure:
+        case ValueType::User:
+        case ValueType::Nil:
+        case ValueType::Undefined:
+        case ValueType::Reference:
+        case ValueType::InstPtr:
+            break;
+        // Note: All values must be listed to prevent issues when a new
+        //       member of ValueType is added so that compiler can detect
+        //       the missing type and warn maintainer.
     }
 
     return object;
@@ -117,7 +130,7 @@ CObject get_cobject(Value& ark_object, ValueType type)
 /*              Objects constructors                   */
 
 // msgpack:sbuffer
-Value msgpack_sbuffer(std::vector<Value>& args, VM* vm)
+Value msgpack_sbuffer(std::vector<Value>& args, VM* vm [[maybe_unused]])
 {
     if (args.size() != 0)
         throw std::runtime_error("msgpack:sbuffer does not require any arguments");
@@ -129,7 +142,7 @@ Value msgpack_sbuffer(std::vector<Value>& args, VM* vm)
 }
 
 // msgpack:object_handle
-Value msgpack_obj_handle(std::vector<Value>& args, VM* vm)
+Value msgpack_obj_handle(std::vector<Value>& args, VM* vm [[maybe_unused]])
 {
     if (args.size() != 0)
         throw std::runtime_error("msgpack:objectHandle does not require any arguments");
@@ -141,7 +154,7 @@ Value msgpack_obj_handle(std::vector<Value>& args, VM* vm)
 }
 
 // msgpack:object
-Value msgpack_obj(std::vector<Value>& args, VM* vm)
+Value msgpack_obj(std::vector<Value>& args, VM* vm [[maybe_unused]])
 {
     if (args.size() != 1)
         throw std::runtime_error("msgpack:object require one argument, msgpack:object_handle for convert");

@@ -55,7 +55,9 @@ Server& create_server()
         });
 
     if (get_error_handler())
-        srv.set_error_handler([](const auto& req, const auto& res) {
+        // Note: MS compiler does not accept [[maybe_unused]] here.
+        //       Commenting out unused parameter.
+        srv.set_error_handler([](const auto& /*req*/, const auto& res) {
             std::cout << "ERROR???\n";
             std::cout << "status " << res.status << "\n";
             std::cout << "==================\n\n";
@@ -140,7 +142,9 @@ UserType::ControlFuncs* get_cfs_server()
         os << "httpServer<0x" << a.data() << ">";
         return os;
     };
-    cfs.deleter = [](void* data) {
+    // Note: MS compiler does not accept [[maybe_unused]] here.
+    //       Commenting out unused parameter.
+    cfs.deleter = [](void* /*data*/) {
         // we don't have anything to do since there is only one server
         // it will be automatically freed
     };
