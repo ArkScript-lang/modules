@@ -109,18 +109,7 @@ CObject get_cobject(Value& ark_object, ValueType type)
         case ValueType::List:
             object = ark_object.list();
             break;
-        // With warnings set as errors.
-        // Unless all items are in the switch this is an error.
-        //
-        // This is deliberate so that any future modifications
-        // to ValueType will explicitly be caught and the maintainer
-        // will be forced to specifically think about this switch
-        // and do the correct thing.
-
-        // Case Statements that were added to prevent compiler warning
-        // But should be explicitly moved into the correct section
-        // either  1: Up and do something or 2: Down to the next section
-        // and explicitly do nothing.
+        // The following types deliberately have no action.
         case ValueType::PageAddr:
         case ValueType::CProc:
         case ValueType::Closure:
@@ -130,12 +119,9 @@ CObject get_cobject(Value& ark_object, ValueType type)
         case ValueType::Reference:
         case ValueType::InstPtr:
             break;
-
-        // Case Statements that have been though about and
-        // correctly do nothing.
-
-        // Currently empty.
-        // See Issue 
+        // Note: All values must be listed to prevent issues when a new
+        //       member of ValueType is added so that compiler can detect
+        //       the missing type and warn maintainer.
     }
 
     return object;
