@@ -15,8 +15,7 @@
 
 Value http_create_server(std::vector<Value>& n [[maybe_unused]], Ark::VM* vm [[maybe_unused]])
 {
-    Value server = Ark::Value(Ark::UserType(&create_server()));
-    server.usertypeRef().setControlFuncs(get_cfs_server());
+    Value server = Ark::Value(Ark::UserType(&create_server(), get_cfs_server()));
     return server;
 }
 
@@ -64,8 +63,7 @@ Value http_server_get(std::vector<Value>& n, Ark::VM* vm)
                     std::list<Params>& p = get_params();
                     p.emplace_back(req.params);
 
-                    Value params = Ark::Value(Ark::UserType(&p.back()));
-                    params.usertypeRef().setControlFuncs(get_cfs_param());
+                    Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
 
                     Value r = vm->resolve(&n[2], matches, params);
                     if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
@@ -83,8 +81,7 @@ Value http_server_get(std::vector<Value>& n, Ark::VM* vm)
                 std::list<Params>& p = get_params();
                 p.emplace_back(req.params);
 
-                Value params = Ark::Value(Ark::UserType(&p.back()));
-                params.usertypeRef().setControlFuncs(get_cfs_param());
+                Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
 
                 Value r = vm->resolve(&n[2], params);
                 if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
@@ -156,8 +153,7 @@ Value http_server_post(std::vector<Value>& n, Ark::VM* vm)
                 std::list<Params>& p = get_params();
                 p.emplace_back(req.params);
 
-                Value params = Ark::Value(Ark::UserType(&p.back()));
-                params.usertypeRef().setControlFuncs(get_cfs_param());
+                Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
 
                 Value r = vm->resolve(&n[2], matches, req.body, params);
                 if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
@@ -175,8 +171,7 @@ Value http_server_post(std::vector<Value>& n, Ark::VM* vm)
             std::list<Params>& p = get_params();
             p.emplace_back(req.params);
 
-            Value params = Ark::Value(Ark::UserType(&p.back()));
-            params.usertypeRef().setControlFuncs(get_cfs_param());
+            Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
 
             Value r = vm->resolve(&n[2], req.body, params);
             if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
@@ -247,8 +242,7 @@ Value http_server_put(std::vector<Value>& n, Ark::VM* vm)
                 std::list<Params>& p = get_params();
                 p.emplace_back(req.params);
 
-                Value params = Ark::Value(Ark::UserType(&p.back()));
-                params.usertypeRef().setControlFuncs(get_cfs_param());
+                Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
 
                 Value r = vm->resolve(&n[2], matches, req.body, params);
                 if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
@@ -266,8 +260,7 @@ Value http_server_put(std::vector<Value>& n, Ark::VM* vm)
             std::list<Params>& p = get_params();
             p.emplace_back(req.params);
 
-            Value params = Ark::Value(Ark::UserType(&p.back()));
-            params.usertypeRef().setControlFuncs(get_cfs_param());
+            Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
 
             Value r = vm->resolve(&n[2], req.body, params);
             if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
@@ -338,8 +331,7 @@ Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
                 std::list<Params>& p = get_params();
                 p.emplace_back(req.params);
 
-                Value params = Ark::Value(Ark::UserType(&p.back()));
-                params.usertypeRef().setControlFuncs(get_cfs_param());
+                Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
 
                 Value r = vm->resolve(&n[2], matches, req.body, params);
                 if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
@@ -357,8 +349,7 @@ Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
             std::list<Params>& p = get_params();
             p.emplace_back(req.params);
 
-            Value params = Ark::Value(Ark::UserType(&p.back()));
-            params.usertypeRef().setControlFuncs(get_cfs_param());
+            Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
 
             Value r = vm->resolve(&n[2], req.body, params);
             if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))

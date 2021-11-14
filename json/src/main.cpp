@@ -47,8 +47,7 @@ namespace json{
 
         // parsing
         nlohmann::json* ptr = get_json_object().emplace_back(std::make_unique<nlohmann::json>(nlohmann::json::parse(content))).get();
-        Value v = Ark::Value(Ark::UserType(ptr));
-        v.usertypeRef().setControlFuncs(get_cfs());
+        Value v = Ark::Value(Ark::UserType(ptr, get_cfs()));
 
         return v;
     }
@@ -68,8 +67,7 @@ namespace json{
         nlohmann::json* ptr = get_json_object().emplace_back(
             std::make_unique<nlohmann::json>(nlohmann::json::parse(args[0].stringRef().c_str()))).get();
 
-        Value v = Ark::Value(Ark::UserType(ptr));
-        v.usertypeRef().setControlFuncs(get_cfs());
+        Value v = Ark::Value(Ark::UserType(ptr, get_cfs()));
         return v;
     }
 
@@ -93,8 +91,7 @@ namespace json{
         else  // is_object() == true
         {
             nlohmann::json* ptr = get_json_object().emplace_back(std::make_unique<nlohmann::json>(obj)).get();
-            Value v = Ark::Value(Ark::UserType(ptr));
-            v.usertypeRef().setControlFuncs(get_cfs());
+            Value v = Ark::Value(Ark::UserType(ptr, get_cfs()));
             return v;
         }
     }
@@ -284,8 +281,7 @@ namespace json{
             throw std::runtime_error("json:fromList: the list must contain an even number of elements: even ones are the keys and odd ones are the values");
 
         nlohmann::json* ptr = get_json_object().emplace_back(std::make_unique<nlohmann::json>()).get();
-        Value v = Ark::Value(Ark::UserType(ptr));
-        v.usertypeRef().setControlFuncs(get_cfs());
+        Value v = Ark::Value(Ark::UserType(ptr, get_cfs()));
 
         for(std::size_t i=0, end=ark_list.size(); i < end; i += 2)
         {

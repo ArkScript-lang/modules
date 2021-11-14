@@ -29,8 +29,7 @@ Value http_create_headers(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
         }
     }
 
-    Value headers = Ark::Value(Ark::UserType(&h.back()));
-    headers.usertypeRef().setControlFuncs(get_cfs_header());
+    Value headers = Ark::Value(Ark::UserType(&h.back(), get_cfs_header()));
     return headers;
 }
 
@@ -46,8 +45,7 @@ Value http_create_client(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     std::list<Client>& c = get_clients();
     c.emplace_back(n[0].stringRef().toString(), static_cast<int>(n[1].number()));
 
-    Value client = Ark::Value(Ark::UserType(&c.back()));
-    client.usertypeRef().setControlFuncs(get_cfs_client());
+    Value client = Ark::Value(Ark::UserType(&c.back(), get_cfs_client()));
     return client;
 }
 
@@ -107,8 +105,7 @@ Value http_create_params(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
         }
     }
 
-    Value params = Ark::Value(Ark::UserType(&p.back()));
-    params.usertypeRef().setControlFuncs(get_cfs_param());
+    Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
     return params;
 }
 

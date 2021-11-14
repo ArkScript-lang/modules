@@ -135,8 +135,7 @@ Value msgpack_sbuffer(std::vector<Value>& args, VM* vm [[maybe_unused]])
     if (args.size() != 0)
         throw std::runtime_error("msgpack:sbuffer does not require any arguments");
 
-    Value sbuffer = Value(UserType(get_sbuffers().emplace_back(std::make_unique<msgpack::sbuffer>()).get()));
-    sbuffer.usertypeRef().setControlFuncs(get_cfs_sbuffers());
+    Value sbuffer = Value(UserType(get_sbuffers().emplace_back(std::make_unique<msgpack::sbuffer>()).get(), get_cfs_sbuffers()));
 
     return sbuffer;
 }
@@ -147,8 +146,7 @@ Value msgpack_obj_handle(std::vector<Value>& args, VM* vm [[maybe_unused]])
     if (args.size() != 0)
         throw std::runtime_error("msgpack:objectHandle does not require any arguments");
 
-    Value object_handle = Value(UserType(get_obj_handlers().emplace_back(std::make_unique<msgpack::object_handle>()).get()));
-    object_handle.usertypeRef().setControlFuncs(get_cfs_obj_handlers());
+    Value object_handle = Value(UserType(get_obj_handlers().emplace_back(std::make_unique<msgpack::object_handle>()).get(), get_cfs_obj_handlers()));
 
     return object_handle;
 }
@@ -164,8 +162,7 @@ Value msgpack_obj(std::vector<Value>& args, VM* vm [[maybe_unused]])
     msgpack::object_handle& oh = args[0].usertypeRef().as<msgpack::object_handle>();
     ;
 
-    Value object = Value(UserType(get_objects().emplace_back(std::make_unique<msgpack::object>(oh.get())).get()));
-    object.usertypeRef().setControlFuncs(get_cfs_objects());
+    Value object = Value(UserType(get_objects().emplace_back(std::make_unique<msgpack::object>(oh.get())).get(), get_cfs_objects()));
 
     return object;
 }
