@@ -12,4 +12,4 @@ namespace md5
     std::string md5(const void* dat, size_t len);
 }
 
-#endif // end of MD5_HPP
+#endif  // end of MD5_HPP

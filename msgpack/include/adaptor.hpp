@@ -12,29 +12,30 @@ namespace msgpack
         namespace adaptor
         {
             // convert ark value
-            template<> struct convert<Value>
+            template <>
+            struct convert<Value>
             {
                 void convert_list(const msgpack::object_array o, Value& list_v) const
                 {
-                    for(std::size_t i = 0; i < o.size; ++ i)
+                    for (std::size_t i = 0; i < o.size; ++i)
                     {
                         Value v;
 
-                        if(o.ptr[i].type == type::NIL)
+                        if (o.ptr[i].type == type::NIL)
                             v = Ark::Nil;
-                        else if(o.ptr[i].type == type::BOOLEAN)
-                            if(o.ptr[i].via.boolean == true)
+                        else if (o.ptr[i].type == type::BOOLEAN)
+                            if (o.ptr[i].via.boolean == true)
                                 v = Ark::True;
                             else
                                 v = Ark::False;
-                        else if(o.ptr[i].type == type::FLOAT)
+                        else if (o.ptr[i].type == type::FLOAT)
                             v = Value(o.ptr[i].via.f64);
-                        else if(o.ptr[i].type == type::STR)
+                        else if (o.ptr[i].type == type::STR)
                         {
                             std::size_t s = o.ptr[i].via.str.size;
                             v = Value(std::string(o.ptr[i].via.str.ptr, s));
                         }
-                        else if(o.ptr[i].type == type::ARRAY)
+                        else if (o.ptr[i].type == type::ARRAY)
                         {
                             v = Value(ValueType::List);
                             convert_list(o.ptr[i].via.array, v);
@@ -46,23 +47,23 @@ namespace msgpack
 
                 msgpack::object const& operator()(msgpack::object const& o, Value& v) const
                 {
-                    if(o.type == type::NIL)
+                    if (o.type == type::NIL)
                         v = Ark::Nil;
-                    else if(o.type == type::BOOLEAN)
-                        if(o.via.boolean == true)
+                    else if (o.type == type::BOOLEAN)
+                        if (o.via.boolean == true)
                             v = Ark::True;
                         else
                             v = Ark::False;
-                    else if(o.type == type::FLOAT)
+                    else if (o.type == type::FLOAT)
                         v = Value(o.via.f64);
-                    else if(o.type == type::STR)
+                    else if (o.type == type::STR)
                     {
                         std::size_t s = o.via.str.size;
                         v = Value(std::string(o.via.str.ptr, s));
                     }
                     else
                     {
-                        Value list_v  = Ark::Value(ValueType::List);
+                        Value list_v = Ark::Value(ValueType::List);
                         convert_list(o.via.array, list_v);
                         v = list_v;
                     }
@@ -72,20 +73,22 @@ namespace msgpack
             };
 
             // pack ark value
-            template<> struct pack<Value>
+            template <>
+            struct pack<Value>
             {
-                template<typename Stream> packer<Stream>& operator()(msgpack::packer<Stream>& o, Value const& v) const
+                template <typename Stream>
+                packer<Stream>& operator()(msgpack::packer<Stream>& o, Value const& v) const
                 {
 
-                    if(v.valueType() == ValueType::Nil)
+                    if (v.valueType() == ValueType::Nil)
                         o.pack_nil();
-                    else if(v.valueType() == ValueType::True)
+                    else if (v.valueType() == ValueType::True)
                         o.pack_true();
-                    else if(v.valueType() == ValueType::False)
+                    else if (v.valueType() == ValueType::False)
                         o.pack_false();
-                    else if(v.valueType() == ValueType::Number)
+                    else if (v.valueType() == ValueType::Number)
                         o.pack_double(static_cast<Value>(v).number());
-                    else if(v.valueType() == ValueType::String)
+                    else if (v.valueType() == ValueType::String)
                     {
                         String str = static_cast<Value>(v).string();
                         o.pack_str(str.size());
@@ -95,7 +98,7 @@ namespace msgpack
                     {
                         std::vector<Value> list = static_cast<Value>(v).list();
                         o.pack_array(list.size());
-                        for(std::size_t i = 0, end = list.size(); i < end; ++ i)
+                        for (std::size_t i = 0, end = list.size(); i < end; ++i)
                             o.pack(list[i]);
                     }
 

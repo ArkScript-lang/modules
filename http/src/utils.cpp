@@ -75,7 +75,7 @@ UserType::ControlFuncs* get_cfs_client()
     };
     cfs.deleter = [](void* data) {
         std::list<Client>& clients = get_clients();
-        for (auto it=clients.begin(), end=clients.end(); it != end; ++it)
+        for (auto it = clients.begin(), end = clients.end(); it != end; ++it)
         {
             if (&(*it) == data)
             {
@@ -99,7 +99,7 @@ UserType::ControlFuncs* get_cfs_header()
     };
     cfs.deleter = [](void* data) {
         std::list<Headers>& headers = get_headers();
-        for (auto it=headers.begin(), end=headers.end(); it != end; ++it)
+        for (auto it = headers.begin(), end = headers.end(); it != end; ++it)
         {
             if (&(*it) == data)
             {
@@ -123,7 +123,7 @@ UserType::ControlFuncs* get_cfs_param()
     };
     cfs.deleter = [](void* data) {
         std::list<Params>& params = get_params();
-        for (auto it=params.begin(), end=params.end(); it != end; ++it)
+        for (auto it = params.begin(), end = params.end(); it != end; ++it)
         {
             if (&(*it) == data)
             {

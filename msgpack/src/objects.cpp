@@ -29,7 +29,7 @@ UserType::ControlFuncs* get_cfs_sbuffers()
 
     cfs.deleter = [](void* data) {
         std::list<std::unique_ptr<msgpack::sbuffer>>& sbuffers = get_sbuffers();
-        for (auto it = sbuffers.begin(), end = sbuffers.end(); it != end; ++ it)
+        for (auto it = sbuffers.begin(), end = sbuffers.end(); it != end; ++it)
         {
             if (&(*it) == data)
             {
@@ -52,7 +52,7 @@ UserType::ControlFuncs* get_cfs_obj_handlers()
 
     cfs.deleter = [](void* data) {
         std::list<std::unique_ptr<msgpack::object_handle>>& object_handlers = get_obj_handlers();
-        for (auto it = object_handlers.begin(), end = object_handlers.end(); it != end; ++ it)
+        for (auto it = object_handlers.begin(), end = object_handlers.end(); it != end; ++it)
         {
             if (&(*it) == data)
             {
@@ -75,7 +75,7 @@ UserType::ControlFuncs* get_cfs_objects()
 
     cfs.deleter = [](void* data) {
         std::list<std::unique_ptr<msgpack::object>>& objects = get_objects();
-        for (auto it = objects.begin(), end = objects.end(); it != end; ++ it)
+        for (auto it = objects.begin(), end = objects.end(); it != end; ++it)
         {
             if (&(*it) == data)
             {
@@ -92,7 +92,7 @@ CObject get_cobject(Value& ark_object, ValueType type)
 {
     CObject object;
 
-    switch(type)
+    switch (type)
     {
         case ValueType::True:
             object = true;
@@ -119,9 +119,9 @@ CObject get_cobject(Value& ark_object, ValueType type)
         case ValueType::Reference:
         case ValueType::InstPtr:
             break;
-        // Note: All values must be listed to prevent issues when a new
-        //       member of ValueType is added so that compiler can detect
-        //       the missing type and warn maintainer.
+            // Note: All values must be listed to prevent issues when a new
+            //       member of ValueType is added so that compiler can detect
+            //       the missing type and warn maintainer.
     }
 
     return object;

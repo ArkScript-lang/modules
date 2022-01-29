@@ -9,24 +9,22 @@ namespace ArkConsole
 {
     Value clear(std::vector<Value>& n [[maybe_unused]], Ark::VM* vm [[maybe_unused]])
     {
-    #if defined(OS_WINDOWS)
-        COORD topLeft  = { 0, 0 };
+#if defined(OS_WINDOWS)
+        COORD topLeft = { 0, 0 };
         HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
         CONSOLE_SCREEN_BUFFER_INFO screen;
         DWORD written;
 
         GetConsoleScreenBufferInfo(console, &screen);
         FillConsoleOutputCharacterA(
-            console, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written
-        );
+            console, ' ', screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
         FillConsoleOutputAttribute(
             console, FOREGROUND_GREEN | FOREGROUND_RED | FOREGROUND_BLUE,
-            screen.dwSize.X * screen.dwSize.Y, topLeft, &written
-        );
+            screen.dwSize.X * screen.dwSize.Y, topLeft, &written);
         SetConsoleCursorPosition(console, topLeft);
-    #elif defined(OS_LINUX)
+#elif defined(OS_LINUX)
         std::cout << "\x1B[2J\x1B[H";
-    #endif
+#endif
         return Nil;
     }
 

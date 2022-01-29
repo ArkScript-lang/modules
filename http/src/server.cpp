@@ -3,8 +3,8 @@
 
 // we need [status-code, content, type]
 #define CHECK_FUNC_RETURN_VAL_FOR_REQ(val) (val.valueType() == ValueType::List && val.list().size() == 3 && \
-                                            val.list()[0].valueType() == ValueType::Number && \
-                                            val.list()[1].valueType() == ValueType::String && \
+                                            val.list()[0].valueType() == ValueType::Number &&               \
+                                            val.list()[1].valueType() == ValueType::String &&               \
                                             val.list()[2].valueType() == ValueType::String)
 
 /*
@@ -44,7 +44,7 @@ Value http_server_get(std::vector<Value>& n, Ark::VM* vm)
             if (req.matches.size() > 1)
             {
                 Value matches(ValueType::List);
-                for (std::size_t i=1, end=req.matches.size(); i < end; ++i)
+                for (std::size_t i = 1, end = req.matches.size(); i < end; ++i)
                     matches.push_back(Value(req.matches[i]));
 
                 if (req.params.size() == 0)
@@ -134,7 +134,7 @@ Value http_server_post(std::vector<Value>& n, Ark::VM* vm)
         if (req.matches.size() > 1)
         {
             Value matches(ValueType::List);
-            for (std::size_t i=1, end=req.matches.size(); i < end; ++i)
+            for (std::size_t i = 1, end = req.matches.size(); i < end; ++i)
                 matches.push_back(Value(req.matches[i]));
 
             if (req.params.size() == 0)
@@ -223,7 +223,7 @@ Value http_server_put(std::vector<Value>& n, Ark::VM* vm)
         if (req.matches.size() > 1)
         {
             Value matches(ValueType::List);
-            for (std::size_t i=1, end=req.matches.size(); i < end; ++i)
+            for (std::size_t i = 1, end = req.matches.size(); i < end; ++i)
                 matches.push_back(Value(req.matches[i]));
 
             if (req.params.size() == 0)
@@ -312,7 +312,7 @@ Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
         if (req.matches.size() > 1)
         {
             Value matches(ValueType::List);
-            for (std::size_t i=1, end=req.matches.size(); i < end; ++i)
+            for (std::size_t i = 1, end = req.matches.size(); i < end; ++i)
                 matches.push_back(Value(req.matches[i]));
 
             if (req.params.size() == 0)
@@ -458,8 +458,7 @@ Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm [[maybe_u
         throw Ark::TypeError("http:server:setFileExtAndMimetypeMapping: mimetype must be a String");
 
     n[0].usertypeRef().as<Server>().set_file_extension_and_mimetype_mapping(
-        n[1].string().c_str(), n[2].string().c_str()
-    );
+        n[1].string().c_str(), n[2].string().c_str());
     return Nil;
 }
 
