@@ -3,7 +3,7 @@
 
 // must be included first, before any #include windows.h
 #define CPPHTTPLIB_OPENSSL_SUPPORT
-#include <httplib.hpp>
+#include <httplib.h>
 
 #include <Ark/Module.hpp>
 
