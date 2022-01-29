@@ -1,11 +1,5 @@
 #include <http_module.hpp>
 
-/*
-    ***********************************
-                   Client
-    ***********************************
-*/
-
 Value http_create_headers(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if ((n.size() % 2) == 1)
@@ -35,18 +29,16 @@ Value http_create_headers(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 
 Value http_create_client(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 2)
-        throw std::runtime_error("http:client:create: needs 2 arguments: host and port");
-    if (n[0].valueType() != ValueType::String)
-        throw Ark::TypeError("http:client:create: host must be a String");
-    if (n[1].valueType() != ValueType::Number)
-        throw Ark::TypeError("http:client:create: port must be a Number");
+    if (!types::check(n, ValueType::String, ValueType::Number))
+        types::generateError(
+            "http:client:create",
+            { { types::Contract { { types::Typedef("host", ValueType::String), types::Typedef("port", ValueType::Number) } } } },
+            n);
 
     std::list<Client>& c = get_clients();
     c.emplace_back(n[0].stringRef().toString(), static_cast<int>(n[1].number()));
 
-    Value client = Ark::Value(Ark::UserType(&c.back(), get_cfs_client()));
-    return client;
+    return Ark::Value(Ark::UserType(&c.back(), get_cfs_client()));
 }
 
 Value http_client_get(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
@@ -111,10 +103,11 @@ Value http_create_params(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 
 Value http_params_tolist(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 1)
-        throw std::runtime_error("http:params:toList: needs 1 argument: params");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Params>())
-        throw Ark::TypeError("http:params:toList: params must be an httpParam");
+    if (!types::check(n, ValueType::User) || !n[0].usertypeRef().is<Params>())
+        types::generateError(
+            "http:params:toList",
+            { { types::Contract { { types::Typedef("params", ValueType::User) } } } },
+            n);
 
     Value lst(ValueType::List);
     for (auto& s : n[0].usertypeRef().as<Params>())
@@ -331,28 +324,26 @@ Value http_client_delete(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 
 Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 2)
-        throw std::runtime_error("http:client:setFollowLocation: needs 2 arguments: client, value");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw Ark::TypeError("http:client:setFollowLocation: client must be an httpClient");
-    if (n[1] != Ark::True && n[1] != Ark::False)
-        throw Ark::TypeError("http:client:setFollowLocation: value must be a Boolean");
+    if ((!types::check(n, ValueType::User, ValueType::True) && !types::check(n, ValueType::User, ValueType::False)) || !n[0].usertypeRef().is<Client>())
+        types::generateError(
+            "http:client:setFollowLocation",
+            { { types::Contract { { types::Typedef("httpClient", ValueType::User), types::Typedef("value", ValueType::True) } },
+                types::Contract { { types::Typedef("httpClient", ValueType::User), types::Typedef("value", ValueType::False) } } } },
+            n);
 
     n[0].usertypeRef().as<Client>().set_follow_location(n[1] == True);
-
     return Nil;
 }
 
 Value http_client_set_co_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 3)
-        throw std::runtime_error("http:client:setConnectionTimeout: needs 3 arguments: client, seconds, microseconds");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw Ark::TypeError("http:client:setConnectionTimeout: client must be an httpClient");
-    if (n[1].valueType() != ValueType::Number)
-        throw Ark::TypeError("http:client:setConnectionTimeout: seconds must be a Number");
-    if (n[2].valueType() != ValueType::Number)
-        throw Ark::TypeError("http:client:setConnectionTimeout: microseconds must be a Number");
+    if (!types::check(n, ValueType::User, ValueType::Number, ValueType::Number) || !n[0].usertype().is<Client>())
+        types::generateError(
+            "http:client:setConnectionTimeout",
+            { { types::Contract { { types::Typedef("httpClient", ValueType::User),
+                                    types::Typedef("seconds", ValueType::Number),
+                                    types::Typedef("microseconds", ValueType::Number) } } } },
+            n);
 
     n[0].usertypeRef().as<Client>().set_connection_timeout(
         static_cast<int>(n[1].number()),
@@ -363,14 +354,13 @@ Value http_client_set_co_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_unus
 
 Value http_client_set_read_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 3)
-        throw std::runtime_error("http:client:setReadTimeout: needs 3 arguments: client, seconds, microseconds");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw Ark::TypeError("http:client:setReadTimeout: client must be an httpClient");
-    if (n[1].valueType() != ValueType::Number)
-        throw Ark::TypeError("http:client:setReadTimeout: seconds must be a Number");
-    if (n[2].valueType() != ValueType::Number)
-        throw Ark::TypeError("http:client:setReadTimeout: microseconds must be a Number");
+    if (!types::check(n, ValueType::User, ValueType::Number, ValueType::Number) || !n[0].usertype().is<Client>())
+        types::generateError(
+            "http:client:setReadTimeout",
+            { { types::Contract { { types::Typedef("httpClient", ValueType::User),
+                                    types::Typedef("seconds", ValueType::Number),
+                                    types::Typedef("microseconds", ValueType::Number) } } } },
+            n);
 
     n[0].usertypeRef().as<Client>().set_read_timeout(
         static_cast<int>(n[1].number()),
@@ -381,14 +371,13 @@ Value http_client_set_read_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_un
 
 Value http_client_set_write_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 3)
-        throw std::runtime_error("http:client:setWriteTimeout: needs 3 arguments: client, seconds, microseconds");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw Ark::TypeError("http:client:setWriteTimeout: client must be an httpClient");
-    if (n[1].valueType() != ValueType::Number)
-        throw Ark::TypeError("http:client:setWriteTimeout: seconds must be a Number");
-    if (n[2].valueType() != ValueType::Number)
-        throw Ark::TypeError("http:client:setWriteTimeout: microseconds must be a Number");
+    if (!types::check(n, ValueType::User, ValueType::Number, ValueType::Number) || !n[0].usertype().is<Client>())
+        types::generateError(
+            "http:client:setWriteTimeout",
+            { { types::Contract { { types::Typedef("httpClient", ValueType::User),
+                                    types::Typedef("seconds", ValueType::Number),
+                                    types::Typedef("microseconds", ValueType::Number) } } } },
+            n);
 
     n[0].usertypeRef().as<Client>().set_write_timeout(
         static_cast<int>(n[1].number()),
@@ -417,58 +406,55 @@ Value http_client_set_basic_auth(std::vector<Value>& n, Ark::VM* vm [[maybe_unus
 
 Value http_client_set_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 2)
-        throw std::runtime_error("http:client:setBearerTokenAuth: needs 2 arguments: client, token");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw Ark::TypeError("http:client:setProxyBasicAuth: client must be an httpClient");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:client:setProxyBasicAuth: token must be a String");
+    if (!types::check(n, ValueType::User, ValueType::String) || !n[0].usertype().is<Client>())
+        types::generateError(
+            "http:client:setBearerTokenAuth",
+            { { types::Contract { { types::Typedef("httpClient", ValueType::User),
+                                    types::Typedef("token", ValueType::String) } } } },
+            n);
 
     n[0].usertypeRef().as<Client>().set_bearer_token_auth(n[1].string().c_str());
-
     return Nil;
 }
 
 Value http_client_set_keep_alive(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 2)
-        throw std::runtime_error("http:client:setKeepAlive: needs 2 arguments: client, toggle");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw Ark::TypeError("http:client:setKeepAlive: client must be an httpClient");
-    if (n[1] != Ark::True && n[1] != Ark::False)
-        throw Ark::TypeError("http:client:setKeepAlive: toggle must be a Boolean");
+    if ((!types::check(n, ValueType::User, ValueType::True) && !types::check(n, ValueType::User, ValueType::False)) || !n[0].usertype().is<Client>())
+        types::generateError(
+            "http:client:setKeepAlive",
+            { { types::Contract { { types::Typedef("httpClient", ValueType::User),
+                                    types::Typedef("toggle", ValueType::True) } },
+                types::Contract { { types::Typedef("httpClient", ValueType::User),
+                                    types::Typedef("toggle", ValueType::False) } } } },
+            n);
 
     n[0].usertypeRef().as<Client>().set_keep_alive(n[1] == Ark::True);
-
     return Nil;
 }
 
 Value http_client_set_proxy(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 3)
-        throw std::runtime_error("http:client:setProxy: needs 3 arguments: client, host, port");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw Ark::TypeError("http:client:setProxy: client must be an httpClient");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:client:setProxy: host must be a String");
-    if (n[2].valueType() != ValueType::Number)
-        throw Ark::TypeError("http:client:setProxy: port must be a Number");
+    if (!types::check(n, ValueType::User, ValueType::String, ValueType::Number) || !n[0].usertype().is<Client>())
+        types::generateError(
+            "http:client:setProxy",
+            { { types::Contract { { types::Typedef("httpClient", ValueType::User),
+                                    types::Typedef("host", ValueType::String),
+                                    types::Typedef("port", ValueType::Number) } } } },
+            n);
 
     n[0].usertypeRef().as<Client>().set_proxy(n[1].string().c_str(), static_cast<int>(n[2].number()));
-
     return Nil;
 }
 
 Value http_client_set_proxy_basic_auth(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 3)
-        throw std::runtime_error("http:client:setProxyBasicAuth: needs 3 arguments: client, username, password");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw Ark::TypeError("http:client:setProxyBasicAuth: client must be an httpClient");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:client:setProxyBasicAuth: username must be a String");
-    if (n[2].valueType() != ValueType::String)
-        throw Ark::TypeError("http:client:setProxyBasicAuth: password must be a String");
+    if (!types::check(n, ValueType::User, ValueType::String, ValueType::String) || !n[0].usertype().is<Client>())
+        types::generateError(
+            "http:client:setProxyBasicAuth",
+            { { types::Contract { { types::Typedef("httpClient", ValueType::User),
+                                    types::Typedef("username", ValueType::String),
+                                    types::Typedef("password", ValueType::String) } } } },
+            n);
 
     n[0].usertypeRef().as<Client>().set_proxy_basic_auth(
         n[1].string().c_str(),
@@ -479,14 +465,13 @@ Value http_client_set_proxy_basic_auth(std::vector<Value>& n, Ark::VM* vm [[mayb
 
 Value http_client_set_proxy_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 2)
-        throw std::runtime_error("http:client:setProxyBearerTokenAuth: needs 2 arguments: client, token");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw Ark::TypeError("http:client:setProxyBearerTokenAuth: client must be an httpClient");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:client:setProxyBearerTokenAuth: token must be a String");
+    if (!types::check(n, ValueType::User, ValueType::String) || !n[0].usertype().is<Client>())
+        types::generateError(
+            "http:client:setProxyBearerTokenAuth",
+            { { types::Contract { { types::Typedef("httpClient", ValueType::User),
+                                    types::Typedef("token", ValueType::String) } } } },
+            n);
 
     n[0].usertypeRef().as<Client>().set_proxy_bearer_token_auth(n[1].string().c_str());
-
     return Nil;
 }

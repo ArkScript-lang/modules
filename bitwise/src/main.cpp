@@ -5,10 +5,11 @@ namespace ArkBitwise
 {
     Value rshift(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
-        if (n.size() != 2)
-            throw std::runtime_error("bitwise:rshift: needs  2 arguments, number and shift");
-        if (n[0].valueType() != ValueType::Number && n[1].valueType() != ValueType::Number)
-            throw Ark::TypeError("bitwise:rshift the 2 arguments must be numbers");
+        if (!types::check(n, ValueType::Number, ValueType::Number))
+            types::generateError(
+                "bitwise:rshift",
+                { { types::Contract { { types::Typedef("number", ValueType::Number), types::Typedef("shift", ValueType::Number) } } } },
+                n);
 
         long num = static_cast<long>(n[0].number());
         long shift = static_cast<long>(n[1].number());
@@ -18,10 +19,11 @@ namespace ArkBitwise
 
     Value lshift(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
-        if (n.size() != 2)
-            throw std::runtime_error("bitwise:lshift: needs  2 arguments, number and shift");
-        if (n[0].valueType() != ValueType::Number && n[1].valueType() != ValueType::Number)
-            throw Ark::TypeError("bitwise:lshift the 2 arguments must be numbers");
+        if (!types::check(n, ValueType::Number, ValueType::Number))
+            types::generateError(
+                "bitwise:lshift",
+                { { types::Contract { { types::Typedef("number", ValueType::Number), types::Typedef("shift", ValueType::Number) } } } },
+                n);
 
         long num = static_cast<long>(n[0].number());
         long shift = static_cast<long>(n[1].number());
@@ -31,10 +33,11 @@ namespace ArkBitwise
 
     Value xor_(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
-        if (n.size() != 2)
-            throw std::runtime_error("bitwise:xor: needs  2 numbers as arguments, number and mask");
-        if (n[0].valueType() != ValueType::Number && n[1].valueType() != ValueType::Number)
-            throw Ark::TypeError("bitwise:xor the 2 arguments must be numbers");
+        if (!types::check(n, ValueType::Number, ValueType::Number))
+            types::generateError(
+                "bitwise:xor",
+                { { types::Contract { { types::Typedef("number", ValueType::Number), types::Typedef("mask", ValueType::Number) } } } },
+                n);
 
         long num = static_cast<long>(n[0].number());
         long mask = static_cast<long>(n[1].number());
@@ -44,10 +47,11 @@ namespace ArkBitwise
 
     Value or_(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
-        if (n.size() != 2)
-            throw std::runtime_error("bitwise:or : needs  2 numbers as arguments, number and mask");
-        if (n[0].valueType() != ValueType::Number && n[1].valueType() != ValueType::Number)
-            throw Ark::TypeError("bitwise:or the 2 arguments must be numbers");
+        if (!types::check(n, ValueType::Number, ValueType::Number))
+            types::generateError(
+                "bitwise:or",
+                { { types::Contract { { types::Typedef("a", ValueType::Number), types::Typedef("b", ValueType::Number) } } } },
+                n);
 
         long num = static_cast<long>(n[0].number());
         long mask = static_cast<long>(n[1].number());
@@ -57,10 +61,11 @@ namespace ArkBitwise
 
     Value and_(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
-        if (n.size() != 2)
-            throw std::runtime_error("bitwise:and : needs  2 numbers as arguments, number and mask");
-        if (n[0].valueType() != ValueType::Number && n[1].valueType() != ValueType::Number)
-            throw Ark::TypeError("bitwise:and the 2 arguments must be numbers");
+        if (!types::check(n, ValueType::Number, ValueType::Number))
+            types::generateError(
+                "bitwise:and",
+                { { types::Contract { { types::Typedef("a", ValueType::Number), types::Typedef("b", ValueType::Number) } } } },
+                n);
 
         long num = static_cast<long>(n[0].number());
         long mask = static_cast<long>(n[1].number());
