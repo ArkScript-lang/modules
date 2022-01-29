@@ -30,10 +30,11 @@ namespace ArkConsole
 
     Value color(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
-        if (n.size() != 1)
-            throw std::runtime_error("console:color need a single argument, a string representing the color to apply");
-        if (n[0].valueType() != ValueType::String)
-            throw std::runtime_error("console:color need a single argument, a string representing the color to apply");
+        if (!types::check(n, ValueType::String))
+            types::generateError(
+                "console:color",
+                { { types::Contract { { types::Typedef("color_name", ValueType::String) } } } },
+                n);
 
         auto value = n[0].string();
         if (value == "reset")

@@ -3,6 +3,7 @@
 
 #include <Ark/VM/VM.hpp>
 #include <Ark/Platform.hpp>
+#include <Ark/TypeChecker.hpp>
 
 using namespace Ark;
 

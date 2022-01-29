@@ -7,10 +7,11 @@ namespace ArkHash
 {
     Value sha2(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
-        if (n.size() != 1)
-            throw std::runtime_error("hash:sha256 need a single argument: data");
-        if (n[0].valueType() != ValueType::String)
-            throw std::runtime_error("hash:sha256: data must be a String");
+        if (!types::check(n, ValueType::String))
+            types::generateError(
+                "hash:sha256",
+                { { types::Contract { { types::Typedef("data", ValueType::String) } } } },
+                n);
 
         std::string src = n[0].stringRef().toString();
         std::string output = "";
@@ -21,10 +22,11 @@ namespace ArkHash
 
     Value md5(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     {
-        if (n.size() != 1)
-            throw std::runtime_error("hash:md5 need a single argument: data");
-        if (n[0].valueType() != ValueType::String)
-            throw std::runtime_error("hash:md5: data must be a String");
+        if (!types::check(n, ValueType::String))
+            types::generateError(
+                "hash:md5",
+                { { types::Contract { { types::Typedef("data", ValueType::String) } } } },
+                n);
 
         return Value(md5::md5(n[0].stringRef().toString()));
     }

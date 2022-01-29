@@ -2,16 +2,11 @@
 #include <iostream>
 
 // we need [status-code, content, type]
-#define CHECK_FUNC_RETURN_VAL_FOR_REQ(val) (val.valueType() == ValueType::List && val.list().size() == 3 && \
-                                            val.list()[0].valueType() == ValueType::Number &&               \
-                                            val.list()[1].valueType() == ValueType::String &&               \
-                                            val.list()[2].valueType() == ValueType::String)
-
-/*
-    ***********************************
-                   Server
-    ***********************************
-*/
+#define CHECK_FUNC_RETURN_VAL_FOR_REQ(val)                           \
+    (val.valueType() == ValueType::List && val.list().size() == 3 && \
+     val.list()[0].valueType() == ValueType::Number &&               \
+     val.list()[1].valueType() == ValueType::String &&               \
+     val.list()[2].valueType() == ValueType::String)
 
 Value http_create_server(std::vector<Value>& n [[maybe_unused]], Ark::VM* vm [[maybe_unused]])
 {
@@ -380,13 +375,13 @@ Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
 
 Value http_server_stop(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 1)
-        throw std::runtime_error("http:server:stop: needs a single argument: server");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Server>())
-        throw Ark::TypeError("http:server:stop: server must be an httpServer");
+    if (!types::check(n, ValueType::User) || !n[0].usertype().is<Server>())
+        types::generateError(
+            "http:server:stop",
+            { { types::Contract { { types::Typedef("httpServer", ValueType::User) } } } },
+            n);
 
     n[0].usertypeRef().as<Server>().stop();
-
     return Nil;
 }
 
@@ -416,14 +411,13 @@ Value http_server_listen(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 
 Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 3)
-        throw std::runtime_error("http:server:setMountPoint: needs 3 arguments: server, folder, destination");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Server>())
-        throw Ark::TypeError("http:server:setMountPoint: server must be an httpServer");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:server:setMountPoint: folder must be a String");
-    if (n[2].valueType() != ValueType::String)
-        throw Ark::TypeError("http:server:setMountPoint: destination must be a String");
+    if (!types::check(n, ValueType::User, ValueType::String, ValueType::String) || !n[0].usertype().is<Server>())
+        types::generateError(
+            "http:server:setMountPoint",
+            { { types::Contract { { types::Typedef("httpServer", ValueType::User),
+                                    types::Typedef("folder", ValueType::String),
+                                    types::Typedef("destination", ValueType::String) } } } },
+            n);
 
     auto ret = n[0].usertypeRef().as<Server>().set_mount_point(n[1].string().c_str(), n[2].string().c_str());
     if (!ret)
@@ -433,12 +427,12 @@ Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_unu
 
 Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 2)
-        throw std::runtime_error("http:server:rmMountPoint: needs 2 arguments: server, folder");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Server>())
-        throw Ark::TypeError("http:server:rmMountPoint: server must be an httpServer");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:server:rmMountPoint: folder must be a String");
+    if (!types::check(n, ValueType::User, ValueType::String) || !n[0].usertype().is<Server>())
+        types::generateError(
+            "http:server:rmMountPoint",
+            { { types::Contract { { types::Typedef("httpServer", ValueType::User),
+                                    types::Typedef("folder", ValueType::String) } } } },
+            n);
 
     auto ret = n[0].usertypeRef().as<Server>().remove_mount_point(n[1].string().c_str());
     if (!ret)
@@ -448,14 +442,13 @@ Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_
 
 Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 3)
-        throw std::runtime_error("http:server:setFileExtAndMimetypeMapping: needs 3 arguments: server, ext, mimetype");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Server>())
-        throw Ark::TypeError("http:server:setFileExtAndMimetypeMapping: server must be an httpServer");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:server:setFileExtAndMimetypeMapping: ext must be a String");
-    if (n[2].valueType() != ValueType::String)
-        throw Ark::TypeError("http:server:setFileExtAndMimetypeMapping: mimetype must be a String");
+    if (!types::check(n, ValueType::User, ValueType::String, ValueType::String) || !n[0].usertype().is<Server>())
+        types::generateError(
+            "http:server:setFileExtAndMimetypeMapping",
+            { { types::Contract { { types::Typedef("httpServer", ValueType::User),
+                                    types::Typedef("ext", ValueType::String),
+                                    types::Typedef("mimetype", ValueType::String) } } } },
+            n);
 
     n[0].usertypeRef().as<Server>().set_file_extension_and_mimetype_mapping(
         n[1].string().c_str(), n[2].string().c_str());
@@ -464,17 +457,13 @@ Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm [[maybe_u
 
 Value http_server_enable_logger(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() > 1)
-        throw std::runtime_error("http:server:enableLogger: needs 0 or 1 argument: [level=1]");
-
-    if (n.size() == 1 && n[0].valueType() != ValueType::String)
-        throw Ark::TypeError("http:server:enableLogger: level must be a Number");
+    if (!types::check(n, ValueType::Number))
+        types::generateError(
+            "http:server:enableLogger",
+            { { types::Contract { { types::Typedef("logLevel", ValueType::Number) } } } },
+            n);
 
     int& level = get_logger_level();
-    if (n.size() == 1)
-        level = static_cast<int>(n[0].number());
-    else
-        level = 1;
-
+    level = static_cast<int>(n[0].number());
     return Nil;
 }
