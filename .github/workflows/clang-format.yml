@@ -18,4 +18,5 @@ jobs:
         uses: HorstBaerbel/action-clang-format@master
         with:
           scandir: ${{ matrix.path }}
+          extensions: 'cpp,hpp'
           style: 'file'
