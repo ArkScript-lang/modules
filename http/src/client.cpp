@@ -109,7 +109,7 @@ Value http_create_params(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     return params;
 }
 
-Value http_params_tolist(std::vector<Value>& n, Ark::VM * vm [[maybe_unused]])
+Value http_params_tolist(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
     if (n.size() != 1)
         throw std::runtime_error("http:params:toList: needs 1 argument: params");
@@ -137,7 +137,7 @@ Value http_client_post(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("http:client:post: route must be a String");
     if (n[2].valueType() != ValueType::String ||
-            (n[2].valueType() != ValueType::User || !n[2].usertype().is<Params>()))
+        (n[2].valueType() != ValueType::User || !n[2].usertype().is<Params>()))
         throw Ark::TypeError("http:client:post: parameters must be a String or httpParams");
 
     Client& c = n[0].usertypeRef().as<Client>();
@@ -163,9 +163,8 @@ Value http_client_post(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 
     if (n[2].valueType() == ValueType::String && n.size() >= 4 && n[3].valueType() == ValueType::String)
     {
-        auto res = headers != nullptr ? 
-              c.Post(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
-            : c.Post(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
+        auto res = headers != nullptr ? c.Post(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
+                                      : c.Post(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
         if (!res)
             return Nil;
 
@@ -177,9 +176,8 @@ Value http_client_post(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     }
     else if (n[2].valueType() == ValueType::String && n.size() == 3)
     {
-        auto res = headers != nullptr ? 
-              c.Post(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
-            : c.Post(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ "text/plain");
+        auto res = headers != nullptr ? c.Post(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
+                                      : c.Post(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ "text/plain");
         if (!res)
             return Nil;
 
@@ -191,9 +189,8 @@ Value http_client_post(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     }
     else
     {
-        auto res = headers != nullptr ?
-              c.Post(route.c_str(), *headers, n[2].usertype().as<Params>())
-            : c.Post(route.c_str(),           n[2].usertype().as<Params>());
+        auto res = headers != nullptr ? c.Post(route.c_str(), *headers, n[2].usertype().as<Params>())
+                                      : c.Post(route.c_str(), n[2].usertype().as<Params>());
         if (!res)
             return Nil;
 
@@ -214,7 +211,7 @@ Value http_client_put(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     if (n[1].valueType() != ValueType::String)
         throw Ark::TypeError("http:client:put: route must be a String");
     if (n[2].valueType() != ValueType::String ||
-            (n[2].valueType() != ValueType::User || !n[2].usertype().is<Params>()))
+        (n[2].valueType() != ValueType::User || !n[2].usertype().is<Params>()))
         throw Ark::TypeError("http:client:put: parameters must be a String or httpParams");
 
     Client& c = n[0].usertypeRef().as<Client>();
@@ -240,9 +237,8 @@ Value http_client_put(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 
     if (n[2].valueType() == ValueType::String && n.size() >= 4 && n[3].valueType() == ValueType::String)
     {
-        auto res = headers != nullptr ? 
-              c.Put(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
-            : c.Put(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
+        auto res = headers != nullptr ? c.Put(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
+                                      : c.Put(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
         if (!res)
             return Nil;
 
@@ -254,9 +250,8 @@ Value http_client_put(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     }
     else if (n[2].valueType() == ValueType::String && n.size() == 3)
     {
-        auto res = headers != nullptr ? 
-              c.Put(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
-            : c.Put(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ "text/plain");
+        auto res = headers != nullptr ? c.Put(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
+                                      : c.Put(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ "text/plain");
         if (!res)
             return Nil;
 
@@ -268,9 +263,8 @@ Value http_client_put(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     }
     else
     {
-        auto res = headers != nullptr ?
-              c.Put(route.c_str(), *headers, n[2].usertype().as<Params>())
-            : c.Put(route.c_str(),           n[2].usertype().as<Params>());
+        auto res = headers != nullptr ? c.Put(route.c_str(), *headers, n[2].usertype().as<Params>())
+                                      : c.Put(route.c_str(), n[2].usertype().as<Params>());
         if (!res)
             return Nil;
 
@@ -309,9 +303,8 @@ Value http_client_delete(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 
     if (n.size() >= 4 && n[3].valueType() == ValueType::String)
     {
-        auto res = headers != nullptr ? 
-              c.Delete(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
-            : c.Delete(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
+        auto res = headers != nullptr ? c.Delete(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
+                                      : c.Delete(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
         if (!res)
             return Nil;
 
@@ -323,9 +316,8 @@ Value http_client_delete(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     }
     else
     {
-        auto res = headers != nullptr ? 
-              c.Delete(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
-            : c.Delete(route.c_str(),           /* body */ n[2].string().c_str(), /* content type */ "text/plain");
+        auto res = headers != nullptr ? c.Delete(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
+                                      : c.Delete(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ "text/plain");
         if (!res)
             return Nil;
 
@@ -364,8 +356,7 @@ Value http_client_set_co_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_unus
 
     n[0].usertypeRef().as<Client>().set_connection_timeout(
         static_cast<int>(n[1].number()),
-        static_cast<int>(n[2].number())
-    );
+        static_cast<int>(n[2].number()));
 
     return Nil;
 }
@@ -383,8 +374,7 @@ Value http_client_set_read_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_un
 
     n[0].usertypeRef().as<Client>().set_read_timeout(
         static_cast<int>(n[1].number()),
-        static_cast<int>(n[2].number())
-    );
+        static_cast<int>(n[2].number()));
 
     return Nil;
 }
@@ -402,8 +392,7 @@ Value http_client_set_write_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_u
 
     n[0].usertypeRef().as<Client>().set_write_timeout(
         static_cast<int>(n[1].number()),
-        static_cast<int>(n[2].number())
-    );
+        static_cast<int>(n[2].number()));
 
     return Nil;
 }
@@ -421,8 +410,7 @@ Value http_client_set_basic_auth(std::vector<Value>& n, Ark::VM* vm [[maybe_unus
 
     n[0].usertypeRef().as<Client>().set_basic_auth(
         n[1].string().c_str(),
-        n[2].string().c_str()
-    );
+        n[2].string().c_str());
 
     return Nil;
 }
@@ -484,8 +472,7 @@ Value http_client_set_proxy_basic_auth(std::vector<Value>& n, Ark::VM* vm [[mayb
 
     n[0].usertypeRef().as<Client>().set_proxy_basic_auth(
         n[1].string().c_str(),
-        n[2].string().c_str()
-    );
+        n[2].string().c_str());
 
     return Nil;
 }
