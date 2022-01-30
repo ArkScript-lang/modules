@@ -11,13 +11,3 @@ A module dedicated to generating random numbers.
 
 **Author**
 - [@SuperFola](https://github.com/SuperFola)
-
-## rand10
-
-**Parameters**
-- None
-
-**Return value** `Number`: random number in range [0, 10[
-
-**Author**
-- [@SuperFola](https://github.com/SuperFola)

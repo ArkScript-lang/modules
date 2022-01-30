@@ -2,7 +2,11 @@
 
 (let in-range? (fun (x start end) (and (>= x start) (<= x end))))
 
-(assert (in-range? (random) 0 32768) "random")
-(assert (in-range? (rand10) 0 10) "rand10")
+(mut i 0)
+
+(while (< i 100) {
+    (assert (in-range? (random) 0 32768) "random")
+    (set i (+ 1 i))
+})
 
 (print "Random tests done")
