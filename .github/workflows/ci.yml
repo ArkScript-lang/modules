@@ -55,7 +55,7 @@ jobs:
     - name: Run module tests
       shell: bash
       run: |
-        for t in lib/modules/*/tests/main.ark; do
+        for t in lib/modules/*/tests/; do
           echo "Running ${t}..."
-          build/arkscript $t --lib lib/
+          (cd $t; build/arkscript "${t}/main.ark" --lib lib/)
         done
