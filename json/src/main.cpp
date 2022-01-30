@@ -130,6 +130,7 @@ namespace json
             { { types::Contract { { types::Typedef("json", ValueType::User), types::Typedef("key", ValueType::Number) } },
                 types::Contract { { types::Typedef("json", ValueType::User), types::Typedef("key", ValueType::String) } } } },
             args);
+        return Nil;
     }
 
     Value toString(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])

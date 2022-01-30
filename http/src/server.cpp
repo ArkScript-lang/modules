@@ -10,416 +10,135 @@
 
 Value http_create_server(std::vector<Value>& n [[maybe_unused]], Ark::VM* vm [[maybe_unused]])
 {
-    Value server = Ark::Value(Ark::UserType(&create_server(), get_cfs_server()));
-    return server;
+    create_server();
+    return Nil;
+}
+
+using HttpMethod_t = Server& (Server::*)(const std::string&, Server::Handler);
+
+Value handle_request_for(std::string_view funcname, HttpMethod_t handler, std::vector<Value>& n, Ark::VM* vm)
+{
+    typecheck(funcname, n);
+    Server& srv = create_server();
+
+    (srv.*handler)(n[0].string().c_str(), [funcname, n, vm](const Request& req, Response& res) {
+        std::string content;
+        std::string type;
+        Value r;
+
+        // checking for req.matches
+        if (req.matches.size() > 1)
+        {
+            Value matches(ValueType::List);
+            for (std::size_t i = 1, end = req.matches.size(); i < end; ++i)
+                matches.push_back(Value(req.matches[i]));
+
+            if (req.params.size() == 0)
+                r = vm->resolve(&n[1], matches, req.body, Nil);
+            else
+            {
+                // craft params
+                std::list<Params>& p = get_params();
+                p.emplace_back(req.params);
+
+                Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
+
+                r = vm->resolve(&n[1], matches, req.body, params);
+            }
+        }
+        // no matches, maybe params
+        else if (req.params.size() != 0)
+        {
+            // craft params
+            std::list<Params>& p = get_params();
+            p.emplace_back(req.params);
+
+            Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
+
+            r = vm->resolve(&n[1], Nil, req.body, params);
+        }
+        // no matches, no params
+        else
+            r = vm->resolve(&n[1], Nil, req.body, Nil);
+
+        if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
+        {
+            res.status = static_cast<int>(r.list()[0].number());
+            content = r.list()[1].stringRef().toString();
+            type = r.list()[2].stringRef().toString();
+        }
+        else
+        {
+            // internal server error because we couldn't match the request
+            res.status = 500;
+            content = "Couldn't parse the return value for the route '" + n[0].string().toString() + "' (" + std::string(funcname) + ")";
+        }
+
+        res.set_content(content, type.c_str());
+        return res.status;
+    });
+
+    return Nil;
 }
 
 Value http_server_get(std::vector<Value>& n, Ark::VM* vm)
 {
-    if (n.size() < 3 || n.size() > 4)
-        throw std::runtime_error("http:server:get needs 3: server, route, content, [mimetype if content is a String]");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Server>())
-        throw Ark::TypeError("http:server:get: server must be an httpServer");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:server:get: route must be a String");
-    if (n[2].valueType() != ValueType::String && !n[2].isFunction())
-        throw Ark::TypeError("http:server:get: content must be a String or a Function");
-
-    Server& srv = n[0].usertypeRef().as<Server>();
-    srv.Get(n[1].string().c_str(), [n, vm](const Request& req, Response& res) {
-        std::string content = (n[2].valueType() == ValueType::String) ? n[2].string().toString() : "";
-        std::string type = (n.size() == 4 && n[3].valueType() == ValueType::String) ? n[3].string().toString() : "text/plain";
-
-        if (n[2].isFunction())
-        {
-            // don't get me wrong here, I didn't follow DRY for optimization purposes
-            // so, don't DRY but WET
-
-            // checking for req.matches
-            if (req.matches.size() > 1)
-            {
-                Value matches(ValueType::List);
-                for (std::size_t i = 1, end = req.matches.size(); i < end; ++i)
-                    matches.push_back(Value(req.matches[i]));
-
-                if (req.params.size() == 0)
-                {
-                    Value r = vm->resolve(&n[2], matches, Nil);
-                    if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-                    {
-                        res.status = static_cast<int>(r.list()[0].number());
-                        content = r.list()[1].stringRef().toString();
-                        type = r.list()[2].stringRef().toString();
-                    }
-                }
-                else
-                {
-                    // craft params
-                    std::list<Params>& p = get_params();
-                    p.emplace_back(req.params);
-
-                    Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
-
-                    Value r = vm->resolve(&n[2], matches, params);
-                    if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-                    {
-                        res.status = static_cast<int>(r.list()[0].number());
-                        content = r.list()[1].stringRef().toString();
-                        type = r.list()[2].stringRef().toString();
-                    }
-                }
-            }
-            // no matches, maybe params
-            else if (req.params.size() != 0)
-            {
-                // craft params
-                std::list<Params>& p = get_params();
-                p.emplace_back(req.params);
-
-                Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
-
-                Value r = vm->resolve(&n[2], params);
-                if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-                {
-                    res.status = static_cast<int>(r.list()[0].number());
-                    content = r.list()[1].stringRef().toString();
-                    type = r.list()[2].stringRef().toString();
-                }
-            }
-            // no matches, no params
-            else
-            {
-                Value r = vm->resolve(&n[2], Nil);
-                if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-                {
-                    res.status = static_cast<int>(r.list()[0].number());
-                    content = r.list()[1].stringRef().toString();
-                    type = r.list()[2].stringRef().toString();
-                }
-            }
-        }
-
-        res.set_content(content, type.c_str());
-        return res.status;
-    });
-
-    return Nil;
+    return handle_request_for("http:server:get", &Server::Get, n, vm);
 }
 
 Value http_server_post(std::vector<Value>& n, Ark::VM* vm)
 {
-    if (n.size() != 3)
-        throw std::runtime_error("http:server:post needs 3 arguments: server, route, content");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Server>())
-        throw Ark::TypeError("http:server:post: server must be an httpServer");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:server:post: route must be a String");
-    if (!n[2].isFunction())
-        throw Ark::TypeError("http:server:post: content must be a Function");
-
-    Server& srv = n[0].usertypeRef().as<Server>();
-    srv.Post(n[1].string().c_str(), [n, vm](const Request& req, Response& res) {
-        std::string content;
-        std::string type;
-
-        // don't get me wrong here, I didn't follow DRY for optimization purposes
-        // so, don't DRY but WET
-
-        // checking for req.matches
-        if (req.matches.size() > 1)
-        {
-            Value matches(ValueType::List);
-            for (std::size_t i = 1, end = req.matches.size(); i < end; ++i)
-                matches.push_back(Value(req.matches[i]));
-
-            if (req.params.size() == 0)
-            {
-                Value r = vm->resolve(&n[2], matches, req.body, Nil);
-                if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-                {
-                    res.status = static_cast<int>(r.list()[0].number());
-                    content = r.list()[1].stringRef().toString();
-                    type = r.list()[2].stringRef().toString();
-                }
-            }
-            else
-            {
-                // craft params
-                std::list<Params>& p = get_params();
-                p.emplace_back(req.params);
-
-                Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
-
-                Value r = vm->resolve(&n[2], matches, req.body, params);
-                if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-                {
-                    res.status = static_cast<int>(r.list()[0].number());
-                    content = r.list()[1].stringRef().toString();
-                    type = r.list()[2].stringRef().toString();
-                }
-            }
-        }
-        // no matches, maybe params
-        else if (req.params.size() != 0)
-        {
-            // craft params
-            std::list<Params>& p = get_params();
-            p.emplace_back(req.params);
-
-            Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
-
-            Value r = vm->resolve(&n[2], req.body, params);
-            if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-            {
-                res.status = static_cast<int>(r.list()[0].number());
-                content = r.list()[1].stringRef().toString();
-                type = r.list()[2].stringRef().toString();
-            }
-        }
-        // no matches, no params
-        else
-        {
-            Value r = vm->resolve(&n[2], req.body, Nil);
-            if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-            {
-                res.status = static_cast<int>(r.list()[0].number());
-                content = r.list()[1].stringRef().toString();
-                type = r.list()[2].stringRef().toString();
-            }
-        }
-
-        res.set_content(content, type.c_str());
-        return res.status;
-    });
-
-    return Nil;
+    return handle_request_for("http:server:post", &Server::Post, n, vm);
 }
 
 Value http_server_put(std::vector<Value>& n, Ark::VM* vm)
 {
-    if (n.size() != 3)
-        throw std::runtime_error("http:server:put needs 3 arguments: server, route, content");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Server>())
-        throw Ark::TypeError("http:server:put: server must be an httpServer");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:server:put: route must be a String");
-    if (!n[2].isFunction())
-        throw Ark::TypeError("http:server:put: content must be a Function");
-
-    Server& srv = n[0].usertypeRef().as<Server>();
-    srv.Put(n[1].string().c_str(), [n, vm](const Request& req, Response& res) {
-        std::string content;
-        std::string type;
-
-        // don't get me wrong here, I didn't follow DRY for optimization purposes
-        // so, don't DRY but WET
-
-        // checking for req.matches
-        if (req.matches.size() > 1)
-        {
-            Value matches(ValueType::List);
-            for (std::size_t i = 1, end = req.matches.size(); i < end; ++i)
-                matches.push_back(Value(req.matches[i]));
-
-            if (req.params.size() == 0)
-            {
-                Value r = vm->resolve(&n[2], matches, req.body, Nil);
-                if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-                {
-                    res.status = static_cast<int>(r.list()[0].number());
-                    content = r.list()[1].stringRef().toString();
-                    type = r.list()[2].stringRef().toString();
-                }
-            }
-            else
-            {
-                // craft params
-                std::list<Params>& p = get_params();
-                p.emplace_back(req.params);
-
-                Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
-
-                Value r = vm->resolve(&n[2], matches, req.body, params);
-                if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-                {
-                    res.status = static_cast<int>(r.list()[0].number());
-                    content = r.list()[1].stringRef().toString();
-                    type = r.list()[2].stringRef().toString();
-                }
-            }
-        }
-        // no matches, maybe params
-        else if (req.params.size() != 0)
-        {
-            // craft params
-            std::list<Params>& p = get_params();
-            p.emplace_back(req.params);
-
-            Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
-
-            Value r = vm->resolve(&n[2], req.body, params);
-            if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-            {
-                res.status = static_cast<int>(r.list()[0].number());
-                content = r.list()[1].stringRef().toString();
-                type = r.list()[2].stringRef().toString();
-            }
-        }
-        // no matches, no params
-        else
-        {
-            Value r = vm->resolve(&n[2], req.body, Nil);
-            if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-            {
-                res.status = static_cast<int>(r.list()[0].number());
-                content = r.list()[1].stringRef().toString();
-                type = r.list()[2].stringRef().toString();
-            }
-        }
-
-        res.set_content(content, type.c_str());
-        return res.status;
-    });
-
-    return Nil;
+    return handle_request_for("http:server:put", &Server::Put, n, vm);
 }
 
 Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
 {
-    if (n.size() != 3)
-        throw std::runtime_error("http:server:delete needs 3 arguments: server, route, content");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Server>())
-        throw Ark::TypeError("http:server:delete: server must be an httpServer");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:server:delete: route must be a String");
-    if (!n[2].isFunction())
-        throw Ark::TypeError("http:server:delete: content must be a Function");
-
-    Server& srv = n[0].usertypeRef().as<Server>();
-    srv.Delete(n[1].string().c_str(), [n, vm](const Request& req, Response& res) {
-        std::string content;
-        std::string type;
-
-        // don't get me wrong here, I didn't follow DRY for optimization purposes
-        // so, don't DRY but WET
-
-        // checking for req.matches
-        if (req.matches.size() > 1)
-        {
-            Value matches(ValueType::List);
-            for (std::size_t i = 1, end = req.matches.size(); i < end; ++i)
-                matches.push_back(Value(req.matches[i]));
-
-            if (req.params.size() == 0)
-            {
-                Value r = vm->resolve(&n[2], matches, req.body, Nil);
-                if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-                {
-                    res.status = static_cast<int>(r.list()[0].number());
-                    content = r.list()[1].stringRef().toString();
-                    type = r.list()[2].stringRef().toString();
-                }
-            }
-            else
-            {
-                // craft params
-                std::list<Params>& p = get_params();
-                p.emplace_back(req.params);
-
-                Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
-
-                Value r = vm->resolve(&n[2], matches, req.body, params);
-                if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-                {
-                    res.status = static_cast<int>(r.list()[0].number());
-                    content = r.list()[1].stringRef().toString();
-                    type = r.list()[2].stringRef().toString();
-                }
-            }
-        }
-        // no matches, maybe params
-        else if (req.params.size() != 0)
-        {
-            // craft params
-            std::list<Params>& p = get_params();
-            p.emplace_back(req.params);
-
-            Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
-
-            Value r = vm->resolve(&n[2], req.body, params);
-            if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-            {
-                res.status = static_cast<int>(r.list()[0].number());
-                content = r.list()[1].stringRef().toString();
-                type = r.list()[2].stringRef().toString();
-            }
-        }
-        // no matches, no params
-        else
-        {
-            Value r = vm->resolve(&n[2], req.body, Nil);
-            if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
-            {
-                res.status = static_cast<int>(r.list()[0].number());
-                content = r.list()[1].stringRef().toString();
-                type = r.list()[2].stringRef().toString();
-            }
-        }
-
-        res.set_content(content, type.c_str());
-        return res.status;
-    });
-
-    return Nil;
+    return handle_request_for("http:server:delete", &Server::Delete, n, vm);
 }
 
 Value http_server_stop(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (!types::check(n, ValueType::User) || !n[0].usertype().is<Server>())
-        types::generateError(
-            "http:server:stop",
-            { { types::Contract { { types::Typedef("httpServer", ValueType::User) } } } },
-            n);
-
-    n[0].usertypeRef().as<Server>().stop();
+    create_server().stop();
     return Nil;
 }
 
 Value http_server_listen(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() < 2 || n.size() > 3)
-        throw std::runtime_error("http:server:listen: needs 2 to 3 arguments: server, host, [port]");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Server>())
-        throw Ark::TypeError("http:server:listen: server must be an httpServer");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:server:listen: host must be a String");
-    if (n.size() == 3 && n[1].string() == "0.0.0.0" && n[2].valueType() != ValueType::Number)
-        throw Ark::TypeError("http:server:listen: port must be a Number, and is a mandatory argument when host is 0.0.0.0");
+    if (!types::check(n, ValueType::String) && !types::check(n, ValueType::String, ValueType::Number))
+        types::generateError(
+            "http:server:listen",
+            { { types::Contract { { types::Typedef("host", ValueType::String) } },
+                types::Contract { { types::Typedef("host", ValueType::String), types::Typedef("port", ValueType::Number) } } } },
+            n);
 
-    Server& srv = n[0].usertypeRef().as<Server>();
+    Server& srv = create_server();
 
-    if (n[1].string() == "0.0.0.0")
+    if (n[0].string() == "0.0.0.0")
     {
         srv.bind_to_any_port("0.0.0.0");
         srv.listen_after_bind();
     }
     else
-        srv.listen(n[1].string().c_str(), static_cast<int>(n[2].number()));
+        srv.listen(n[0].string().c_str(), static_cast<int>(n[1].number()));
 
     return Nil;
 }
 
 Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (!types::check(n, ValueType::User, ValueType::String, ValueType::String) || !n[0].usertype().is<Server>())
+    if (!types::check(n, ValueType::String, ValueType::String))
         types::generateError(
             "http:server:setMountPoint",
-            { { types::Contract { { types::Typedef("httpServer", ValueType::User),
-                                    types::Typedef("folder", ValueType::String),
+            { { types::Contract { { types::Typedef("folder", ValueType::String),
                                     types::Typedef("destination", ValueType::String) } } } },
             n);
 
-    auto ret = n[0].usertypeRef().as<Server>().set_mount_point(n[1].string().c_str(), n[2].string().c_str());
+    auto ret = create_server().set_mount_point(n[0].string().c_str(), n[1].string().c_str());
     if (!ret)
         return False;  // directory doesn't exist
     return True;
@@ -427,14 +146,13 @@ Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_unu
 
 Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (!types::check(n, ValueType::User, ValueType::String) || !n[0].usertype().is<Server>())
+    if (!types::check(n, ValueType::String))
         types::generateError(
             "http:server:rmMountPoint",
-            { { types::Contract { { types::Typedef("httpServer", ValueType::User),
-                                    types::Typedef("folder", ValueType::String) } } } },
+            { { types::Contract { { types::Typedef("folder", ValueType::String) } } } },
             n);
 
-    auto ret = n[0].usertypeRef().as<Server>().remove_mount_point(n[1].string().c_str());
+    auto ret = create_server().remove_mount_point(n[0].string().c_str());
     if (!ret)
         return False;  // directory doesn't exist
     return True;
@@ -442,16 +160,15 @@ Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_
 
 Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (!types::check(n, ValueType::User, ValueType::String, ValueType::String) || !n[0].usertype().is<Server>())
+    if (!types::check(n, ValueType::String, ValueType::String))
         types::generateError(
             "http:server:setFileExtAndMimetypeMapping",
-            { { types::Contract { { types::Typedef("httpServer", ValueType::User),
-                                    types::Typedef("ext", ValueType::String),
+            { { types::Contract { { types::Typedef("ext", ValueType::String),
                                     types::Typedef("mimetype", ValueType::String) } } } },
             n);
 
-    n[0].usertypeRef().as<Server>().set_file_extension_and_mimetype_mapping(
-        n[1].string().c_str(), n[2].string().c_str());
+    create_server().set_file_extension_and_mimetype_mapping(
+        n[0].string().c_str(), n[1].string().c_str());
     return Nil;
 }
 

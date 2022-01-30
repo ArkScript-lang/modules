@@ -1,15 +1,12 @@
 #include <httplib.h>
+
 #include <http_module.hpp>
+
 #include <algorithm>
 #include <list>
+#include <ctime>
 
 using namespace httplib;
-
-/*
-    ***********************************
-                   Misc
-    ***********************************
-*/
 
 std::list<Params>& get_params()
 {
@@ -45,22 +42,34 @@ Server& create_server()
 {
     static Server srv;
 
-    // TODO make the logger great again
-    if (get_logger_level() > 0)
-        srv.set_logger([](const auto& req, const auto& res) {
-            std::cout << "got request\n";
-            std::cout << "method " << req.method << ", path " << req.path << ", body " << req.body << "\n";
-            std::cout << "status " << res.status << "\n";
-            std::cout << "==================\n\n";
-        });
+    srv.set_logger([](const auto& req, const auto& res) {
+        if (auto level = get_logger_level(); level > 0)
+        {
+            switch (level)
+            {
+                case 1:
+                {
+                    std::time_t t = std::time(nullptr);
+                    std::cout << "[" << t << "]" << req.method << "\t" << req.path << "(" << res.status << ")";
+                    break;
+                }
+
+                case 2:
+                    std::cout << " -- " << req.body;
+                    break;
+
+                default:
+                    break;
+            }
+            std::cout << "\n";
+        }
+    });
+
 
     if (get_error_handler())
-        // Note: MS compiler does not accept [[maybe_unused]] here.
-        //       Commenting out unused parameter.
-        srv.set_error_handler([](const auto& /*req*/, const auto& res) {
-            std::cout << "ERROR???\n";
-            std::cout << "status " << res.status << "\n";
-            std::cout << "==================\n\n";
+        srv.set_error_handler([](const auto& /*req*/, auto& res) {
+            std::string fmt = "<p>Error Status: <span style='color:red;'>" + std::to_string(res.status) + "</span></p>";
+            res.set_content(fmt, "text/html");
         });
 
     return srv;
@@ -135,18 +144,13 @@ UserType::ControlFuncs* get_cfs_param()
     return &cfs;
 }
 
-UserType::ControlFuncs* get_cfs_server()
+void typecheck(std::string_view funcname, const std::vector<Value>& n)
 {
-    static UserType::ControlFuncs cfs;
-    cfs.ostream_func = [](std::ostream& os, const UserType& a) -> std::ostream& {
-        os << "httpServer<0x" << a.data() << ">";
-        return os;
-    };
-    // Note: MS compiler does not accept [[maybe_unused]] here.
-    //       Commenting out unused parameter.
-    cfs.deleter = [](void* /*data*/) {
-        // we don't have anything to do since there is only one server
-        // it will be automatically freed
-    };
-    return &cfs;
+    if (n.size() != 2 || n[0].valueType() != ValueType::String || !n[1].isFunction())
+        types::generateError(
+            funcname,
+            { { types::Contract { { types::Typedef("route", ValueType::String), types::Typedef("content", ValueType::PageAddr) } },
+                types::Contract { { types::Typedef("route", ValueType::String), types::Typedef("content", ValueType::Closure) } },
+                types::Contract { { types::Typedef("route", ValueType::String), types::Typedef("content", ValueType::CProc) } } } },
+            n);
 }
