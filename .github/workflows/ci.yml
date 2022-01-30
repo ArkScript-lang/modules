@@ -55,7 +55,9 @@ jobs:
     - name: Run module tests
       shell: bash
       run: |
+        ARKSCRIPT=$(pwd)/build/arkscript
+        ARKLIB=$(pwd)/lib
         for t in lib/modules/*/tests/; do
           echo "Running ${t}..."
-          (cd $t; build/arkscript "${t}/main.ark" --lib lib/)
+          (cd $t; $ARKSCRIPT main.ark --lib $ARKLIB)
         done

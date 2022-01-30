@@ -111,6 +111,7 @@ namespace json
 
                 return jsonToArk(obj);
             }
+            return Nil;
         }
         else if (types::check(args, ValueType::User, ValueType::String))
         {
@@ -121,6 +122,7 @@ namespace json
 
                 return jsonToArk(obj);
             }
+            return Nil;
         }
 
         types::generateError(
