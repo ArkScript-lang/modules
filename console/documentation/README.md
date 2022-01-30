@@ -2,17 +2,24 @@
 
 ## console:clear
 
-This function takes no argument, and will clear the terminal.
+Clear the terminal on Windows and Posix.
 
-Returns `nil`.
+**Parameters**
+- None.
+
+**Return value** `nil`
+
+**Author**
+- [@SuperFola](https://github.com/SuperFola)
 
 ## console:color
 
 This function changes the color of the text written to the terminal.
 
-Must give a String representing the wanted color.
+**Parameter**
+- `color`: a string representing the wanted color.
 
-Returns `nil`.
+**Return value** `nil`
 
 Available colors:
 ```
