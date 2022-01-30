@@ -3,6 +3,8 @@
 #include <fstream>
 #include <memory>
 
+#include <iostream>
+
 namespace json
 {
 
@@ -20,12 +22,21 @@ namespace json
             return os;
         };
         cfs.deleter = [](void* data) {
+            std::cout << "json deleter" << std::endl;
             std::vector<std::unique_ptr<nlohmann::json>>& jsons = get_json_object();
+            std::cout << "- get_json_object" << std::endl;
             auto it = std::find_if(jsons.begin(), jsons.end(), [data](const auto& val) -> bool {
+                std::cout << "- find_if" << std::endl;
                 return val.get() == static_cast<nlohmann::json*>(data);
             });
+            std::cout << "    - done" << std::endl;
             if (it != jsons.end())
+            {
+                std::cout << "- found" << std::endl;
                 jsons.erase(it);
+                std::cout << "    - erased" << std::endl;
+            }
+            std::cout << "- end" << std::endl;
         };
         return &cfs;
     }
