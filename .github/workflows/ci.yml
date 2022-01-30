@@ -52,18 +52,6 @@ jobs:
       shell: bash
       run: cmake --build build --config $BUILD_TYPE
 
-    - shell: bash
-      run: |
-        mkdir -p artifact
-        cp build/arkscript artifact/
-        cp lib/*.arkm artifact/
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: temp
-        path: artifact
-
     - name: Run module tests
       shell: bash
       run: |
