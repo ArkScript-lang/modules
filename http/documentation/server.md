@@ -6,33 +6,39 @@ Important note related to the routes: in case the given content argument doesn't
 
 ### http:server:create
 
-Create a server.
+Create the server (only one per VM may be instanciated).
 
 Example:
 
 ```clojure
-(let srv (http:server:create))
+(http:server:create)
 ```
 
-### http:server:get
+### Route handlers
 
-Create a route to answer GET requests.
+- http:server:get
+- http:server:post
+- http:server:put
+- http:server:delete
 
-The route must be a String, the content can be either a String or a Function. If the content is a String, the mimetype will be set to `text/plain` or to the value of a fourth optional argument which must be a String.
+Create a route to answer the specified request type.
 
-If the route accepts matches (eg `"/numbers/(\\d+)"`), the content must be a Function accepting arguments: matches and params.  
-If the route doesn't accept matches, it takes a single argument: params.  
+The route must be a String, the content must be a Function.
+
 The function must return a list: `[status-code content type]`, with `type` being the mimetype of `content`.
 
-If no params were sent, then params will be `nil`.
+If no params were sent, then params will be `nil`. The same applies to the matches.
+
+In the case of a GET request, the body will always be `nil`.
 
 Example:
 
 ```clojure
-(let srv (http:server:create))
-(http:server:get srv "/hi" "this is my fabulous content" "text/plain")
+(http:server:create)
+(http:server:get "/hi" "this is my fabulous content" "text/plain")
 
-(http:server:get srv "/numbers/(\\d+)" (fun (matches params) {
+# both matches and params can be nil
+(http:server:get "/numbers/(\\d+)" (fun (matches body params) {
     (print (len matches))  # 1
     (let number (toNumber (@ matches 0)))
     (print number)  # the matched number
@@ -43,26 +49,6 @@ Example:
 }))
 ```
 
-### http:server:post
-
-Create a route to answer POST requests.
-
-The route must be a String, the content must be Function.
-
-If the route accepts matches (eg `"/numbers/(\\d+)"`), the content must be a Function accepting arguments: matches, body and params.  
-If the route doesn't accept matches, it takes only: body and params.  
-The function must return a list: `[status-code content type]`, with `type` being the mimetype of `content`.
-
-If no params were sent, then params will be `nil`.
-
-### http:server:put
-
-Works the same way as `http:server:post`.
-
-### http:server:delete
-
-Works the same way as `http:server:post`.
-
 ### http:server:stop
 
 Stop a server.
@@ -72,12 +58,12 @@ Returns `nil`.
 Example:
 
 ```clojure
-(http:server:stop srv)
+(http:server:stop)
 ```
 
 ### http:server:listen
 
-Setup the server to listen forever on a given host (String) and port (Number). Should be called after having setup all the routes.
+Setup the server to listen forever on a given host (String) and port (Number). Should only be called once after having setup all the routes.
 
 The port is optional if the host is `"0.0.0.0"` (aka *bind to all interfaces*).
 
@@ -86,12 +72,12 @@ Returns `nil`.
 Example:
 
 ```clojure
-(let srv (http:server:create))
+(http:server:create)
 
-(http:server:get srv "/hi" "this is my fabulous content")
+(http:server:get "/hi" "this is my fabulous content")
 # more routes...
 
-(http:server:listen srv "localhost" 1234)
+(http:server:listen "localhost" 1234)
 ```
 
 ### http:server:setMountPoint
@@ -105,14 +91,14 @@ Returns a Boolean: true if it worked, false if the base directory doesn't exist.
 Example:
 
 ```clojure
-(let srv (http:server:create))
+(http:server:create)
 
 # mount / to ./www
-(http:server:setMountPoint srv "/" "./www")
+(http:server:setMountPoint "/" "./www")
 
 # mount /public to ./www1 and ./www2 directories
-(http:server:setMountPoint srv "/public" "/www1")  # 1st order to search
-(http:server:setMountPoint srv "/public" "/www2")  # 2nd order to search
+(http:server:setMountPoint "/public" "/www1")  # 1st order to search
+(http:server:setMountPoint "/public" "/www2")  # 2nd order to search
 ```
 
 ### http:server:rmMountPoint
@@ -122,17 +108,17 @@ Remove a mount point. Returns false if the mount point can't be found, true othe
 Example:
 
 ```clojure
-(let srv (http:server:create))
+(http:server:create)
 
 # mount / to ./www
-(http:server:setMountPoint srv "/" "./www")
+(http:server:setMountPoint "/" "./www")
 
 # mount /public to ./www1 and ./www2 directories
-(http:server:setMountPoint srv "/public" "/www1")  # 1st order to search
-(http:server:setMountPoint srv "/public" "/www2")  # 2nd order to search
+(http:server:setMountPoint "/public" "/www1")  # 1st order to search
+(http:server:setMountPoint "/public" "/www2")  # 2nd order to search
 
 # remove mount /
-(http:server:rmMountPoint srv "/")
+(http:server:rmMountPoint "/")
 ```
 
 ### http:server:setFileExtAndMimetypeMapping
@@ -163,7 +149,7 @@ xhtml | application/xhtml+xml
 Example:
 
 ```clojure
-(http:server:setFileExtAndMimetypeMapping srv "cc" "text/x-c")
+(http:server:setFileExtAndMimetypeMapping "cc" "text/x-c")
 ```
 
 ### http:server:enableLogger
@@ -172,16 +158,15 @@ Set the logging level, by default 0.
 
 Returns `nil`.
 
-TODO document the logging level
+Logger level 1 will display the timestamp, request method, path and response status.  
+Level 2 will add the request body as well.
 
 Example:
 
 ```clojure
-{
-    # set logger level to 1
-    (http:server:enableLogger)
+# set logger level to 1
+(http:server:enableLogger)
 
-    # select a given logger level, here 3
-    (http:server:enableLogger 3)
-}
+# select a given logger level, here 3
+(http:server:enableLogger 3)
 ```

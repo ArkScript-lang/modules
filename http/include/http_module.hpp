@@ -8,6 +8,7 @@
 #include <Ark/Module.hpp>
 
 #include <vector>
+#include <string>
 #include <memory>
 #include <list>
 
@@ -23,7 +24,7 @@ Server& create_server();
 UserType::ControlFuncs* get_cfs_client();
 UserType::ControlFuncs* get_cfs_header();
 UserType::ControlFuncs* get_cfs_param();
-UserType::ControlFuncs* get_cfs_server();
+void typecheck(std::string_view funcname, const std::vector<Value>& n);
 
 // server
 Value http_create_server(std::vector<Value>& n, Ark::VM* vm);
