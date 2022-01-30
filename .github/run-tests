@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+ARKSCRIPT=$(pwd)/build/arkscript
+ARKLIB=$(pwd)/lib
+
+for t in lib/modules/*/tests/; do
+    echo "Running ${t}..."
+    (cd $t; $ARKSCRIPT main.ark --lib $ARKLIB)
+done

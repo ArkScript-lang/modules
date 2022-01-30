@@ -54,10 +54,4 @@ jobs:
 
     - name: Run module tests
       shell: bash
-      run: |
-        ARKSCRIPT=$(pwd)/build/arkscript
-        ARKLIB=$(pwd)/lib
-        for t in lib/modules/*/tests/; do
-          echo "Running ${t}..."
-          (cd $t; $ARKSCRIPT main.ark --lib $ARKLIB)
-        done
+      run: source lib/modules/.github/run-tests
