@@ -1,0 +1,4 @@
+# TODO add real tests
+(let do_nothing nil)
+
+(print "HTTP tests done")

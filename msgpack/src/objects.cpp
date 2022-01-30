@@ -127,12 +127,12 @@ CObject get_cobject(Value& ark_object, ValueType type)
     return object;
 }
 
-Value msgpack_sbuffer(std::vector<Value>& args, VM* vm [[maybe_unused]])
+Value msgpack_sbuffer(std::vector<Value>& args [[maybe_unused]], VM* vm [[maybe_unused]])
 {
     return Value(UserType(get_sbuffers().emplace_back(std::make_unique<msgpack::sbuffer>()).get(), get_cfs_sbuffers()));
 }
 
-Value msgpack_obj_handle(std::vector<Value>& args, VM* vm [[maybe_unused]])
+Value msgpack_obj_handle(std::vector<Value>& args [[maybe_unused]], VM* vm [[maybe_unused]])
 {
     return Value(UserType(get_obj_handlers().emplace_back(std::make_unique<msgpack::object_handle>()).get(), get_cfs_obj_handlers()));
 }
@@ -146,7 +146,5 @@ Value msgpack_obj(std::vector<Value>& args, VM* vm [[maybe_unused]])
             args);
 
     msgpack::object_handle& oh = args[0].usertypeRef().as<msgpack::object_handle>();
-    ;
-
     return Value(UserType(get_objects().emplace_back(std::make_unique<msgpack::object>(oh.get())).get(), get_cfs_objects()));
 }

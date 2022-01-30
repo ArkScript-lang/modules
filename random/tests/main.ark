@@ -1,0 +1,12 @@
+(import "random.arkm")
+
+(let in-range? (fun (x start end) (and (>= x start) (<= x end))))
+
+(mut i 0)
+
+(while (< i 100) {
+    (assert (in-range? (random) 0 32768) "random")
+    (set i (+ 1 i))
+})
+
+(print "Random tests done")

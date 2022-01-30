@@ -1,0 +1,14 @@
+(import "bitwise.arkm")
+
+(assert (= 4 (bitwise:rshift 140 5)) "140 >> 5")
+(assert (= 8 (bitwise:rshift 140 4)) "140 >> 4")
+(assert (= 96 (bitwise:lshift 3 5)) "3 << 5")
+(assert (= 48 (bitwise:lshift 3 4)) "3 << 4")
+(assert (= 41 (bitwise:xor 37 12)) "37 ^ 12")
+(assert (= 0 (bitwise:xor 2 2)) "2 ^ 2")
+(assert (= 4 (bitwise:or 4 4)) "4 | 4")
+(assert (= 5 (bitwise:or 1 4)) "1 | 4")
+(assert (= 33 (bitwise:and 97 43)) "97 & 43")
+(assert (= 0 (bitwise:and 1 4)) "1 & 4")
+
+(print "Bitwise tests done")

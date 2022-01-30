@@ -1,0 +1,15 @@
+(import "json.arkm")
+
+(let json (json:open "test.json"))
+(let jsonString "{\"hello\":\"world\",\"key\":12}")
+(let jsonStringBis "{\"hello\":\"world\",\"key\":12.0}")
+(let jsonList (json:fromList ["hello" "world" "key" 12]))
+
+(assert (= 2 (json:len json)) "json:len")
+(assert (= (json:toString json) jsonString) "json:toString")
+(assert (= (json:toString (json:fromString jsonString)) jsonString) "json:fromString")
+(assert (= (json:toString jsonList) jsonStringBis) "json:fromList")
+(json:set jsonList "hello" "john")
+(assert (= "john" (json:get jsonList "hello")) "json:set and json:get")
+
+(print "JSON tests done")

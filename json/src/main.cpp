@@ -95,12 +95,7 @@ namespace json
 
     Value get(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
     {
-        if (args.size() != 2)
-            throw std::runtime_error("json:get: needs 2 arguments: json and key");
-        if (args[0].valueType() != ValueType::User || !args[0].usertype().is<nlohmann::json>())
-            throw Ark::TypeError("json:get: json must be a jsonObject");
-
-        if (!args[0].usertype().is<nlohmann::json>())
+        if (args.size() < 2 || !args[0].usertype().is<nlohmann::json>())
             types::generateError(
                 "json:get",
                 { { types::Contract { { types::Typedef("json", ValueType::User), types::Typedef("key", ValueType::Number) } },
@@ -116,6 +111,7 @@ namespace json
 
                 return jsonToArk(obj);
             }
+            return Nil;
         }
         else if (types::check(args, ValueType::User, ValueType::String))
         {
@@ -126,6 +122,7 @@ namespace json
 
                 return jsonToArk(obj);
             }
+            return Nil;
         }
 
         types::generateError(
@@ -133,6 +130,7 @@ namespace json
             { { types::Contract { { types::Typedef("json", ValueType::User), types::Typedef("key", ValueType::Number) } },
                 types::Contract { { types::Typedef("json", ValueType::User), types::Typedef("key", ValueType::String) } } } },
             args);
+        return Nil;
     }
 
     Value toString(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
@@ -315,7 +313,6 @@ namespace json
 
         return v;
     }
-
 
     Value len(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
     {
