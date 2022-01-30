@@ -23,7 +23,7 @@ Value http_create_headers(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
         }
     }
 
-    Value headers = Ark::Value(Ark::UserType(&h.back(), get_cfs_header()));
+    Value headers = Value(Ark::UserType(&h.back(), get_cfs_header()));
     return headers;
 }
 
@@ -38,7 +38,7 @@ Value http_create_client(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     std::list<Client>& c = get_clients();
     c.emplace_back(n[0].stringRef().toString(), static_cast<int>(n[1].number()));
 
-    return Ark::Value(Ark::UserType(&c.back(), get_cfs_client()));
+    return Value(Ark::UserType(&c.back(), get_cfs_client()));
 }
 
 Value http_client_get(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
@@ -388,19 +388,17 @@ Value http_client_set_write_timeout(std::vector<Value>& n, Ark::VM* vm [[maybe_u
 
 Value http_client_set_basic_auth(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
 {
-    if (n.size() != 3)
-        throw std::runtime_error("http:client:setBasicAuth: needs 3 arguments: client, username, password");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw Ark::TypeError("http:client:setBasicAuth: client must be an httpClient");
-    if (n[1].valueType() != ValueType::String)
-        throw Ark::TypeError("http:client:setBasicAuth: username must be a String");
-    if (n[2].valueType() != ValueType::String)
-        throw Ark::TypeError("http:client:setBasicAuth: password must be a String");
+    if (!types::check(n, ValueType::User, ValueType::String, ValueType::String) || !n[0].usertype().is<Client>())
+        types::generateError(
+            "http:client:setBasicAuth",
+            { { types::Contract { { types::Typedef("httpClient", ValueType::User),
+                                    types::Typedef("username", ValueType::String),
+                                    types::Typedef("password", ValueType::String) } } } },
+            n);
 
     n[0].usertypeRef().as<Client>().set_basic_auth(
         n[1].string().c_str(),
         n[2].string().c_str());
-
     return Nil;
 }
 
