@@ -1,4 +1,4 @@
-# http Client
+@page http_client http Client
 
 ## Functions
 

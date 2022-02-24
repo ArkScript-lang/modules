@@ -1,4 +1,4 @@
-# http Server
+@page http_server http Server
 
 ## Functions
 

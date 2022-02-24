@@ -1,4 +1,4 @@
-# msgpack module documentation
+@page msgpack_module MsgPack module
 
 A module for **msgpack**, an efficient binary serialization format like JSON, but smaller and faster.
 

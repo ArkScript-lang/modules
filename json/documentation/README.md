@@ -1,4 +1,4 @@
-# JSON module
+@page json_module JSON module
 
 ## json:open
 

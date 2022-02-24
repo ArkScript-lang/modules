@@ -1,4 +1,4 @@
-# Console module
+@page console_module Console module
 
 ## console:clear
 

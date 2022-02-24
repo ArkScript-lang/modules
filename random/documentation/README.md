@@ -1,4 +1,4 @@
-# random module
+@page random_module Random module
 
 A module dedicated to generating random numbers.
 

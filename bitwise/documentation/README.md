@@ -1,4 +1,4 @@
-# Bitwise module
+@page bitwise_module Bitwise module
 
 For bitwise operations.
 

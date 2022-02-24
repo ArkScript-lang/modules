@@ -1,4 +1,4 @@
-# Hash module
+@page hash_module Hash module
 
 ## hash:sha256
 
