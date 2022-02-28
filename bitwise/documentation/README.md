@@ -15,6 +15,12 @@ Right shifts a given number.
 **Author**
 - [@rakista112](https://github.com/rakista112)
 
+**Example**
+~~~~{.lisp}
+(import "bitwise.arkm")
+(print (bitwise:rshift 4096 3))  # 512
+~~~~
+
 ## bitwise:lshift
 
 Left shifts a given number.
@@ -27,6 +33,12 @@ Left shifts a given number.
 
 **Author**
 - [@rakista112](https://github.com/rakista112)
+
+**Example**
+~~~~{.lisp}
+(import "bitwise.arkm")
+(print (bitwise:lshift 512 3))  # 4096
+~~~~
 
 ## bitwise:xor
 
@@ -41,6 +53,12 @@ Xor a number given a mask.
 **Author**
 - [@rakista112](https://github.com/rakista112)
 
+**Example**
+~~~~{.lisp}
+(import "bitwise.arkm")
+(print (bitwise:xor 99 13))  # 110
+~~~~
+
 ## bitwise:or
 
 Compute the bitwise `a OR b` operation.
@@ -54,6 +72,12 @@ Compute the bitwise `a OR b` operation.
 **Author**
 - [@rakista112](https://github.com/rakista112)
 
+**Example**
+~~~~{.lisp}
+(import "bitwise.arkm")
+(print (bitwise:or 89 13))  # 93
+~~~~
+
 ## bitwise:and
 
 Compute the bitwise `a AND b` operation.
@@ -66,3 +90,9 @@ Compute the bitwise `a AND b` operation.
 
 **Author**
 - [@rakista112](https://github.com/rakista112)
+
+**Example**
+~~~~{.lisp}
+(import "bitwise.arkm")
+(print (bitwise:and 89 13))  # 9
+~~~~

@@ -12,6 +12,13 @@ Clear the terminal on Windows and Posix.
 **Author**
 - [@SuperFola](https://github.com/SuperFola)
 
+**Example**
+~~~~{.lisp}
+(import "console.arkm")
+(print "hello world")  # hello world is printed
+(console:clear)        # now the whole terminal is empty and nothing is printed
+~~~~
+
 ## console:color
 
 This function changes the color of the text written to the terminal.
@@ -51,3 +58,16 @@ on_magenta
 on_cyan
 on_white
 ```
+
+**Example**
+~~~~{.lisp}
+(import "console.arkm")
+(print "hello world")  # this is using the default color of the terminal
+(console:color "red")
+(print "this is in red")
+(print "this line is still red")
+(console:color "reset")    # now the colors are back to normal
+(print "I am normal")
+(console:color "on_cyan")
+(print "I am a text on cyan background")
+~~~~

@@ -1,39 +1,55 @@
 @page http_server http Server
 
-## Functions
-
 Important note related to the routes: in case the given content argument doesn't return the wanted values, it will silently fail to avoid crashing the server.
 
-### http:server:create
+## http:server:create
 
 Create the server (only one per VM may be instanciated).
 
-Example:
+**Parameters**
+- None.
 
-```clojure
+**Return value** `nil`
+
+**Author**
+- [@SuperFola](https://github.com/SuperFola)
+
+**Example**
+~~~~{.lisp}
+(import "http.arkm")
 (http:server:create)
-```
+~~~~
 
-### Route handlers
+## Route handlers
 
-- http:server:get
-- http:server:post
-- http:server:put
-- http:server:delete
+- `http:server:get`
+- `http:server:post`
+- `http:server:put`
+- `http:server:delete`
 
 Create a route to answer the specified request type.
 
-The route must be a String, the content must be a Function.
+**Parameters**
+- `route`: a string representing the route to handle. The route can receive matches with the regex syntax, eg `/(\\d+)` to match on numbers
+- `handler`: a function returning a list `[status-code content type]`
+    - `status-code`: number, representing an HTTP code
+    - `content`: string
+    - `type`: string, the mimetype for `content`
 
-The function must return a list: `[status-code content type]`, with `type` being the mimetype of `content`.
+The typical `handler` function looks like this: `(fun (matches body params) ...)`:
+- `matches` is a list of matches (as strings). If none were found, it will be `nil`
+- `body` is a string, the request's body ; for GET requests this is always `nil`
+- `params` is a `UserType<http:Params>` sent to the function if any, otherwise `nil`
 
-If no params were sent, then params will be `nil`. The same applies to the matches.
+**Return value** `nil`
 
-In the case of a GET request, the body will always be `nil`.
+**Author**
+- [@SuperFola](https://github.com/SuperFola)
 
-Example:
+**Example**
+~~~~{.lisp}
+(import "http.arkm")
 
-```clojure
 (http:server:create)
 (http:server:get "/hi" "this is my fabulous content" "text/plain")
 
@@ -47,50 +63,77 @@ Example:
     # (returned content must be a string)
     [200 (toString (+ 12 number)) "text/plain"]
 }))
-```
+~~~~
 
-### http:server:stop
+## http:server:stop
 
 Stop a server.
 
-Returns `nil`.
+**Parameters**
+- None.
 
-Example:
+**Return value** `nil`
 
-```clojure
-(http:server:stop)
-```
+**Author**
+- [@SuperFola](https://github.com/SuperFola)
 
-### http:server:listen
+**Example**
+~~~~{.lisp}
+(import "http.arkm")
 
-Setup the server to listen forever on a given host (String) and port (Number). Should only be called once after having setup all the routes.
+(http:server:create)
+...
+(http:server:stop)  # this can be used in routes
 
-The port is optional if the host is `"0.0.0.0"` (aka *bind to all interfaces*).
+(http:server:get "/shutdown" (fun (matches body params) {
+    (http:server:stop)
+    # this will never be sent to the user be cause the server shut down before
+    [200 "Going down" "text/plain"]
+}))
+~~~~
 
-Returns `nil`.
+## http:server:listen
 
-Example:
+Setup the server to listen forever. Should only be called once after having setup all the routes.
 
-```clojure
+**Parameters**
+- `host`: a string ; an IP address or `localhost`
+- `port`: a number, optional if the host is `0.0.0.0` (= *bind to all interfaces*)
+
+**Return value** `nil`
+
+**Author**
+- [@SuperFola](https://github.com/SuperFola)
+
+**Example**
+~~~~{.lisp}
+(import "http.arkm")
+
 (http:server:create)
 
 (http:server:get "/hi" "this is my fabulous content")
-# more routes...
+# more routes
 
 (http:server:listen "localhost" 1234)
-```
+~~~~
 
-### http:server:setMountPoint
+## http:server:setMountPoint
 
-Mount a given directory to a specific location.
+Mount a given directory to a specific location. You can mount a directory to multiple locations, thus creating a search order.
 
-You can mount a directory to multiple locations, thus creating a search order.
+**Parameters**
+- `mountpoint`: string, a route
+- `port`: string, a folder on the computer
 
-Returns a Boolean: true if it worked, false if the base directory doesn't exist.
+**Return value** `bool`, true if it worked, false if the base directory doesn't exist.
 
-Example:
+**Author**
+- [@SuperFola](https://github.com/SuperFola)
 
-```clojure
+**Example**
+~~~~{.lisp}
+(import "http.arkm")
+
 (http:server:create)
 
 # mount / to ./www
@@ -99,15 +142,24 @@ Example:
 # mount /public to ./www1 and ./www2 directories
 (http:server:setMountPoint "/public" "/www1")  # 1st order to search
 (http:server:setMountPoint "/public" "/www2")  # 2nd order to search
-```
+~~~~
 
-### http:server:rmMountPoint
+## http:server:rmMountPoint
 
-Remove a mount point. Returns false if the mount point can't be found, true otherwise.
+Remove a mount point.
 
-Example:
+**Parameters**
+- `mountpoint`: string, a mountpoint name
 
-```clojure
+**Return value** `bool`, false if the mount point can't be found, true otherwise.
+
+**Author**
+- [@SuperFola](https://github.com/SuperFola)
+
+**Example**
+~~~~{.lisp}
+(import "http.arkm")
+
 (http:server:create)
 
 # mount / to ./www
@@ -119,13 +171,17 @@ Example:
 
 # remove mount /
 (http:server:rmMountPoint "/")
-```
+~~~~
 
-### http:server:setFileExtAndMimetypeMapping
+## http:server:setFileExtAndMimetypeMapping
 
 Map a file extension to a mimetype.
 
-Returns `nil`.
+**Return value** `nil`
+
+**Parameters**
+- `extension`: string, a file extension
+- `mimetype`: string, a mimetype
 
 Built-in mappings:
 
@@ -146,27 +202,38 @@ wasm | application/wasm
 xml | application/xml
 xhtml | application/xhtml+xml
 
-Example:
+**Author**
+- [@SuperFola](https://github.com/SuperFola)
 
-```clojure
+**Example**
+~~~~{.lisp}
 (http:server:setFileExtAndMimetypeMapping "cc" "text/x-c")
-```
+~~~~
 
-### http:server:enableLogger
+## http:server:enableLogger
 
 Set the logging level, by default 0.
 
-Returns `nil`.
+**Parameters**
+- `loglevel`: number
 
 Logger level 1 will display the timestamp, request method, path and response status.  
 Level 2 will add the request body as well.
 
-Example:
+**Return value** `nil`
 
-```clojure
+**Author**
+- [@SuperFola](https://github.com/SuperFola)
+
+**Example**
+~~~~{.lisp}
+(import "http.arkm")
+
+(http:server:create)
+
 # set logger level to 1
 (http:server:enableLogger)
 
 # select a given logger level, here 3
 (http:server:enableLogger 3)
-```
+~~~~
