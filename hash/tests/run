@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+ARKSCRIPT=$1
+ARKLIB=$2
+
+$ARKSCRIPT main.ark --lib $ARKLIB

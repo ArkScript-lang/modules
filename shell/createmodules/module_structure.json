@@ -16,6 +16,11 @@
 			{
 				"name": "main.ark",
 				"type": "file"
+			},
+			{
+				"name": "run",
+				"type": "file",
+				"is-template": true
 			}
 		]	
 	},
