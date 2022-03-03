@@ -11,5 +11,3 @@
 (assert (= (json:toString jsonList) jsonStringBis) "json:fromList")
 (json:set jsonList "hello" "john")
 (assert (= "john" (json:get jsonList "hello")) "json:set and json:get")
-
-(print "JSON tests done")

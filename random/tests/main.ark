@@ -8,5 +8,3 @@
     (assert (in-range? (random) 0 32768) "random")
     (set i (+ 1 i))
 })
-
-(print "Random tests done")

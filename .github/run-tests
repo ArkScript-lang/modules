@@ -28,6 +28,7 @@ for t in lib/modules/*/tests/; do
     total_time=$((total_time + elapsed))
     seconds=$((elapsed / 1000000000))
     decimals=$((elapsed - (seconds * 1000000000) ))
+    runtime="${seconds}.${decimals}sec"
 
     echo -e "-- in ${Purple}${runtime}${Reset}"
 done

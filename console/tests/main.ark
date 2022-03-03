@@ -1,3 +1,22 @@
 (import "console.arkm")
 
 # no tests to do as this is only visual and cosmetics
+
+(console:color "grey")              (print "text color: grey")               (console:color "reset")
+(console:color "red")               (print "text color: red")                (console:color "reset")
+(console:color "green")             (print "text color: green")              (console:color "reset")
+(console:color "yellow")            (print "text color: yellow")             (console:color "reset")
+(console:color "blue")              (print "text color: blue")               (console:color "reset")
+(console:color "magenta")           (print "text color: magenta")            (console:color "reset")
+(console:color "cyan")              (print "text color: cyan")               (console:color "reset")
+(console:color "white")             (print "text color: white")              (console:color "reset")
+(console:color "bright_grey")       (print "text color: bright_grey")        (console:color "reset")
+(console:color "bright_red")        (print "text color: bright_red")         (console:color "reset")
+(console:color "bright_green")      (print "text color: bright_green")       (console:color "reset")
+(console:color "bright_yellow")     (print "text color: bright_yellow")      (console:color "reset")
+(console:color "bright_blue")       (print "text color: bright_blue")        (console:color "reset")
+(console:color "bright_magenta")    (print "text color: bright_magenta")     (console:color "reset")
+(console:color "bright_cyan")       (print "text color: bright_cyan")        (console:color "reset")
+(console:color "bright_white")      (print "text color: bright_white")       (console:color "reset")
+
+(console:color "reset")

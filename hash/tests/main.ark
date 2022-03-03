@@ -4,5 +4,3 @@
 (assert (= "2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824" (hash:sha256 "hello")) "sha256 'hello'")
 (assert (= "d41d8cd98f00b204e9800998ecf8427e" (hash:md5 "")) "md5 ''")
 (assert (= "5d41402abc4b2a76b9719d911017c592" (hash:md5 "hello")) "md5 'hello'")
-
-(print "Hash tests done")
