@@ -3,5 +3,53 @@
 ARKSCRIPT=$1
 ARKLIB=$2
 
-# todo, see #50
-$ARKSCRIPT main.ark --lib $ARKLIB
+($ARKSCRIPT main.ark --lib $ARKLIB &)
+
+echo "GET /hi"
+res=$(curl -s -X GET http://localhost:8080/hi)
+if [[ $res != "hello world" ]]; then
+    echo "Got $res"
+    exit 1
+fi
+
+echo "GET /hi john"
+res=$(curl -s -X GET --data 'john' http://localhost:8080/hi)
+if [[ $res != "hello, john" ]]; then
+    echo "Got $res"
+    exit 1
+fi
+
+echo "GET /numbers/4"
+res=$(curl -s -X GET http://localhost:8080/numbers/4)
+if [[ $res != "16" ]]; then
+    echo "Got $res"
+    exit 1
+fi
+
+echo "POST /post john"
+res=$(curl -s -X POST --data 'john' http://localhost:8080/post)
+if [[ $res != "nil-john-nil" ]]; then
+    echo "Got $res"
+    exit 1
+fi
+
+echo "PUT /put john"
+res=$(curl -s -X PUT --data 'john' http://localhost:8080/put)
+if [[ $res != "nil-john-nil" ]]; then
+    echo "Got $res"
+    exit 1
+fi
+
+echo "DELETE /delete john"
+res=$(curl -s -X DELETE --data 'john' http://localhost:8080/delete)
+if [[ $res != "nil-john-nil" ]]; then
+    echo "Got $res"
+    exit 1
+fi
+
+echo "GET /stop"
+res=$(curl -s -X GET http://localhost:8080/stop)
+if [[ $res != "stopped" ]]; then
+    echo "Got $res"
+    exit 1
+fi
