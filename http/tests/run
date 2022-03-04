@@ -3,5 +3,28 @@
 ARKSCRIPT=$1
 ARKLIB=$2
 
-# todo, see #50
-$ARKSCRIPT main.ark --lib $ARKLIB
+($ARKSCRIPT main.ark --lib $ARKLIB &)
+
+if [[ $(curl -X GET http://localhost:8080/hi) != "hello world" ]]; then
+    exit 1
+fi
+
+if [[ $(curl -X GET --data 'john' http://localhost:8080/hi) != "hello, john" ]]; then
+    exit 1
+fi
+
+if [[ $(curl -X POST --data 'john' http://localhost:8080/post) != "nil-john-nil" ]]; then
+    exit 1
+fi
+
+if [[ $(curl -X PUT --data 'john' http://localhost:8080/put) != "nil-john-nil" ]]; then
+    exit 1
+fi
+
+if [[ $(curl -X DELETE --data 'john' http://localhost:8080/delete) != "nil-john-nil" ]]; then
+    exit 1
+fi
+
+if [[ $(curl -X GET http://localhost:8080/stop) != "stopped" ]]; then
+    exit 1
+fi

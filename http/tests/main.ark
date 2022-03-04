@@ -1,4 +1,35 @@
-# TODO add real tests
-(let do_nothing nil)
+(import "http.arkm")
 
-(print "HTTP tests done")
+(http:server:create)
+
+(http:server:get "/hi" (fun (matches body params) {
+    [
+        200
+        (if (nil? data)
+            "hello world"
+            (+ "hello, " body))
+        "text/plain"
+    ]
+}))
+
+(http:server:get "/numbers/(\\d+)" (fun (matches body params) {
+    (let number (toNumber (@ matches 0)))
+
+    [200 (toString (+ 12 number)) "text/plain"]
+}))
+
+(http:server:get "/stop" (fun (matches body params) {
+    (http:server:stop)
+    [200 "stopped" "text/plain"]
+}))
+
+(let handler (fun (matches body params) {
+    (let str_params (if (nil? str_params) "nil" (toString (http:params:toList params))))
+    [200 (+ (toString matches) "-" body "-" str_params) "text/plain"]
+}))
+
+(http:server:post "/post" handler)
+(http:server:put "/put" handler)
+(http:server:delete "/delete" handler)
+
+(http:server:listen "localhost" 8080)
