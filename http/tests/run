@@ -13,6 +13,10 @@ if [[ $(curl -X GET --data 'john' http://localhost:8080/hi) != "hello, john" ]];
     exit 1
 fi
 
+if [[ $(curl -X GET --data 'john' http://localhost:8080/numbers/4) != "16" ]]; then
+    exit 1
+fi
+
 if [[ $(curl -X POST --data 'john' http://localhost:8080/post) != "nil-john-nil" ]]; then
     exit 1
 fi
