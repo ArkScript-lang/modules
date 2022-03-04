@@ -5,7 +5,7 @@
 (http:server:get "/hi" (fun (matches body params) {
     [
         200
-        (if (nil? body)
+        (if (empty? body)
             "hello world"
             (+ "hello, " body))
         "text/plain"
