@@ -13,7 +13,7 @@ namespace ArkHash
                 { { types::Contract { { types::Typedef("data", ValueType::String) } } } },
                 n);
 
-        std::string src = n[0].stringRef().toString();
+        std::string src = n[0].stringRef();
         std::string output = "";
         picosha2::hash256_hex_string(src, output);
 
@@ -28,7 +28,7 @@ namespace ArkHash
                 { { types::Contract { { types::Typedef("data", ValueType::String) } } } },
                 n);
 
-        return Value(md5::md5(n[0].stringRef().toString()));
+        return Value(md5::md5(n[0].stringRef()));
     }
 }
 
