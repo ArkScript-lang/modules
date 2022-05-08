@@ -58,7 +58,7 @@ namespace Database
 
     Value database_sqlite_exec_with_callback(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
     {
-        if (args.size() != 3 || !args[0].usertype().is<sqlite3>() || args[1].valueType() != ValueType::String || !args[2].isFunction())
+        if (args.size() != 3 || args[0].valueType() != ValueType::User || !args[0].usertype().is<sqlite3>() || args[1].valueType() != ValueType::String || !args[2].isFunction())
             types::generateError(
                 "database:sqlite:exec_with_callback",
                 { { types::Contract { { types::Typedef("database", ValueType::User),
