@@ -27,8 +27,8 @@ namespace Database
                 { { types::Contract { { types::Typedef("database", ValueType::User) } } } },
                 args);
 
-        sqlite3* db = (sqlite3*)args[0].usertypeRef().data();
-        return Ark::Value(sqlite3_close(db));
+        sqlite3& db = args[0].usertypeRef().as<sqlite3>();
+        return Ark::Value(sqlite3_close(&db));
     }
 
     Value database_sqlite_exec(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
@@ -40,11 +40,11 @@ namespace Database
                                         types::Typedef("sql", ValueType::String) } } } },
                 args);
 
-        sqlite3* db = (sqlite3*)args[0].usertypeRef().data();
+        sqlite3& db = args[0].usertypeRef().as<sqlite3>();
         const char* sql = args[1].string().c_str();
         char* error_message = nullptr;
 
-        int code = sqlite3_exec(db, sql, nullptr, nullptr, &error_message);
+        int code = sqlite3_exec(&db, sql, nullptr, nullptr, &error_message);
         if (code != SQLITE_OK)
         {
             std::runtime_error error = std::runtime_error(
@@ -66,7 +66,7 @@ namespace Database
                                         types::Typedef("callback", ValueType::Closure) } } } },
                 args);
 
-        sqlite3* db = (sqlite3*)args[0].usertypeRef().data();
+        sqlite3& db = args[0].usertypeRef().as<sqlite3>();
         const char* sql = args[1].string().c_str();
         const Ark::Value user_defined_callback = args[2];
 
@@ -88,7 +88,7 @@ namespace Database
 
         char* error_message = nullptr;
         std::vector<std::vector<Ark::Value>> all_results;
-        int code = sqlite3_exec(db, sql, callback, &all_results, &error_message);
+        int code = sqlite3_exec(&db, sql, callback, &all_results, &error_message);
 
         // For each row returned from the SQL query, run the user's callback
         // function on each row passing in an Ark List of the row results.
@@ -114,8 +114,8 @@ namespace Database
                 { { types::Contract { { types::Typedef("database", ValueType::User) } } } },
                 args);
 
-        sqlite3* db = (sqlite3*)args[0].usertypeRef().data();
-        int row_id = sqlite3_last_insert_rowid(db);
+        sqlite3& db = args[0].usertypeRef().as<sqlite3>();
+        int row_id = sqlite3_last_insert_rowid(&db);
         return Ark::Value(row_id);
     }
 }
