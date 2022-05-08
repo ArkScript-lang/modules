@@ -1,0 +1,18 @@
+(import "database.arkm")
+
+(let db (database:sqlite:open "test.db"))
+
+(assert (= 0 (database:sqlite:exec db "CREATE TABLE company(id INT PRIMARY KEY NOT NULL, name TEXT NOT NULL, country TEXT NOT NULL);")) "database:sqlite:exec")
+(assert (= 0 (database:sqlite:exec db "INSERT INTO company (id, name, country) VALUES (1, 'Erdman Group', 'France');")) "database:sqlite:exec")
+(assert (= 0 (database:sqlite:exec db "INSERT INTO company (id, name, country) VALUES (2, 'Wiza Ltd', 'United States');")) "database:sqlite:exec")
+(assert (= 0 (database:sqlite:exec db "INSERT INTO company (id, name, country) VALUES (3, 'Buckridge Inc', 'Spain');")) "database:sqlite:exec")
+(assert (= 3 (database:sqlite:last_insert_row_id db)) "database:sqlite:last_insert_row_id")
+
+# The 'company' table has three columns, so each row should return a list with three elements
+(database:sqlite:exec_with_callback
+    db
+    "SELECT * FROM company;"
+    (fun (row)
+      (assert (= 3 (len row)) "database:sqlite:exec_with_callback")))
+
+(database:sqlite:close db)
