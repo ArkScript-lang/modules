@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+ARKSCRIPT=$1
+ARKLIB=$2
+
+delete_test_db_if_exists()
+{
+    if [ -f ./test.db ]; then
+        rm ./test.db
+    fi
+}
+
+# Delete any existing test database if it exists
+delete_test_db_if_exists
+
+$ARKSCRIPT main.ark --lib $ARKLIB
+
+# Clean up test database after run
+delete_test_db_if_exists
