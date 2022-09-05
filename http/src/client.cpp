@@ -15,10 +15,10 @@ Value http_create_headers(std::vector<Value>& n, VM* vm [[maybe_unused]])
             throw TypeError("http:headers:create: takes only String as argument");
 
         if (key == "")
-            key = v.stringRef().toString();
+            key = v.stringRef();
         else
         {
-            h.back().insert(std::pair<std::string, std::string>(key, v.stringRef().toString()));
+            h.back().insert(std::pair<std::string, std::string>(key, v.stringRef()));
             key = "";
         }
     }
@@ -36,7 +36,7 @@ Value http_create_client(std::vector<Value>& n, VM* vm [[maybe_unused]])
             n);
 
     std::list<Client>& c = get_clients();
-    c.emplace_back(n[0].stringRef().toString(), static_cast<int>(n[1].number()));
+    c.emplace_back(n[0].stringRef(), static_cast<int>(n[1].number()));
 
     return Value(UserType(&c.back(), get_cfs_client()));
 }
@@ -61,7 +61,7 @@ Value http_client_get(std::vector<Value>& n, VM* vm [[maybe_unused]])
     }
 
     Client& c = n[0].usertypeRef().as<Client>();
-    std::string route = n[1].stringRef().toString();
+    std::string route = n[1].stringRef();
     auto res = (headers == nullptr) ? c.Get(route.c_str()) : c.Get(route.c_str(), *headers);
 
     if (!res)
@@ -89,10 +89,10 @@ Value http_create_params(std::vector<Value>& n, VM* vm [[maybe_unused]])
             throw TypeError("http:params:create: takes only String as arguments");
 
         if (key == "")
-            key = v.stringRef().toString();
+            key = v.stringRef();
         else
         {
-            p.back().insert(std::pair<std::string, std::string>(key, v.stringRef().toString()));
+            p.back().insert(std::pair<std::string, std::string>(key, v.stringRef()));
             key = "";
         }
     }
@@ -134,7 +134,7 @@ Value http_client_post(std::vector<Value>& n, VM* vm [[maybe_unused]])
         throw TypeError("http:client:post: parameters must be a String or httpParams");
 
     Client& c = n[0].usertypeRef().as<Client>();
-    std::string route = n[1].stringRef().toString();
+    std::string route = n[1].stringRef();
 
     Headers* headers = nullptr;
 
@@ -208,7 +208,7 @@ Value http_client_put(std::vector<Value>& n, VM* vm [[maybe_unused]])
         throw TypeError("http:client:put: parameters must be a String or httpParams");
 
     Client& c = n[0].usertypeRef().as<Client>();
-    std::string route = n[1].stringRef().toString();
+    std::string route = n[1].stringRef();
 
     Headers* headers = nullptr;
 
@@ -281,7 +281,7 @@ Value http_client_delete(std::vector<Value>& n, VM* vm [[maybe_unused]])
         throw TypeError("http:client:delete: body must be a String");
 
     Client& c = n[0].usertypeRef().as<Client>();
-    std::string route = n[1].stringRef().toString();
+    std::string route = n[1].stringRef();
 
     Headers* headers = nullptr;
 
