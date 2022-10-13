@@ -7,7 +7,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 find_package(SQLite3)
 
 include_directories(
-    ${PROJECT_SOURCE_DIR}/../include
     ${PROJECT_SOURCE_DIR}/include
     ${ark_SOURCE_DIR}/thirdparty
     ${ark_SOURCE_DIR}/include
@@ -29,4 +28,4 @@ set_target_properties(
 
 add_custom_command(TARGET ${PROJECT_NAME}
     COMMAND ${CMAKE_COMMAND} -E copy
-        "$<TARGET_FILE:${PROJECT_NAME}>" ${PROJECT_SOURCE_DIR}/../../${PROJECT_NAME}.${MODULE_EXTENSION})
+        "$<TARGET_FILE:${PROJECT_NAME}>" ${PROJECT_SOURCE_DIR}/../../${PROJECT_NAME}.arkm)
