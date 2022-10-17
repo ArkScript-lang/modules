@@ -22,8 +22,10 @@ namespace ArkRandom
 
 ARK_API Ark::mapping* getFunctionsMapping()
 {
-    Ark::mapping* map = Ark::mapping_create(1);
-    Ark::mapping_add(map[0], "random", ArkRandom::random);
+    static Ark::mapping map[] = {
+        { "random", ArkRandom::random },
+        { nullptr, nullptr }
+    };
 
     return map;
 }

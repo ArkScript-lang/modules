@@ -36,9 +36,11 @@ namespace ArkHash
 
 ARK_API Ark::mapping* getFunctionsMapping()
 {
-    Ark::mapping* map = Ark::mapping_create(2);
-    Ark::mapping_add(map[0], "hash:sha256", ArkHash::sha2);
-    Ark::mapping_add(map[1], "hash:md5", ArkHash::md5);
+    static Ark::mapping map[] = {
+        { "hash:sha256", ArkHash::sha2 },
+        { "hash:md5", ArkHash::md5 },
+        { nullptr, nullptr }
+    };
 
     return map;
 }

@@ -329,16 +329,17 @@ namespace json
 
 ARK_API Ark::mapping* getFunctionsMapping()
 {
-    Ark::mapping* map = Ark::mapping_create(8);
-
-    Ark::mapping_add(map[0], "json:open", json::open);
-    Ark::mapping_add(map[1], "json:get", json::get);
-    Ark::mapping_add(map[2], "json:toString", json::toString);
-    Ark::mapping_add(map[3], "json:fromString", json::fromString);
-    Ark::mapping_add(map[4], "json:set", json::jset);
-    Ark::mapping_add(map[5], "json:write", json::write);
-    Ark::mapping_add(map[6], "json:fromList", json::fromList);
-    Ark::mapping_add(map[7], "json:len", json::len);
+    static Ark::mapping map[] = {
+        { "json:open", json::open },
+        { "json:get", json::get },
+        { "json:toString", json::toString },
+        { "json:fromString", json::fromString },
+        { "json:set", json::jset },
+        { "json:write", json::write },
+        { "json:fromList", json::fromList },
+        { "json:len", json::len },
+        { nullptr, nullptr }
+    };
 
     return map;
 }

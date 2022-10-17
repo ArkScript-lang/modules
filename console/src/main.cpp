@@ -92,9 +92,11 @@ namespace ArkConsole
 
 ARK_API mapping* getFunctionsMapping()
 {
-    mapping* map = mapping_create(2);
-    mapping_add(map[0], "console:clear", ArkConsole::clear);
-    mapping_add(map[1], "console:color", ArkConsole::color);
+    static mapping map[] = {
+        { "console:clear", ArkConsole::clear },
+        { "console:color", ArkConsole::color },
+        { nullptr, nullptr }
+    };
 
     return map;
 }

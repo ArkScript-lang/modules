@@ -2,17 +2,19 @@
 
 ARK_API Ark::mapping* getFunctionsMapping()
 {
-    Ark::mapping* map = Ark::mapping_create(6);
+    static Ark::mapping map[] = {
+        // msgpack objects constructors
+        { "msgpack:sbuffer", msgpack_sbuffer },
+        { "msgpack:objectHandle", msgpack_obj_handle },
+        { "msgpack:object", msgpack_obj },
 
-    // msgpack objects constructors
-    Ark::mapping_add(map[0], "msgpack:sbuffer", msgpack_sbuffer);
-    Ark::mapping_add(map[1], "msgpack:objectHandle", msgpack_obj_handle);
-    Ark::mapping_add(map[2], "msgpack:object", msgpack_obj);
+        // msgpack operations
+        { "msgpack:pack", msgpack_pack },
+        { "msgpack:unpack", msgpack_unpack },
+        { "msgpack:convert", msgpack_convert },
 
-    // msgpack operations
-    Ark::mapping_add(map[3], "msgpack:pack", msgpack_pack);
-    Ark::mapping_add(map[4], "msgpack:unpack", msgpack_unpack);
-    Ark::mapping_add(map[5], "msgpack:convert", msgpack_convert);
+        { nullptr, nullptr }
+    };
 
     return map;
 }

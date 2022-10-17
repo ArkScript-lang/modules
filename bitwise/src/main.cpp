@@ -78,12 +78,14 @@ namespace ArkBitwise
 
 ARK_API mapping* getFunctionsMapping()
 {
-    mapping* map = mapping_create(5);
-    mapping_add(map[0], "bitwise:rshift", ArkBitwise::rshift);
-    mapping_add(map[1], "bitwise:lshift", ArkBitwise::lshift);
-    mapping_add(map[2], "bitwise:xor", ArkBitwise::xor_);
-    mapping_add(map[3], "bitwise:or", ArkBitwise::or_);
-    mapping_add(map[4], "bitwise:and", ArkBitwise::and_);
+    static mapping map[] = {
+        { "bitwise:rshift", ArkBitwise::rshift },
+        { "bitwise:lshift", ArkBitwise::lshift },
+        { "bitwise:xor", ArkBitwise::xor_ },
+        { "bitwise:or", ArkBitwise::or_ },
+        { "bitwise:and", ArkBitwise::and_ },
+        { nullptr, nullptr }
+    };
 
     return map;
 }
