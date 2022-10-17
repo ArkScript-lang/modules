@@ -8,18 +8,18 @@
 #include <Ark/Module.hpp>
 
 
-using CObject = std::variant<bool, double, std::string, std::vector<Value>>;
+using CObject = std::variant<bool, double, std::string, std::vector<Ark::Value>>;
 
 std::list<std::unique_ptr<msgpack::sbuffer>>& get_sbuffers();
 std::list<std::unique_ptr<msgpack::object_handle>>& get_obj_handlers();
 std::list<std::unique_ptr<msgpack::object>>& get_objects();
-UserType::ControlFuncs* get_cfs_sbuffers();
-UserType::ControlFuncs* get_cfs_obj_handlers();
-UserType::ControlFuncs* get_cfs_objects();
-CObject get_cobject(Value& ark_object, ValueType type);
+Ark::UserType::ControlFuncs* get_cfs_sbuffers();
+Ark::UserType::ControlFuncs* get_cfs_obj_handlers();
+Ark::UserType::ControlFuncs* get_cfs_objects();
+CObject get_cobject(Ark::Value& ark_object, Ark::ValueType type);
 
-Value msgpack_obj_handle(std::vector<Value>& args, VM* vm);
-Value msgpack_sbuffer(std::vector<Value>& args, VM* vm);
-Value msgpack_obj(std::vector<Value>& args, VM* vm);
+Ark::Value msgpack_obj_handle(std::vector<Ark::Value>& args, Ark::VM* vm);
+Ark::Value msgpack_sbuffer(std::vector<Ark::Value>& args, Ark::VM* vm);
+Ark::Value msgpack_obj(std::vector<Ark::Value>& args, Ark::VM* vm);
 
 #endif

@@ -7,6 +7,8 @@
 
 namespace msgpack
 {
+    using namespace Ark;
+
     MSGPACK_API_VERSION_NAMESPACE(MSGPACK_DEFAULT_API_NS)
     {
         namespace adaptor
@@ -22,12 +24,12 @@ namespace msgpack
                         Value v;
 
                         if (o.ptr[i].type == type::NIL)
-                            v = Ark::Nil;
+                            v = Nil;
                         else if (o.ptr[i].type == type::BOOLEAN)
                             if (o.ptr[i].via.boolean == true)
-                                v = Ark::True;
+                                v = True;
                             else
-                                v = Ark::False;
+                                v = False;
                         else if (o.ptr[i].type == type::FLOAT)
                             v = Value(o.ptr[i].via.f64);
                         else if (o.ptr[i].type == type::STR)
@@ -48,12 +50,12 @@ namespace msgpack
                 msgpack::object const& operator()(msgpack::object const& o, Value& v) const
                 {
                     if (o.type == type::NIL)
-                        v = Ark::Nil;
+                        v = Nil;
                     else if (o.type == type::BOOLEAN)
                         if (o.via.boolean == true)
-                            v = Ark::True;
+                            v = True;
                         else
-                            v = Ark::False;
+                            v = False;
                     else if (o.type == type::FLOAT)
                         v = Value(o.via.f64);
                     else if (o.type == type::STR)
@@ -63,7 +65,7 @@ namespace msgpack
                     }
                     else
                     {
-                        Value list_v = Ark::Value(ValueType::List);
+                        Value list_v = Value(ValueType::List);
                         convert_list(o.via.array, list_v);
                         v = list_v;
                     }

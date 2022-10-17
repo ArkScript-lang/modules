@@ -3,7 +3,7 @@
 
 #include <objects.hpp>
 
-Value msgpack_unpack(std::vector<Value>& args, VM* vm);
-Value msgpack_convert(std::vector<Value>& args, VM* vm);
+Ark::Value msgpack_unpack(std::vector<Ark::Value>& args, Ark::VM* vm);
+Ark::Value msgpack_convert(std::vector<Ark::Value>& args, Ark::VM* vm);
 
 #endif

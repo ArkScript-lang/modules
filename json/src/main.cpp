@@ -5,6 +5,7 @@
 
 namespace json
 {
+    using namespace Ark;
 
     std::vector<std::unique_ptr<nlohmann::json>>& get_json_object()
     {
@@ -30,7 +31,7 @@ namespace json
         return &cfs;
     }
 
-    Value open(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
+    Value open(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::String))
             types::generateError(
@@ -45,12 +46,12 @@ namespace json
 
         // parsing
         nlohmann::json* ptr = get_json_object().emplace_back(std::make_unique<nlohmann::json>(nlohmann::json::parse(content))).get();
-        Value v = Ark::Value(Ark::UserType(ptr, get_cfs()));
+        Value v = Value(UserType(ptr, get_cfs()));
 
         return v;
     }
 
-    Value fromString(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
+    Value fromString(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::String))
             types::generateError(
@@ -64,7 +65,7 @@ namespace json
                                       std::make_unique<nlohmann::json>(nlohmann::json::parse(args[0].stringRef().c_str())))
                                   .get();
 
-        Value v = Ark::Value(Ark::UserType(ptr, get_cfs()));
+        Value v = Value(UserType(ptr, get_cfs()));
         return v;
     }
 
@@ -88,12 +89,12 @@ namespace json
         else  // is_object() == true
         {
             nlohmann::json* ptr = get_json_object().emplace_back(std::make_unique<nlohmann::json>(obj)).get();
-            Value v = Ark::Value(Ark::UserType(ptr, get_cfs()));
+            Value v = Value(UserType(ptr, get_cfs()));
             return v;
         }
     }
 
-    Value get(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
+    Value get(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (args.size() < 2 || !args[0].usertype().is<nlohmann::json>())
             types::generateError(
@@ -133,7 +134,7 @@ namespace json
         return Nil;
     }
 
-    Value toString(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
+    Value toString(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::User))
             types::generateError(
@@ -164,7 +165,7 @@ namespace json
                 case ValueType::True:
                 case ValueType::False:
                 {
-                    json_list.emplace_back(el == Ark::True);
+                    json_list.emplace_back(el == True);
                     break;
                 }
 
@@ -180,13 +181,13 @@ namespace json
                 }
 
                 default:
-                    throw Ark::TypeError("json module: Couldn't parse the provided json");
+                    throw TypeError("json module: Couldn't parse the provided json");
             }
         }
         return json_list;
     }
 
-    Value jset(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
+    Value jset(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::User, ValueType::String, ValueType::Any) || !args[0].usertype().is<nlohmann::json>())
             types::generateError(
@@ -216,7 +217,7 @@ namespace json
             case ValueType::False:
             case ValueType::True:
             {
-                json_object[args[1].stringRef().c_str()] = (args[2] == Ark::True);
+                json_object[args[1].stringRef().c_str()] = (args[2] == True);
                 break;
             }
 
@@ -229,7 +230,7 @@ namespace json
             case ValueType::User:
             {
                 if (!args[2].usertypeRef().is<nlohmann::json>())
-                    throw Ark::TypeError("json:set: couldn't parse value (UserType)");
+                    throw TypeError("json:set: couldn't parse value (UserType)");
 
                 nlohmann::json& json_to_push = args[2].usertypeRef().as<nlohmann::json>();
                 json_object[args[1].stringRef().c_str()] = json_to_push;
@@ -243,7 +244,7 @@ namespace json
         return Nil;
     }
 
-    Value write(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
+    Value write(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::User, ValueType::String) || !args[0].usertype().is<nlohmann::json>())
             types::generateError(
@@ -260,7 +261,7 @@ namespace json
         return Nil;
     }
 
-    Value fromList(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
+    Value fromList(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::List))
             types::generateError(
@@ -273,12 +274,12 @@ namespace json
             throw std::runtime_error("json:fromList: the list must contain an even number of elements: even ones are the keys and odd ones are the values");
 
         nlohmann::json* ptr = get_json_object().emplace_back(std::make_unique<nlohmann::json>()).get();
-        Value v = Ark::Value(Ark::UserType(ptr, get_cfs()));
+        Value v = Value(UserType(ptr, get_cfs()));
 
         for (std::size_t i = 0, end = ark_list.size(); i < end; i += 2)
         {
             if (ark_list[i].valueType() != ValueType::String)
-                throw Ark::TypeError("json:fromList: keys need to be of type String");
+                throw TypeError("json:fromList: keys need to be of type String");
 
             switch (ark_list[i + 1].valueType())
             {
@@ -292,7 +293,7 @@ namespace json
 
                 case ValueType::True:
                 case ValueType::False:
-                    (*ptr)[ark_list[i].stringRef().c_str()] = (ark_list[i + 1] == Ark::True);
+                    (*ptr)[ark_list[i].stringRef().c_str()] = (ark_list[i + 1] == True);
                     break;
 
                 case ValueType::List:
@@ -301,20 +302,20 @@ namespace json
 
                 case ValueType::User:
                     if (!ark_list[i + 1].usertype().is<nlohmann::json>())
-                        throw Ark::TypeError("json:fromList: value for key '" + ark_list[i].stringRef().toString() + "' isn't handled");
+                        throw TypeError("json:fromList: value for key '" + ark_list[i].stringRef().toString() + "' isn't handled");
 
                     (*ptr)[ark_list[i].stringRef().c_str()] = ark_list[i + 1].usertypeRef().as<nlohmann::json>();
                     break;
 
                 default:
-                    throw Ark::TypeError("json:fromList: value for key '" + ark_list[i].stringRef().toString() + "' isn't handled");
+                    throw TypeError("json:fromList: value for key '" + ark_list[i].stringRef().toString() + "' isn't handled");
             }
         }
 
         return v;
     }
 
-    Value len(std::vector<Value>& args, Ark::VM* vm [[maybe_unused]])
+    Value len(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::User) || !args[0].usertype().is<nlohmann::json>())
             types::generateError(
@@ -326,18 +327,18 @@ namespace json
     }
 }
 
-ARK_API mapping* getFunctionsMapping()
+ARK_API Ark::mapping* getFunctionsMapping()
 {
-    mapping* map = mapping_create(8);
+    Ark::mapping* map = Ark::mapping_create(8);
 
-    mapping_add(map[0], "json:open", json::open);
-    mapping_add(map[1], "json:get", json::get);
-    mapping_add(map[2], "json:toString", json::toString);
-    mapping_add(map[3], "json:fromString", json::fromString);
-    mapping_add(map[4], "json:set", json::jset);
-    mapping_add(map[5], "json:write", json::write);
-    mapping_add(map[6], "json:fromList", json::fromList);
-    mapping_add(map[7], "json:len", json::len);
+    Ark::mapping_add(map[0], "json:open", json::open);
+    Ark::mapping_add(map[1], "json:get", json::get);
+    Ark::mapping_add(map[2], "json:toString", json::toString);
+    Ark::mapping_add(map[3], "json:fromString", json::fromString);
+    Ark::mapping_add(map[4], "json:set", json::jset);
+    Ark::mapping_add(map[5], "json:write", json::write);
+    Ark::mapping_add(map[6], "json:fromList", json::fromList);
+    Ark::mapping_add(map[7], "json:len", json::len);
 
     return map;
 }

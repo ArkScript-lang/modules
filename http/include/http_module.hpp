@@ -13,6 +13,7 @@
 #include <list>
 
 using namespace httplib;
+using namespace Ark;
 
 // utils
 std::list<Params>& get_params();
@@ -27,37 +28,37 @@ UserType::ControlFuncs* get_cfs_param();
 void typecheck(std::string_view funcname, const std::vector<Value>& n);
 
 // server
-Value http_create_server(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_get(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_post(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_put(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_delete(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_stop(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_listen(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm);
-Value http_server_enable_logger(std::vector<Value>& n, Ark::VM* vm);
+Value http_create_server(std::vector<Value>& n, VM* vm);
+Value http_server_get(std::vector<Value>& n, VM* vm);
+Value http_server_post(std::vector<Value>& n, VM* vm);
+Value http_server_put(std::vector<Value>& n, VM* vm);
+Value http_server_delete(std::vector<Value>& n, VM* vm);
+Value http_server_stop(std::vector<Value>& n, VM* vm);
+Value http_server_listen(std::vector<Value>& n, VM* vm);
+Value http_server_set_mount_point(std::vector<Value>& n, VM* vm);
+Value http_server_remove_mount_point(std::vector<Value>& n, VM* vm);
+Value http_server_set_fext_mimetype(std::vector<Value>& n, VM* vm);
+Value http_server_enable_logger(std::vector<Value>& n, VM* vm);
 
 // client
-Value http_create_headers(std::vector<Value>& n, Ark::VM* vm);
-Value http_create_client(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_get(std::vector<Value>& n, Ark::VM* vm);
-Value http_create_params(std::vector<Value>& n, Ark::VM* vm);
-Value http_params_tolist(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_post(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_put(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_delete(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_set_follow_location(std::vector<Value>& n, Ark::VM* vm);
+Value http_create_headers(std::vector<Value>& n, VM* vm);
+Value http_create_client(std::vector<Value>& n, VM* vm);
+Value http_client_get(std::vector<Value>& n, VM* vm);
+Value http_create_params(std::vector<Value>& n, VM* vm);
+Value http_params_tolist(std::vector<Value>& n, VM* vm);
+Value http_client_post(std::vector<Value>& n, VM* vm);
+Value http_client_put(std::vector<Value>& n, VM* vm);
+Value http_client_delete(std::vector<Value>& n, VM* vm);
+Value http_client_set_follow_location(std::vector<Value>& n, VM* vm);
 
-Value http_client_set_co_timeout(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_set_read_timeout(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_set_write_timeout(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_set_basic_auth(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_set_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_set_keep_alive(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_set_proxy(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_set_proxy_basic_auth(std::vector<Value>& n, Ark::VM* vm);
-Value http_client_set_proxy_bearer_token_auth(std::vector<Value>& n, Ark::VM* vm);
+Value http_client_set_co_timeout(std::vector<Value>& n, VM* vm);
+Value http_client_set_read_timeout(std::vector<Value>& n, VM* vm);
+Value http_client_set_write_timeout(std::vector<Value>& n, VM* vm);
+Value http_client_set_basic_auth(std::vector<Value>& n, VM* vm);
+Value http_client_set_bearer_token_auth(std::vector<Value>& n, VM* vm);
+Value http_client_set_keep_alive(std::vector<Value>& n, VM* vm);
+Value http_client_set_proxy(std::vector<Value>& n, VM* vm);
+Value http_client_set_proxy_basic_auth(std::vector<Value>& n, VM* vm);
+Value http_client_set_proxy_bearer_token_auth(std::vector<Value>& n, VM* vm);
 
 #endif

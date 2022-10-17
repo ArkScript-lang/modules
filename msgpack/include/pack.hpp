@@ -3,6 +3,6 @@
 
 #include <objects.hpp>
 
-Value msgpack_pack(std::vector<Value>& args, VM* vm);
+Ark::Value msgpack_pack(std::vector<Ark::Value>& args, Ark::VM* vm);
 
 #endif

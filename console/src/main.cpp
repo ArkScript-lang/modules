@@ -1,13 +1,13 @@
 #include <string>
-#include <random>
-#include <chrono>
 #include <termcolor/termcolor.hpp>
 
 #include <Ark/Module.hpp>
 
+using namespace Ark;
+
 namespace ArkConsole
 {
-    Value clear(std::vector<Value>& n [[maybe_unused]], Ark::VM* vm [[maybe_unused]])
+    Value clear(std::vector<Value>& n [[maybe_unused]], VM* vm [[maybe_unused]])
     {
 #if defined(OS_WINDOWS)
         COORD topLeft = { 0, 0 };
@@ -28,7 +28,7 @@ namespace ArkConsole
         return Nil;
     }
 
-    Value color(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+    Value color(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::String))
             types::generateError(

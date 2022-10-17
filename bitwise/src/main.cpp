@@ -1,9 +1,11 @@
 #include <Ark/Module.hpp>
 #include <bitset>
 
+using namespace Ark;
+
 namespace ArkBitwise
 {
-    Value rshift(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+    Value rshift(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::Number, ValueType::Number))
             types::generateError(
@@ -17,7 +19,7 @@ namespace ArkBitwise
         return Value(static_cast<double>(shifted));
     }
 
-    Value lshift(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+    Value lshift(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::Number, ValueType::Number))
             types::generateError(
@@ -31,7 +33,7 @@ namespace ArkBitwise
         return Value(static_cast<double>(shifted));
     }
 
-    Value xor_(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+    Value xor_(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::Number, ValueType::Number))
             types::generateError(
@@ -45,7 +47,7 @@ namespace ArkBitwise
         return Value(static_cast<double>(masked));
     }
 
-    Value or_(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+    Value or_(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::Number, ValueType::Number))
             types::generateError(
@@ -59,7 +61,7 @@ namespace ArkBitwise
         return Value(static_cast<double>(masked));
     }
 
-    Value and_(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+    Value and_(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::Number, ValueType::Number))
             types::generateError(

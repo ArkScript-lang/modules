@@ -1,18 +1,18 @@
 #include <ark_msgpack.hpp>
 
-ARK_API mapping* getFunctionsMapping()
+ARK_API Ark::mapping* getFunctionsMapping()
 {
-    mapping* map = mapping_create(6);
+    Ark::mapping* map = Ark::mapping_create(6);
 
     // msgpack objects constructors
-    mapping_add(map[0], "msgpack:sbuffer", msgpack_sbuffer);
-    mapping_add(map[1], "msgpack:objectHandle", msgpack_obj_handle);
-    mapping_add(map[2], "msgpack:object", msgpack_obj);
+    Ark::mapping_add(map[0], "msgpack:sbuffer", msgpack_sbuffer);
+    Ark::mapping_add(map[1], "msgpack:objectHandle", msgpack_obj_handle);
+    Ark::mapping_add(map[2], "msgpack:object", msgpack_obj);
 
     // msgpack operations
-    mapping_add(map[3], "msgpack:pack", msgpack_pack);
-    mapping_add(map[4], "msgpack:unpack", msgpack_unpack);
-    mapping_add(map[5], "msgpack:convert", msgpack_convert);
+    Ark::mapping_add(map[3], "msgpack:pack", msgpack_pack);
+    Ark::mapping_add(map[4], "msgpack:unpack", msgpack_unpack);
+    Ark::mapping_add(map[5], "msgpack:convert", msgpack_convert);
 
     return map;
 }
