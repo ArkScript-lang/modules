@@ -1,6 +1,8 @@
 #include <objects.hpp>
 #include <adaptor.hpp>
 
+using namespace Ark;
+
 std::list<std::unique_ptr<msgpack::sbuffer>>& get_sbuffers()
 {
     static std::list<std::unique_ptr<msgpack::sbuffer>> sbuffers;

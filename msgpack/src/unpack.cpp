@@ -1,6 +1,8 @@
 #include <unpack.hpp>
 #include <adaptor.hpp>
 
+using namespace Ark;
+
 Value msgpack_unpack(std::vector<Value>& args, VM* vm [[maybe_unused]])
 {
     if (!types::check(args, ValueType::User, ValueType::User) || !args[0].usertypeRef().is<msgpack::sbuffer>() || !args[1].usertypeRef().is<msgpack::object_handle>())
@@ -15,7 +17,7 @@ Value msgpack_unpack(std::vector<Value>& args, VM* vm [[maybe_unused]])
 
     oh = msgpack::unpack(sbuf.data(), sbuf.size());
 
-    return Value(Ark::Nil);
+    return Value(Nil);
 }
 
 Value msgpack_convert(std::vector<Value>& args, VM* vm [[maybe_unused]])

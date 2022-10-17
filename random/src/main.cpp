@@ -7,7 +7,9 @@
 
 namespace ArkRandom
 {
-    Value random(std::vector<Value>& n [[maybe_unused]], Ark::VM* vm [[maybe_unused]])
+    using namespace Ark;
+
+    Value random(std::vector<Value>& n [[maybe_unused]], VM* vm [[maybe_unused]])
     {
         unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
         std::mt19937 g(seed);
@@ -18,10 +20,12 @@ namespace ArkRandom
     }
 }
 
-ARK_API mapping* getFunctionsMapping()
+ARK_API Ark::mapping* getFunctionsMapping()
 {
-    mapping* map = mapping_create(1);
-    mapping_add(map[0], "random", ArkRandom::random);
+    static Ark::mapping map[] = {
+        { "random", ArkRandom::random },
+        { nullptr, nullptr }
+    };
 
     return map;
 }

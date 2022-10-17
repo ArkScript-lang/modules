@@ -5,7 +5,9 @@
 
 namespace ArkHash
 {
-    Value sha2(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+    using namespace Ark;
+
+    Value sha2(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::String))
             types::generateError(
@@ -20,7 +22,7 @@ namespace ArkHash
         return Value(output);
     }
 
-    Value md5(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+    Value md5(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::String))
             types::generateError(
@@ -32,11 +34,13 @@ namespace ArkHash
     }
 }
 
-ARK_API mapping* getFunctionsMapping()
+ARK_API Ark::mapping* getFunctionsMapping()
 {
-    mapping* map = mapping_create(2);
-    mapping_add(map[0], "hash:sha256", ArkHash::sha2);
-    mapping_add(map[1], "hash:md5", ArkHash::md5);
+    static Ark::mapping map[] = {
+        { "hash:sha256", ArkHash::sha2 },
+        { "hash:md5", ArkHash::md5 },
+        { nullptr, nullptr }
+    };
 
     return map;
 }

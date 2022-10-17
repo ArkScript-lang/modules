@@ -8,7 +8,7 @@
      val.list()[1].valueType() == ValueType::String &&               \
      val.list()[2].valueType() == ValueType::String)
 
-Value http_create_server(std::vector<Value>& n [[maybe_unused]], Ark::VM* vm [[maybe_unused]])
+Value http_create_server(std::vector<Value>& n [[maybe_unused]], VM* vm [[maybe_unused]])
 {
     create_server();
     return Nil;
@@ -16,7 +16,7 @@ Value http_create_server(std::vector<Value>& n [[maybe_unused]], Ark::VM* vm [[m
 
 using HttpMethod_t = Server& (Server::*)(const std::string&, Server::Handler);
 
-Value handle_request_for(std::string_view funcname, HttpMethod_t handler, std::vector<Value>& n, Ark::VM* vm)
+Value handle_request_for(std::string_view funcname, HttpMethod_t handler, std::vector<Value>& n, VM* vm)
 {
     typecheck(funcname, n);
     Server& srv = create_server();
@@ -41,7 +41,7 @@ Value handle_request_for(std::string_view funcname, HttpMethod_t handler, std::v
                 std::list<Params>& p = get_params();
                 p.emplace_back(req.params);
 
-                Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
+                Value params = Value(UserType(&p.back(), get_cfs_param()));
 
                 r = vm->resolve(&n[1], matches, req.body, params);
             }
@@ -53,7 +53,7 @@ Value handle_request_for(std::string_view funcname, HttpMethod_t handler, std::v
             std::list<Params>& p = get_params();
             p.emplace_back(req.params);
 
-            Value params = Ark::Value(Ark::UserType(&p.back(), get_cfs_param()));
+            Value params = Value(UserType(&p.back(), get_cfs_param()));
 
             r = vm->resolve(&n[1], Nil, req.body, params);
         }
@@ -81,33 +81,33 @@ Value handle_request_for(std::string_view funcname, HttpMethod_t handler, std::v
     return Nil;
 }
 
-Value http_server_get(std::vector<Value>& n, Ark::VM* vm)
+Value http_server_get(std::vector<Value>& n, VM* vm)
 {
     return handle_request_for("http:server:get", &Server::Get, n, vm);
 }
 
-Value http_server_post(std::vector<Value>& n, Ark::VM* vm)
+Value http_server_post(std::vector<Value>& n, VM* vm)
 {
     return handle_request_for("http:server:post", &Server::Post, n, vm);
 }
 
-Value http_server_put(std::vector<Value>& n, Ark::VM* vm)
+Value http_server_put(std::vector<Value>& n, VM* vm)
 {
     return handle_request_for("http:server:put", &Server::Put, n, vm);
 }
 
-Value http_server_delete(std::vector<Value>& n, Ark::VM* vm)
+Value http_server_delete(std::vector<Value>& n, VM* vm)
 {
     return handle_request_for("http:server:delete", &Server::Delete, n, vm);
 }
 
-Value http_server_stop(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+Value http_server_stop(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     create_server().stop();
     return Nil;
 }
 
-Value http_server_listen(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+Value http_server_listen(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::String) && !types::check(n, ValueType::String, ValueType::Number))
         types::generateError(
@@ -129,7 +129,7 @@ Value http_server_listen(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
     return Nil;
 }
 
-Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+Value http_server_set_mount_point(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::String, ValueType::String))
         types::generateError(
@@ -144,7 +144,7 @@ Value http_server_set_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_unu
     return True;
 }
 
-Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+Value http_server_remove_mount_point(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::String))
         types::generateError(
@@ -158,7 +158,7 @@ Value http_server_remove_mount_point(std::vector<Value>& n, Ark::VM* vm [[maybe_
     return True;
 }
 
-Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+Value http_server_set_fext_mimetype(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::String, ValueType::String))
         types::generateError(
@@ -172,7 +172,7 @@ Value http_server_set_fext_mimetype(std::vector<Value>& n, Ark::VM* vm [[maybe_u
     return Nil;
 }
 
-Value http_server_enable_logger(std::vector<Value>& n, Ark::VM* vm [[maybe_unused]])
+Value http_server_enable_logger(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::Number))
         types::generateError(

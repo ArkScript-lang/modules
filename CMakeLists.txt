@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.8)
 
 project(Modules)
 
-set(MODULE_EXTENSION "arkm")
-
 set(ARK_MOD_RAND    Off CACHE BOOL "Build the random module")
 set(ARK_MOD_CONSOLE On  CACHE BOOL "Build the console module")
 set(ARK_MOD_MSGPACK Off CACHE BOOL "Build the msgpack module")
