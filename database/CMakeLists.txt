@@ -8,7 +8,6 @@ find_package(SQLite3)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/include
-    ${ark_SOURCE_DIR}/thirdparty
     ${ark_SOURCE_DIR}/include
     ${SQLite3_INCLUDE_DIRS})
 
