@@ -6,7 +6,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/include
-    ${ark_SOURCE_DIR}/thirdparty
     ${ark_SOURCE_DIR}/include
     ${Modules_SOURCE_DIR}/submodules/json/single_include)
 

@@ -1,5 +1,5 @@
 #include <string>
-#include <termcolor/termcolor.hpp>
+#include <termcolor/proxy.hpp>
 
 #include <Ark/Module.hpp>
 
@@ -84,7 +84,7 @@ namespace ArkConsole
         else if (value == "on_white")
             std::cout << termcolor::on_white;
         else
-            throw std::runtime_error("Couldn't identify argument given to console:color: '" + value.toString() + "'");
+            throw std::runtime_error("Couldn't identify argument given to console:color: '" + value + "'");
 
         return Nil;
     }

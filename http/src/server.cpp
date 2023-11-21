@@ -64,14 +64,14 @@ Value handle_request_for(std::string_view funcname, HttpMethod_t handler, std::v
         if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
         {
             res.status = static_cast<int>(r.list()[0].number());
-            content = r.list()[1].stringRef().toString();
-            type = r.list()[2].stringRef().toString();
+            content = r.list()[1].stringRef();
+            type = r.list()[2].stringRef();
         }
         else
         {
             // internal server error because we couldn't match the request
             res.status = 500;
-            content = "Couldn't parse the return value for the route '" + n[0].string().toString() + "' (" + std::string(funcname) + ")";
+            content = "Couldn't parse the return value for the route '" + n[0].string() + "' (" + std::string(funcname) + ")";
         }
 
         res.set_content(content, type.c_str());

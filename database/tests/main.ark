@@ -1,4 +1,4 @@
-(import "database.arkm")
+(import database)
 
 (let db (database:sqlite:open "test.db"))
 

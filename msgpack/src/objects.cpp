@@ -106,7 +106,7 @@ CObject get_cobject(Value& ark_object, ValueType type)
             object = ark_object.number();
             break;
         case ValueType::String:
-            object = ark_object.stringRef().toString();
+            object = ark_object.stringRef();
             break;
         case ValueType::List:
             object = ark_object.list();
@@ -120,6 +120,7 @@ CObject get_cobject(Value& ark_object, ValueType type)
         case ValueType::Undefined:
         case ValueType::Reference:
         case ValueType::InstPtr:
+        case ValueType::Any:
             break;
             // Note: All values must be listed to prevent issues when a new
             //       member of ValueType is added so that compiler can detect

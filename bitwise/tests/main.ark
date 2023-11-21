@@ -1,4 +1,4 @@
-(import "bitwise.arkm")
+(import bitwise)
 
 (assert (= 4 (bitwise:rshift 140 5)) "140 >> 5")
 (assert (= 8 (bitwise:rshift 140 4)) "140 >> 4")
