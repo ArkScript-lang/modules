@@ -1,4 +1,4 @@
-(import "random.arkm")
+(import random)
 
 (let in-range? (fun (x start end) (and (>= x start) (<= x end))))
 
