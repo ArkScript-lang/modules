@@ -16,7 +16,7 @@ White='\033[0;37m'
 
 total_time=0
 
-for t in lib/modules/*/tests/; do
+for t in lib/modules/{src,draft}/*/tests/; do
     start=$(date +%s%N | tr -d 'N')
 
     echo -n "Running ${t}..."

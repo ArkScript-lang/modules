@@ -36,7 +36,7 @@ def createDirectory(rootDirectory, directoryName):
 	Returns:
 	string: path of the current root directory
 	'''
-	path = os.path.join(rootDirectory, directoryName)
+	path = os.path.join(rootDirectory, "src", directoryName)
 	os.mkdir(path)
 
 	return path

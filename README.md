@@ -15,10 +15,17 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 
 * `console` to change text color when using `print`
 
+### Generic utilities
+
+* `bitwise` for bitwise operations
+* `hash` to compute md5 and sha256 hashes
+* `random` to generate random numbers
+
 ### Data related
 
 * `json` to manipulate and create JSON objects
 * `msgpack` to manipulate and create MsgPack objects
+* `database` to manipulate sqlite database
 
 ### Network related
 
@@ -26,7 +33,7 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 
 ## Dependencies
 
-* C++17
+* C++20
 * CMake >= 3.8
 * Visual Studio >= 11 (on Windows)
 * Python >= 2.7
@@ -37,6 +44,6 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 
 ## Copyright and Licence information
 
-Copyright (c) 2019-2021 Alexandre Plateau. All rights reserved.
+Copyright (c) 2019-2024 Alexandre Plateau. All rights reserved.
 
 This ArkScript distribution contains no GNU GPL code, which means it can be used in proprietary projects.
