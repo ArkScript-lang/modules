@@ -6,9 +6,11 @@ set(ARK_MOD_ALL Off CACHE BOOL "Build all the modules")
 set(ARK_MOD_DRAFT Off CACHE BOOL "Build all draft modules")
 
 if (ARK_MOD_ALL)
-    add_subdirectory(${PROJECT_SOURCE_DIR}/src)
+    message(STATUS "Building modules in modules/src")
+    add_subdirectory(src)
 endif ()
 
 if (ARK_MOD_DRAFT)
-    add_subdirectory(${PROJECT_SOURCE_DIR}/draft)
+    message(STATUS "Building modules in modules/draft")
+    add_subdirectory(draft)
 endif ()
