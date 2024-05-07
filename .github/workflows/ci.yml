@@ -2,14 +2,14 @@ name: "CMake"
 
 on:
   push:
-    branches: [master]
+    branches: [ master ]
     paths-ignore:
       - '.github/*.*'
       - '*.md'
       - 'LICENCE'
       - '.gitignore'
   pull_request:
-    branches: [master]
+    branches: [ master ]
 
 env:
   BUILD_TYPE: Release
@@ -20,38 +20,42 @@ jobs:
     name: "Ubuntu Clang 11"
 
     steps:
-    - uses: actions/checkout@v2
-      if: contains(github.event.head_commit.message, '[skip ci]') == false
-      with:
-        repository: ArkScript-lang/Ark
-        path: '.'
-        submodules: recursive
+      - uses: actions/checkout@v2
+        if: contains(github.event.head_commit.message, '[skip ci]') == false
+        with:
+          repository: ArkScript-lang/Ark
+          path: '.'
+          submodules: recursive
 
-    - shell: bash
-      run: rm -r lib/modules
+      - shell: bash
+        run: rm -r lib/modules
 
-    - uses: actions/checkout@v2
-      with:
-        submodules: recursive
-        path: lib/modules
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          path: lib/modules
 
-    - name: Update LLVM compilers
-      shell: bash
-      run: sudo apt-get install -y clang-11 lld-11 libc++-11-dev libc++abi-11-dev clang-tools-11
+      - name: Update LLVM compilers
+        shell: bash
+        run: sudo apt-get install -y clang-11 lld-11 libc++-11-dev libc++abi-11-dev clang-tools-11
 
-    - name: Configure CMake Ark
-      shell: bash
-      run: |
-        cmake -Bbuild \
-          -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-          -DCMAKE_C_COMPILER=clang-11 \
-          -DCMAKE_CXX_COMPILER=clang++-11 \
-          -DARK_BUILD_EXE=On -DARK_BUILD_MODULES=On -DARK_MOD_ALL=On
+      - name: Configure CMake Ark
+        shell: bash
+        run: |
+          cmake -Bbuild \
+            -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
+            -DCMAKE_C_COMPILER=clang-11 \
+            -DCMAKE_CXX_COMPILER=clang++-11 \
+            -DARK_BUILD_EXE=On -DARK_BUILD_MODULES=On -DARK_MOD_ALL=On -DARK_MOD_DRAFT=On
 
-    - name: Build ArkScript
-      shell: bash
-      run: cmake --build build --config $BUILD_TYPE
+      - name: Build ArkScript
+        shell: bash
+        run: cmake --build build --config $BUILD_TYPE
 
-    - name: Run module tests
-      shell: bash
-      run: source lib/modules/.github/run-tests
+      - name: Run src module tests
+        shell: bash
+        run: ./lib/modules/.github/run-tests src
+
+      - name: Run draft module tests
+        shell: bash
+        run: ./lib/modules/.github/run-tests draft
