@@ -1,7 +1,6 @@
 #ifndef ARK_MSGPACK_ADAPTOR_HPP
 #define ARK_MSGPACK_ADAPTOR_HPP
 
-#include <Ark/String.hpp>
 #include <Ark/Module.hpp>
 #include <msgpack.hpp>
 
