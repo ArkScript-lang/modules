@@ -91,7 +91,7 @@ namespace msgpack
                         o.pack_double(static_cast<Value>(v).number());
                     else if (v.valueType() == ValueType::String)
                     {
-                        String str = static_cast<Value>(v).string();
+                        std::string str = static_cast<Value>(v).string();
                         o.pack_str(str.size());
                         o.pack_str_body(str.c_str(), str.size());
                     }
