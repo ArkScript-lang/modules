@@ -13,7 +13,7 @@ Returns a random number in range `[0, 32678[`.
 
 **Example**
 ~~~~{.lisp}
-(import "random.arkm")
+(import random)
 (print (random))  # 11653
 (print (random))  # 4501
 ~~~~

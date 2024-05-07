@@ -1,4 +1,4 @@
-(import "console.arkm")
+(import console)
 
 # no tests to do as this is only visual and cosmetics
 

@@ -1,4 +1,4 @@
-(import "msgpack.arkm")
+(import msgpack)
 
 # buffer
 (let sbuf (msgpack:sbuffer))

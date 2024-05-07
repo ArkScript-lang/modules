@@ -14,7 +14,7 @@ A module for **msgpack**, an efficient binary serialization format like JSON, bu
 ### Example
 
 ``` clojure
-(import "msgpack.arkm")
+(import msgpack)
 
 # buffer
 (let sbuf (msgpack:sbuffer))

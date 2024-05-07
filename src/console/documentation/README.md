@@ -14,7 +14,7 @@ Clear the terminal on Windows and Posix.
 
 **Example**
 ~~~~{.lisp}
-(import "console.arkm")
+(import console)
 (print "hello world")  # hello world is printed
 (console:clear)        # now the whole terminal is empty and nothing is printed
 ~~~~
@@ -61,7 +61,7 @@ on_white
 
 **Example**
 ~~~~{.lisp}
-(import "console.arkm")
+(import console)
 (print "hello world")  # this is using the default color of the terminal
 (console:color "red")
 (print "this is in red")

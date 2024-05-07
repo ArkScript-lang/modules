@@ -4,7 +4,7 @@ Important note related to the routes: in case the given content argument doesn't
 
 ## http:server:create
 
-Create the server (only one per VM may be instanciated).
+Create the server (only one per VM may be instanced).
 
 **Parameters**
 - None.
@@ -16,7 +16,7 @@ Create the server (only one per VM may be instanciated).
 
 **Example**
 ~~~~{.lisp}
-(import "http.arkm")
+(import http)
 (http:server:create)
 ~~~~
 
@@ -30,7 +30,7 @@ Create the server (only one per VM may be instanciated).
 Create a route to answer the specified request type.
 
 **Parameters**
-- `route`: a string representing the route to handle. The route can receive matches with the regex syntax, eg `/(\\d+)` to match on numbers
+- `route`: a string representing the route to handle. The route can receive matches with the regex syntax, e.g. `/(\\d+)` to match on numbers
 - `handler`: a function returning a list `[status-code content type]`
     - `status-code`: number, representing an HTTP code
     - `content`: string
@@ -48,7 +48,7 @@ The typical `handler` function looks like this: `(fun (matches body params) ...)
 
 **Example**
 ~~~~{.lisp}
-(import "http.arkm")
+(import http)
 
 (http:server:create)
 (http:server:get "/hi" "this is my fabulous content" "text/plain")
@@ -79,7 +79,7 @@ Stop a server.
 
 **Example**
 ~~~~{.lisp}
-(import "http.arkm")
+(import http)
 
 (http:server:create)
 ...
@@ -94,7 +94,7 @@ Stop a server.
 
 ## http:server:listen
 
-Setup the server to listen forever. Should only be called once after having setup all the routes.
+Set up the server to listen forever. Should only be called once after having setup all the routes.
 
 **Parameters**
 - `host`: a string ; an IP address or `localhost`
@@ -107,7 +107,7 @@ Setup the server to listen forever. Should only be called once after having setu
 
 **Example**
 ~~~~{.lisp}
-(import "http.arkm")
+(import http)
 
 (http:server:create)
 
@@ -132,7 +132,7 @@ Mount a given directory to a specific location. You can mount a directory to mul
 
 **Example**
 ~~~~{.lisp}
-(import "http.arkm")
+(import http)
 
 (http:server:create)
 
@@ -149,7 +149,7 @@ Mount a given directory to a specific location. You can mount a directory to mul
 Remove a mount point.
 
 **Parameters**
-- `mountpoint`: string, a mountpoint name
+- `mountpoint`: string, a mount point name
 
 **Return value** `bool`, false if the mount point can't be found, true otherwise.
 
@@ -158,7 +158,7 @@ Remove a mount point.
 
 **Example**
 ~~~~{.lisp}
-(import "http.arkm")
+(import http)
 
 (http:server:create)
 
@@ -185,22 +185,22 @@ Map a file extension to a mimetype.
 
 Built-in mappings:
 
-Extension | MIME Type
---------- | ---------
-txt | text/plain
-html, htm | text/html
-css | text/css
-jpeg, jpg | image/jpg
-png | image/png
-gif | image/gif
-svg | image/svg+xml
-ico | image/x-icon
-json | application/json
-pdf | application/pdf
-js | application/javascript
-wasm | application/wasm
-xml | application/xml
-xhtml | application/xhtml+xml
+| Extension | MIME Type              |
+|-----------|------------------------|
+| txt       | text/plain             |
+| html, htm | text/html              |
+| css       | text/css               |
+| jpeg, jpg | image/jpg              |
+| png       | image/png              |
+| gif       | image/gif              |
+| svg       | image/svg+xml          |
+| ico       | image/x-icon           |
+| json      | application/json       |
+| pdf       | application/pdf        |
+| js        | application/javascript |
+| wasm      | application/wasm       |
+| xml       | application/xml        |
+| xhtml     | application/xhtml+xml  |
 
 **Author**
 - [@SuperFola](https://github.com/SuperFola)
@@ -227,7 +227,7 @@ Level 2 will add the request body as well.
 
 **Example**
 ~~~~{.lisp}
-(import "http.arkm")
+(import http)
 
 (http:server:create)
 

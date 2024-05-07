@@ -17,7 +17,7 @@ Right shifts a given number.
 
 **Example**
 ~~~~{.lisp}
-(import "bitwise.arkm")
+(import bitwise)
 (print (bitwise:rshift 4096 3))  # 512
 ~~~~
 
@@ -36,7 +36,7 @@ Left shifts a given number.
 
 **Example**
 ~~~~{.lisp}
-(import "bitwise.arkm")
+(import bitwise)
 (print (bitwise:lshift 512 3))  # 4096
 ~~~~
 
@@ -55,7 +55,7 @@ Xor a number given a mask.
 
 **Example**
 ~~~~{.lisp}
-(import "bitwise.arkm")
+(import bitwise)
 (print (bitwise:xor 99 13))  # 110
 ~~~~
 
@@ -74,7 +74,7 @@ Compute the bitwise `a OR b` operation.
 
 **Example**
 ~~~~{.lisp}
-(import "bitwise.arkm")
+(import bitwise)
 (print (bitwise:or 89 13))  # 93
 ~~~~
 
@@ -93,6 +93,6 @@ Compute the bitwise `a AND b` operation.
 
 **Example**
 ~~~~{.lisp}
-(import "bitwise.arkm")
+(import bitwise)
 (print (bitwise:and 89 13))  # 9
 ~~~~

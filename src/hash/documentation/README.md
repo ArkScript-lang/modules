@@ -14,7 +14,7 @@ Generates a SHA256 of a given string.
 
 **Example**
 ~~~~{.lisp}
-(import "hash.arkm")
+(import hash)
 (print (hash:sha256 "arkscript"))  # c56d0bb03e9e03e7000f7b596cdb333c315523af7e4781f02610c690441c43dd
 ~~~~
 
@@ -32,6 +32,6 @@ Generates a MD5 of a given string.
 
 **Example**
 ~~~~{.lisp}
-(import "hash.arkm")
+(import hash)
 (print (hash:md5 "arkscript"))  # a27ee01c49b7552b8d69a631b7bb23c9
 ~~~~
