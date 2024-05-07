@@ -302,13 +302,13 @@ namespace json
 
                 case ValueType::User:
                     if (!ark_list[i + 1].usertype().is<nlohmann::json>())
-                        throw TypeError("json:fromList: value for key '" + ark_list[i].stringRef().toString() + "' isn't handled");
+                        throw TypeError("json:fromList: value for key '" + ark_list[i].stringRef() + "' isn't handled");
 
                     (*ptr)[ark_list[i].stringRef().c_str()] = ark_list[i + 1].usertypeRef().as<nlohmann::json>();
                     break;
 
                 default:
-                    throw TypeError("json:fromList: value for key '" + ark_list[i].stringRef().toString() + "' isn't handled");
+                    throw TypeError("json:fromList: value for key '" + ark_list[i].stringRef() + "' isn't handled");
             }
         }
 

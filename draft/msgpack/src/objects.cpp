@@ -106,7 +106,7 @@ CObject get_cobject(Value& ark_object, ValueType type)
             object = ark_object.number();
             break;
         case ValueType::String:
-            object = ark_object.stringRef().toString();
+            object = ark_object.stringRef();
             break;
         case ValueType::List:
             object = ark_object.list();
