@@ -1,5 +1,5 @@
 #include <string>
-#include <termcolor/termcolor.hpp>
+#include <termcolor/proxy.hpp>
 
 #include <Ark/Module.hpp>
 
