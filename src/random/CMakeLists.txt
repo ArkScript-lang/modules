@@ -5,14 +5,14 @@ project(random)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories(
-    ${PROJECT_SOURCE_DIR}/include
-    ${ark_SOURCE_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include)
 
 file(GLOB_RECURSE SOURCE_FILES
     ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${ark_SOURCE_DIR}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE ArkReactor)
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)

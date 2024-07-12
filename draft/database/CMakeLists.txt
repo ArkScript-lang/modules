@@ -8,7 +8,6 @@ find_package(SQLite3)
 
 include_directories(
     ${PROJECT_SOURCE_DIR}/include
-    ${ark_SOURCE_DIR}/include
     ${SQLite3_INCLUDE_DIRS})
 
 file(GLOB_RECURSE SOURCE_FILES
@@ -16,6 +15,7 @@ file(GLOB_RECURSE SOURCE_FILES
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
+target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${ark_SOURCE_DIR}/include)
 target_link_libraries(${PROJECT_NAME} PRIVATE ArkReactor ${SQLite3_LIBRARIES})
 
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
