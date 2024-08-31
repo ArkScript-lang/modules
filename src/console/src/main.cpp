@@ -1,6 +1,6 @@
 #include <string>
-#include <termcolor/proxy.hpp>
 
+#include <termcolor/termcolor.hpp>
 #include <Ark/Module.hpp>
 
 using namespace Ark;
