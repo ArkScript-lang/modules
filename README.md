@@ -24,7 +24,6 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 ### Data related
 
 * `json` to manipulate and create JSON objects
-* `msgpack` to manipulate and create MsgPack objects
 * `database` to manipulate sqlite database
 
 ### Network related

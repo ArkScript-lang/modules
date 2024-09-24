@@ -1,9 +1,6 @@
 [submodule "submodules/json"]
 	path = submodules/json
 	url = https://github.com/ArkScript-lang/nlohmann-json.git
-[submodule "submodules/msgpack-cpp"]
-	path = submodules/msgpack-cpp
-	url = https://github.com/ArkScript-lang/msgpack-cpp.git
 [submodule "submodules/cpp-httplib"]
 	path = submodules/cpp-httplib
 	url = https://github.com/yhirose/cpp-httplib.git

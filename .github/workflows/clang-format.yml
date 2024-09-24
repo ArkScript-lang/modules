@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        path: [bitwise, console, hash, http, include, json, msgpack, random]
+        path: [bitwise, console, hash, http, include, json, random]
 
     steps:
       - uses: actions/checkout@v2
