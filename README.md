@@ -19,7 +19,6 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 
 * `bitwise` for bitwise operations
 * `hash` to compute md5 and sha256 hashes
-* `random` to generate random numbers
 
 ### Data related
 
