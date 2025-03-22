@@ -17,7 +17,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: "Ubuntu Clang 11"
+    name: "Ubuntu Clang 16"
 
     steps:
       - uses: actions/checkout@v2
@@ -37,20 +37,21 @@ jobs:
 
       - name: Update LLVM compilers
         shell: bash
-        run: sudo apt-get install -y clang-11 lld-11 libc++-11-dev libc++abi-11-dev clang-tools-11
+        run: sudo apt-get install -y clang-16 lld-16 libc++-16-dev libc++abi-16-dev clang-tools-16
 
       - name: Configure CMake Ark
         shell: bash
         run: |
           cmake -Bbuild \
             -DCMAKE_BUILD_TYPE=$BUILD_TYPE \
-            -DCMAKE_C_COMPILER=clang-11 \
-            -DCMAKE_CXX_COMPILER=clang++-11 \
-            -DARK_BUILD_EXE=On -DARK_BUILD_MODULES=On -DARK_MOD_ALL=On -DARK_MOD_DRAFT=On
+            -DCMAKE_C_COMPILER=clang-16 \
+            -DCMAKE_CXX_COMPILER=clang++-16 \
+            -DARK_BUILD_EXE=On -DARK_UNITY_BUILD=On \
+            -DARK_BUILD_MODULES=On -DARK_MOD_ALL=On -DARK_MOD_DRAFT=On
 
       - name: Build ArkScript
         shell: bash
-        run: cmake --build build --config $BUILD_TYPE
+        run: cmake --build build --config $BUILD_TYPE -j $(nproc)
 
       - name: Run src module tests
         shell: bash
