@@ -36,10 +36,6 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 * Visual Studio >= 11 (on Windows)
 * Python >= 2.7
 
-## Repository structure
-
-![](./diagram.svg)
-
 ## Copyright and Licence information
 
 Copyright (c) 2019-2024 Alexandre Plateau. All rights reserved.
