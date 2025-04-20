@@ -95,7 +95,7 @@ namespace Database
         // For each row returned from the SQL query, run the user's callback
         // function on each row passing in an Ark List of the row results.
         for (std::vector<Value>& row : all_results)
-            vm->resolve(&user_defined_callback, Value(std::move(row)));
+            vm->resolve(vm->getDefaultContext(), { user_defined_callback, Value(std::move(row)) });
 
         if (code != SQLITE_OK)
         {

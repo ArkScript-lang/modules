@@ -22,6 +22,9 @@ Value handle_request_for(std::string_view funcname, HttpMethod_t handler, std::v
     Server& srv = create_server();
 
     (srv.*handler)(n[0].string().c_str(), [funcname, n, vm](const Request& req, Response& res) {
+        // todo: find a way to have 1 execution context per thread. Should we use a lock?
+        //       Pre-create as many execution contexts as threads inside cpp-httplib pool?
+        //       Track contexts that are being used to find the first available one
         std::string content;
         std::string type;
         Value r;
@@ -34,7 +37,7 @@ Value handle_request_for(std::string_view funcname, HttpMethod_t handler, std::v
                 matches.push_back(Value(req.matches[i]));
 
             if (req.params.size() == 0)
-                r = vm->resolve(&n[1], matches, req.body, Nil);
+                r = Nil;  // fixme: vm->resolve(&n[1], matches, req.body, Nil);
             else
             {
                 // craft params
@@ -43,7 +46,7 @@ Value handle_request_for(std::string_view funcname, HttpMethod_t handler, std::v
 
                 Value params = Value(UserType(&p.back(), get_cfs_param()));
 
-                r = vm->resolve(&n[1], matches, req.body, params);
+                r = Nil;  // fixme: vm->resolve(&n[1], matches, req.body, params);
             }
         }
         // no matches, maybe params
@@ -55,11 +58,11 @@ Value handle_request_for(std::string_view funcname, HttpMethod_t handler, std::v
 
             Value params = Value(UserType(&p.back(), get_cfs_param()));
 
-            r = vm->resolve(&n[1], Nil, req.body, params);
+            r = Nil;  // fixme: vm->resolve(&n[1], Nil, req.body, params);
         }
         // no matches, no params
         else
-            r = vm->resolve(&n[1], Nil, req.body, Nil);
+            r = Nil;  // fixme: vm->resolve(&n[1], Nil, req.body, Nil);
 
         if (CHECK_FUNC_RETURN_VAL_FOR_REQ(r))
         {
