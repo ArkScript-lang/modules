@@ -3,66 +3,65 @@
 Value http_create_headers(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if ((n.size() % 2) == 1)
-        throw std::runtime_error("http:headers:create: needs an even number of arguments: [header -> value]");
+        throw std::runtime_error("http:headers: needs an even number of arguments: [header -> value]");
 
-    std::list<Headers>& h = get_headers();
-    h.emplace_back();
+    std::vector<std::unique_ptr<Headers>>& h = get_headers();
+    h.emplace_back(std::make_unique<Headers>());
 
-    std::string key = "";
+    std::string key;
     for (Value& v : n)
     {
         if (v.valueType() != ValueType::String)
-            throw TypeError("http:headers:create: takes only String as argument");
+            throw TypeError("http:headers: takes only String as argument");
 
-        if (key == "")
+        if (key.empty())
             key = v.stringRef();
         else
         {
-            h.back().insert(std::pair<std::string, std::string>(key, v.stringRef()));
+            h.back()->insert(std::pair<std::string, std::string>(key, v.stringRef()));
             key = "";
         }
     }
 
-    Value headers = Value(UserType(&h.back(), get_cfs_header()));
-    return headers;
+    return Value(UserType(h.back().get(), get_cfs_header()));
 }
 
 Value http_create_client(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::String, ValueType::Number))
         types::generateError(
-            "http:client:create",
+            "http:client",
             { { types::Contract { { types::Typedef("host", ValueType::String), types::Typedef("port", ValueType::Number) } } } },
             n);
 
-    std::list<Client>& c = get_clients();
-    c.emplace_back(n[0].stringRef(), static_cast<int>(n[1].number()));
+    std::vector<std::unique_ptr<Client>>& c = get_clients();
+    c.emplace_back(std::make_unique<Client>(n[0].stringRef(), static_cast<int>(n[1].number())));
 
-    return Value(UserType(&c.back(), get_cfs_client()));
+    return Value(UserType(c.back().get(), get_cfs_client()));
 }
 
 Value http_client_get(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (n.size() < 2 || n.size() > 3)
-        throw std::runtime_error("http:client:get: needs 2 to 3 arguments: client, route, [headers]");
+        throw std::runtime_error("http:get: needs 2 to 3 arguments: client, route, [headers]");
     if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw TypeError("http:client:get: client must be an httpClient");
+        throw TypeError("http:get: client must be an httpClient");
     if (n[1].valueType() != ValueType::String)
-        throw TypeError("http:client:get: route must be a String");
+        throw TypeError("http:get: route must be a String");
 
     Headers* headers = nullptr;
 
     if (n.size() == 3)
     {
         if (n[2].valueType() != ValueType::User || !n[2].usertype().is<Headers>())
-            throw TypeError("http:client:get: headers must be httpHeaders");
+            throw TypeError("http:get: headers must be httpHeaders");
         else
             headers = &n[2].usertypeRef().as<Headers>();
     }
 
-    Client& c = n[0].usertypeRef().as<Client>();
+    auto& c = n[0].usertypeRef().as<Client>();
     std::string route = n[1].stringRef();
-    auto res = (headers == nullptr) ? c.Get(route.c_str()) : c.Get(route.c_str(), *headers);
+    auto res = c.Get(route.c_str(), (headers == nullptr) ? Headers() : *headers);
 
     if (!res)
         return Nil;
@@ -74,259 +73,124 @@ Value http_client_get(std::vector<Value>& n, VM* vm [[maybe_unused]])
     return data;
 }
 
-Value http_create_params(std::vector<Value>& n, VM* vm [[maybe_unused]])
+enum class HttpVerb
 {
-    if ((n.size() % 2) == 1)
-        throw std::runtime_error("http:params:create: needs an even number of arguments: [key -> value]");
+    Get,
+    Post,
+    Patch,
+    Put,
+    Delete
+};
 
-    std::list<Params>& p = get_params();
-    p.emplace_back();
-
-    std::string key = "";
-    for (Value& v : n)
+std::string verb_as_string(HttpVerb verb)
+{
+    switch (verb)
     {
-        if (v.valueType() != ValueType::String)
-            throw TypeError("http:params:create: takes only String as arguments");
-
-        if (key == "")
-            key = v.stringRef();
-        else
-        {
-            p.back().insert(std::pair<std::string, std::string>(key, v.stringRef()));
-            key = "";
-        }
+        case HttpVerb::Get:
+            return "get";
+        case HttpVerb::Post:
+            return "post";
+        case HttpVerb::Patch:
+            return "patch";
+        case HttpVerb::Put:
+            return "put";
+        case HttpVerb::Delete:
+            return "delete";
     }
-
-    Value params = Value(UserType(&p.back(), get_cfs_param()));
-    return params;
 }
 
-Value http_params_tolist(std::vector<Value>& n, VM* vm [[maybe_unused]])
+Headers* get_headers(std::vector<Value>& n, const std::string& verb)
 {
-    if (!types::check(n, ValueType::User) || !n[0].usertypeRef().is<Params>())
-        types::generateError(
-            "http:params:toList",
-            { { types::Contract { { types::Typedef("params", ValueType::User) } } } },
-            n);
-
-    Value lst(ValueType::List);
-    for (auto& s : n[0].usertypeRef().as<Params>())
+    if (n.size() == 4)
     {
-        Value inner(ValueType::List);
-        inner.push_back(Value(s.first));
-        inner.push_back(Value(s.second));
-        lst.push_back(inner);
+        if (n.back().valueType() == ValueType::User && n.back().usertype().is<Headers>())
+            return &n.back().usertypeRef().as<Headers>();
+    }
+    else if (n.size() == 5)
+    {
+        if (n.back().valueType() == ValueType::User && n.back().usertype().is<Headers>())
+            return &n.back().usertypeRef().as<Headers>();
+        throw TypeError(fmt::format("http:{}: headers must be httpHeaders", verb));
     }
 
-    return lst;
+    return nullptr;
+}
+
+Value handle_http_data_verb(HttpVerb kind, std::vector<Value>& n)
+{
+    const std::string verb = verb_as_string(kind);
+
+    if (n.size() < 3 || n.size() > 5)
+        throw std::runtime_error(fmt::format("http:{}: needs 3 to 5 arguments: client, route, body, [content-type], [headers]", verb));
+    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
+        throw TypeError(fmt::format("http:{}: client must be an httpClient", verb));
+    if (n[1].valueType() != ValueType::String)
+        throw TypeError(fmt::format("http:{}: route must be a String", verb));
+    if (n[2].valueType() != ValueType::String)
+        throw TypeError(fmt::format("http:{}: body must be a String", verb));
+
+    auto& c = n[0].usertypeRef().as<Client>();
+    std::string route = n[1].stringRef();
+    const auto content_type = n.size() >= 4 ? n[3].string().c_str() : "text/plain";
+    Headers* headers = get_headers(n, verb);
+
+    std::optional<Result> maybe_res;
+
+    switch (kind)
+    {
+        case HttpVerb::Get:
+            // Not handled as we can't send data using Get
+            break;
+
+        case HttpVerb::Post:
+            maybe_res = c.Post(route.c_str(), (headers == nullptr) ? Headers() : *headers, /* body= */ n[2].string(), /* content_type= */ content_type);
+            break;
+        case HttpVerb::Patch:
+            maybe_res = c.Patch(route.c_str(), (headers == nullptr) ? Headers() : *headers, /* body= */ n[2].string(), /* content_type= */ content_type);
+            break;
+        case HttpVerb::Put:
+            maybe_res = c.Put(route.c_str(), (headers == nullptr) ? Headers() : *headers, /* body= */ n[2].string(), /* content_type= */ content_type);
+            break;
+        case HttpVerb::Delete:
+            maybe_res = c.Delete(route.c_str(), (headers == nullptr) ? Headers() : *headers, /* body= */ n[2].string(), /* content_type= */ content_type);
+            break;
+    }
+
+    if (!maybe_res || !maybe_res.value())
+        return Nil;
+
+    Value data = Value(ValueType::List);
+    data.push_back(Value(maybe_res.value()->status));
+    data.push_back(Value(maybe_res.value()->body));
+
+    return data;
 }
 
 Value http_client_post(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
-    if (n.size() < 3 || n.size() > 5)
-        throw std::runtime_error("http:client:post: needs 3 to 5 arguments: client, route, parameters, [content-type], [headers]");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw TypeError("http:client:post: client must be an httpClient");
-    if (n[1].valueType() != ValueType::String)
-        throw TypeError("http:client:post: route must be a String");
-    if (n[2].valueType() != ValueType::String ||
-        (n[2].valueType() != ValueType::User || !n[2].usertype().is<Params>()))
-        throw TypeError("http:client:post: parameters must be a String or httpParams");
-
-    Client& c = n[0].usertypeRef().as<Client>();
-    std::string route = n[1].stringRef();
-
-    Headers* headers = nullptr;
-
-    // if params is a string, headers come last
-    if (n.size() == 5 && n[2].valueType() == ValueType::String)
-    {
-        if (n[4].valueType() != ValueType::User || !n[4].usertype().is<Headers>())
-            throw TypeError("http:client:post: headers must be httpHeaders");
-        else
-            headers = &n[4].usertypeRef().as<Headers>();
-    }
-    else if (n[2].valueType() != ValueType::String && n.size() == 4)
-    {
-        if (n[3].valueType() != ValueType::User || !n[3].usertype().is<Headers>())
-            throw TypeError("http:client:post: headers must be httpHeaders");
-        else
-            headers = &n[3].usertypeRef().as<Headers>();
-    }
-
-    if (n[2].valueType() == ValueType::String && n.size() >= 4 && n[3].valueType() == ValueType::String)
-    {
-        auto res = headers != nullptr ? c.Post(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
-                                      : c.Post(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
-    else if (n[2].valueType() == ValueType::String && n.size() == 3)
-    {
-        auto res = headers != nullptr ? c.Post(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
-                                      : c.Post(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ "text/plain");
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
-    else
-    {
-        auto res = headers != nullptr ? c.Post(route.c_str(), *headers, n[2].usertype().as<Params>())
-                                      : c.Post(route.c_str(), n[2].usertype().as<Params>());
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
+    return handle_http_data_verb(HttpVerb::Post, n);
 }
 
 Value http_client_put(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
-    if (n.size() < 3 || n.size() > 5)
-        throw std::runtime_error("http:client:put: needs 3 to 5 arguments: client, route, parameters, [content-type], [headers]");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw TypeError("http:client:put: client must be an httpClient");
-    if (n[1].valueType() != ValueType::String)
-        throw TypeError("http:client:put: route must be a String");
-    if (n[2].valueType() != ValueType::String ||
-        (n[2].valueType() != ValueType::User || !n[2].usertype().is<Params>()))
-        throw TypeError("http:client:put: parameters must be a String or httpParams");
-
-    Client& c = n[0].usertypeRef().as<Client>();
-    std::string route = n[1].stringRef();
-
-    Headers* headers = nullptr;
-
-    // if params is a string, headers come last
-    if (n.size() == 5 && n[2].valueType() == ValueType::String)
-    {
-        if (n[4].valueType() != ValueType::User || !n[4].usertype().is<Headers>())
-            throw TypeError("http:client:put: headers must be httpHeaders");
-        else
-            headers = &n[4].usertypeRef().as<Headers>();
-    }
-    else if (n[2].valueType() != ValueType::String && n.size() == 4)
-    {
-        if (n[3].valueType() != ValueType::User || !n[3].usertype().is<Headers>())
-            throw TypeError("http:client:put: headers must be httpHeaders");
-        else
-            headers = &n[3].usertypeRef().as<Headers>();
-    }
-
-    if (n[2].valueType() == ValueType::String && n.size() >= 4 && n[3].valueType() == ValueType::String)
-    {
-        auto res = headers != nullptr ? c.Put(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
-                                      : c.Put(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
-    else if (n[2].valueType() == ValueType::String && n.size() == 3)
-    {
-        auto res = headers != nullptr ? c.Put(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
-                                      : c.Put(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ "text/plain");
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
-    else
-    {
-        auto res = headers != nullptr ? c.Put(route.c_str(), *headers, n[2].usertype().as<Params>())
-                                      : c.Put(route.c_str(), n[2].usertype().as<Params>());
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
+    return handle_http_data_verb(HttpVerb::Put, n);
 }
 
 Value http_client_delete(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
-    if (n.size() < 3 || n.size() > 5)
-        throw std::runtime_error("http:client:delete: needs 3 to 5 arguments: client, route, body, [content-type], [headers]");
-    if (n[0].valueType() != ValueType::User || !n[0].usertype().is<Client>())
-        throw TypeError("http:client:delete: client must be an httpClient");
-    if (n[1].valueType() != ValueType::String)
-        throw TypeError("http:client:delete: route must be a String");
-    if (n[2].valueType() != ValueType::String)
-        throw TypeError("http:client:delete: body must be a String");
+    return handle_http_data_verb(HttpVerb::Delete, n);
+}
 
-    Client& c = n[0].usertypeRef().as<Client>();
-    std::string route = n[1].stringRef();
-
-    Headers* headers = nullptr;
-
-    // if params is a string, headers come last
-    if (n.size() == 5)
-    {
-        if (n[4].valueType() != ValueType::User || !n[4].usertype().is<Headers>())
-            throw TypeError("http:client:delete: headers must be httpHeaders");
-        else
-            headers = &n[4].usertypeRef().as<Headers>();
-    }
-
-    if (n.size() >= 4 && n[3].valueType() == ValueType::String)
-    {
-        auto res = headers != nullptr ? c.Delete(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str())
-                                      : c.Delete(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ n[3].string().c_str());
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
-    else
-    {
-        auto res = headers != nullptr ? c.Delete(route.c_str(), *headers, /* body */ n[2].string().c_str(), /* content type */ "text/plain")
-                                      : c.Delete(route.c_str(), /* body */ n[2].string().c_str(), /* content type */ "text/plain");
-        if (!res)
-            return Nil;
-
-        Value data = Value(ValueType::List);
-        data.push_back(Value(res->status));
-        data.push_back(Value(res->body));
-
-        return data;
-    }
+Value http_client_patch(std::vector<Value>& n, VM* vm [[maybe_unused]])
+{
+    return handle_http_data_verb(HttpVerb::Patch, n);
 }
 
 Value http_client_set_follow_location(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if ((!types::check(n, ValueType::User, ValueType::True) && !types::check(n, ValueType::User, ValueType::False)) || !n[0].usertypeRef().is<Client>())
         types::generateError(
-            "http:client:setFollowLocation",
+            "http:setFollowLocation",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User), types::Typedef("value", ValueType::True) } },
                 types::Contract { { types::Typedef("httpClient", ValueType::User), types::Typedef("value", ValueType::False) } } } },
             n);
@@ -339,7 +203,7 @@ Value http_client_set_co_timeout(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::User, ValueType::Number, ValueType::Number) || !n[0].usertype().is<Client>())
         types::generateError(
-            "http:client:setConnectionTimeout",
+            "http:setConnectionTimeout",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("seconds", ValueType::Number),
                                     types::Typedef("microseconds", ValueType::Number) } } } },
@@ -356,7 +220,7 @@ Value http_client_set_read_timeout(std::vector<Value>& n, VM* vm [[maybe_unused]
 {
     if (!types::check(n, ValueType::User, ValueType::Number, ValueType::Number) || !n[0].usertype().is<Client>())
         types::generateError(
-            "http:client:setReadTimeout",
+            "http:setReadTimeout",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("seconds", ValueType::Number),
                                     types::Typedef("microseconds", ValueType::Number) } } } },
@@ -373,7 +237,7 @@ Value http_client_set_write_timeout(std::vector<Value>& n, VM* vm [[maybe_unused
 {
     if (!types::check(n, ValueType::User, ValueType::Number, ValueType::Number) || !n[0].usertype().is<Client>())
         types::generateError(
-            "http:client:setWriteTimeout",
+            "http:setWriteTimeout",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("seconds", ValueType::Number),
                                     types::Typedef("microseconds", ValueType::Number) } } } },
@@ -390,7 +254,7 @@ Value http_client_set_basic_auth(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::User, ValueType::String, ValueType::String) || !n[0].usertype().is<Client>())
         types::generateError(
-            "http:client:setBasicAuth",
+            "http:setBasicAuth",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("username", ValueType::String),
                                     types::Typedef("password", ValueType::String) } } } },
@@ -406,7 +270,7 @@ Value http_client_set_bearer_token_auth(std::vector<Value>& n, VM* vm [[maybe_un
 {
     if (!types::check(n, ValueType::User, ValueType::String) || !n[0].usertype().is<Client>())
         types::generateError(
-            "http:client:setBearerTokenAuth",
+            "http:setBearerTokenAuth",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("token", ValueType::String) } } } },
             n);
@@ -419,7 +283,7 @@ Value http_client_set_keep_alive(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if ((!types::check(n, ValueType::User, ValueType::True) && !types::check(n, ValueType::User, ValueType::False)) || !n[0].usertype().is<Client>())
         types::generateError(
-            "http:client:setKeepAlive",
+            "http:setKeepAlive",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("toggle", ValueType::True) } },
                 types::Contract { { types::Typedef("httpClient", ValueType::User),
@@ -434,7 +298,7 @@ Value http_client_set_proxy(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::User, ValueType::String, ValueType::Number) || !n[0].usertype().is<Client>())
         types::generateError(
-            "http:client:setProxy",
+            "http:setProxy",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("host", ValueType::String),
                                     types::Typedef("port", ValueType::Number) } } } },
@@ -448,7 +312,7 @@ Value http_client_set_proxy_basic_auth(std::vector<Value>& n, VM* vm [[maybe_unu
 {
     if (!types::check(n, ValueType::User, ValueType::String, ValueType::String) || !n[0].usertype().is<Client>())
         types::generateError(
-            "http:client:setProxyBasicAuth",
+            "http:setProxyBasicAuth",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("username", ValueType::String),
                                     types::Typedef("password", ValueType::String) } } } },
@@ -465,7 +329,7 @@ Value http_client_set_proxy_bearer_token_auth(std::vector<Value>& n, VM* vm [[ma
 {
     if (!types::check(n, ValueType::User, ValueType::String) || !n[0].usertype().is<Client>())
         types::generateError(
-            "http:client:setProxyBearerTokenAuth",
+            "http:setProxyBearerTokenAuth",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("token", ValueType::String) } } } },
             n);

@@ -3,5 +3,10 @@
 ARKSCRIPT=$1
 ARKLIB=$2
 
-# todo, see #50
+# run a sample API in the background, so that we have something to query
+python3 api.py &
+
 $ARKSCRIPT main.ark --lib $ARKLIB
+
+# kill the api, running as a background job
+kill $(jobs -p)

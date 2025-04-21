@@ -27,7 +27,7 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 
 ### Network related
 
-* `http` to create http clients and servers
+* `http` to make web requests (get, post, put, patch, delete)
 
 ## Dependencies
 
@@ -38,6 +38,6 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 
 ## Copyright and Licence information
 
-Copyright (c) 2019-2024 Alexandre Plateau. All rights reserved.
+Copyright (c) 2019-2025 Alexandre Plateau. All rights reserved.
 
 This ArkScript distribution contains no GNU GPL code, which means it can be used in proprietary projects.

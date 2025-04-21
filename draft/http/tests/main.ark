@@ -1,4 +1,170 @@
-# TODO add real tests
-(let do_nothing nil)
+(import http)
+(import std.Testing)
+(import std.String :split :join :toUpper)
+(import std.List :map)
 
-(print "HTTP tests done")
+(let compare (fun (result length method path query content_type data headers) {
+  (let code (head result))
+  (let lines (split (@ result 1) "\n"))
+
+  (test:case (string:format "{} {}{}{}" method path (if (empty? query) "" "?") query) {
+    (test:eq code 200)
+      (test:eq (@ lines 1) (string:format "CONTENT_LENGTH: {}" length))
+      (test:eq (@ lines 3) (string:format "REQUEST_METHOD: {}" method))
+      (test:eq (@ lines 4) (string:format "PATH_INFO: {}" path))
+      (test:eq (@ lines 5) (string:format "QUERY_STRING: {}" query))
+      (test:eq (@ lines 6) (string:format "CONTENT_TYPE: {}" content_type))
+
+      (if (not (nil? data))
+        (test:eq (@ lines 9) (string:format "DATA: {}" data)))
+      (if (not (empty? headers))
+        {
+          (let as_str (join
+            (map
+              headers
+              (fun (tuple)
+                (string:format "{}={};" (toUpper (head tuple)) (@ tuple 1))))
+            ""))
+          (test:eq (@ lines 10) (+ "HEADERS: " as_str)) })
+  }) }))
+
+(test:suite http {
+  (let c (http:client "localhost" 8000))
+  (let headers (http:headers
+    "TEST_HEADER" "value"
+    "USERNAME" "foo"
+    "PASSWORD" "bar"))
+  # headers are sorted alphabetically in the API
+  (let headers_as_list [["PASSWORD" "bar"] ["TEST_HEADER" "value"] ["USERNAME" "foo"]])
+
+  (let json "{\"key\": 5, \"list\": []}")
+
+  (test:case "http:get" {
+    (compare (http:get c "/")
+      ""
+      "GET"
+      "/"
+      ""
+      "text/plain"
+      nil
+      [])
+    (compare (http:get c "/hello/world?question=y&count=5&flag")
+      ""
+      "GET"
+      "/hello/world"
+      "question=y&count=5&flag"
+      "text/plain"
+      nil
+      [])
+    (compare (http:get c "/login" headers)
+      ""
+      "GET"
+      "/login"
+      ""
+      "text/plain"
+      nil
+      headers_as_list) })
+
+  (test:case "http:post" {
+    (compare (http:post c "/" "hello")
+      5
+      "POST"
+      "/"
+      ""
+      "text/plain"
+      "hello"
+      [])
+    (compare (http:post c "/hello/world?question=y&count=5&flag" json "application/json")
+      (len json)
+      "POST"
+      "/hello/world"
+      "question=y&count=5&flag"
+      "application/json"
+      json
+      [])
+    (compare (http:post c "/login" "data" "application/json" headers)
+      4
+      "POST"
+      "/login"
+      ""
+      "application/json"
+      "data"
+      headers_as_list) })
+
+  (test:case "http:put" {
+    (compare (http:put c "/" "hello")
+      5
+      "PUT"
+      "/"
+      ""
+      "text/plain"
+      "hello"
+      [])
+    (compare (http:put c "/hello/world?question=y&count=5&flag" json "application/json")
+      (len json)
+      "PUT"
+      "/hello/world"
+      "question=y&count=5&flag"
+      "application/json"
+      json
+      [])
+    (compare (http:put c "/login" "data" "application/json" headers)
+      4
+      "PUT"
+      "/login"
+      ""
+      "application/json"
+      "data"
+      headers_as_list) })
+
+  (test:case "http:patch" {
+    (compare (http:patch c "/" "hello")
+      5
+      "PATCH"
+      "/"
+      ""
+      "text/plain"
+      "hello"
+      [])
+    (compare (http:patch c "/hello/world?question=y&count=5&flag" json "application/json")
+      (len json)
+      "PATCH"
+      "/hello/world"
+      "question=y&count=5&flag"
+      "application/json"
+      json
+      [])
+    (compare (http:patch c "/login" "data" "application/json" headers)
+      4
+      "PATCH"
+      "/login"
+      ""
+      "application/json"
+      "data"
+      headers_as_list) })
+
+  (test:case "http:delete" {
+    (compare (http:delete c "/" "hello")
+      5
+      "DELETE"
+      "/"
+      ""
+      "text/plain"
+      "hello"
+      [])
+    (compare (http:delete c "/hello/world?question=y&count=5&flag" json "application/json")
+      (len json)
+      "DELETE"
+      "/hello/world"
+      "question=y&count=5&flag"
+      "application/json"
+      json
+      [])
+    (compare (http:delete c "/login" "data" "application/json" headers)
+      4
+      "DELETE"
+      "/login"
+      ""
+      "application/json"
+      "data"
+      headers_as_list) }) })
