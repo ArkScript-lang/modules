@@ -9,7 +9,8 @@ include_directories(
     ${Modules_SOURCE_DIR}/submodules/cpp-httplib)
 
 file(GLOB_RECURSE SOURCE_FILES
-    ${PROJECT_SOURCE_DIR}/src/*.cpp)
+    ${PROJECT_SOURCE_DIR}/src/*.cpp
+    ${ark_SOURCE_DIR}/lib/fmt/src/format.cc)
 
 set(OPENSSL_USE_STATIC_LIBS TRUE)
 find_package(OpenSSL REQUIRED)
