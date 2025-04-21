@@ -5,6 +5,8 @@ ARKLIB=$2
 
 # run a sample API in the background, so that we have something to query
 python3 api.py &
+# wait for the api to be up and running
+sleep 1
 
 $ARKSCRIPT main.ark --lib $ARKLIB
 
