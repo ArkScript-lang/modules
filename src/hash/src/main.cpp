@@ -10,7 +10,7 @@ namespace ArkHash
     Value sha2(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::String))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "hash:sha256",
                 { { types::Contract { { types::Typedef("data", ValueType::String) } } } },
                 n);
@@ -25,7 +25,7 @@ namespace ArkHash
     Value md5(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::String))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "hash:md5",
                 { { types::Contract { { types::Typedef("data", ValueType::String) } } } },
                 n);

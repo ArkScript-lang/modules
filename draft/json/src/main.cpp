@@ -34,7 +34,7 @@ namespace json
     Value open(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::String))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "json:open",
                 { { types::Contract { { types::Typedef("filename", ValueType::String) } } } },
                 args);
@@ -54,7 +54,7 @@ namespace json
     Value fromString(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::String))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "json:fromString",
                 { { types::Contract { { types::Typedef("jsonObject", ValueType::String) } } } },
                 args);
@@ -97,7 +97,7 @@ namespace json
     Value get(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (args.size() < 2 || !args[0].usertype().is<nlohmann::json>())
-            types::generateError(
+            throw types::TypeCheckingError(
                 "json:get",
                 { { types::Contract { { types::Typedef("json", ValueType::User), types::Typedef("key", ValueType::Number) } },
                     types::Contract { { types::Typedef("json", ValueType::User), types::Typedef("key", ValueType::String) } } } },
@@ -126,7 +126,7 @@ namespace json
             return Nil;
         }
 
-        types::generateError(
+        throw types::TypeCheckingError(
             "json:get",
             { { types::Contract { { types::Typedef("json", ValueType::User), types::Typedef("key", ValueType::Number) } },
                 types::Contract { { types::Typedef("json", ValueType::User), types::Typedef("key", ValueType::String) } } } },
@@ -137,7 +137,7 @@ namespace json
     Value toString(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::User))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "json:toString",
                 { { types::Contract { { types::Typedef("jsonObject", ValueType::User) } } } },
                 args);
@@ -190,7 +190,7 @@ namespace json
     Value jset(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::User, ValueType::String, ValueType::Any) || !args[0].usertype().is<nlohmann::json>())
-            types::generateError(
+            throw types::TypeCheckingError(
                 "json:set",
                 { { types::Contract { { types::Typedef("jsonObject", ValueType::User),
                                         types::Typedef("key", ValueType::String),
@@ -215,6 +215,7 @@ namespace json
             }
 
             case ValueType::False:
+                [[fallthrough]];
             case ValueType::True:
             {
                 json_object[args[1].stringRef().c_str()] = (args[2] == True);
@@ -247,7 +248,7 @@ namespace json
     Value write(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::User, ValueType::String) || !args[0].usertype().is<nlohmann::json>())
-            types::generateError(
+            throw types::TypeCheckingError(
                 "json:write",
                 { { types::Contract { { types::Typedef("jsonObject", ValueType::User),
                                         types::Typedef("filename", ValueType::String) } } } },
@@ -264,7 +265,7 @@ namespace json
     Value fromList(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::List))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "json:fromList",
                 { { types::Contract { { types::Typedef("jsonAsList", ValueType::List) } } } },
                 args);
@@ -292,6 +293,7 @@ namespace json
                     break;
 
                 case ValueType::True:
+                    [[fallthrough]];
                 case ValueType::False:
                     (*ptr)[ark_list[i].stringRef().c_str()] = (ark_list[i + 1] == True);
                     break;
@@ -318,7 +320,7 @@ namespace json
     Value len(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::User) || !args[0].usertype().is<nlohmann::json>())
-            types::generateError(
+            throw types::TypeCheckingError(
                 "json:len",
                 { { types::Contract { { types::Typedef("jsonObject", ValueType::User) } } } },
                 args);

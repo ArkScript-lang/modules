@@ -31,7 +31,7 @@ namespace ArkConsole
     Value color(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::String))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "console:color",
                 { { types::Contract { { types::Typedef("color_name", ValueType::String) } } } },
                 n);

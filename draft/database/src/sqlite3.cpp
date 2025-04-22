@@ -7,7 +7,7 @@ namespace Database
     Value database_sqlite_open(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::String))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "database:sqlite:open",
                 { { types::Contract { { types::Typedef("database_filename", ValueType::String) } } } },
                 args);
@@ -24,7 +24,7 @@ namespace Database
     Value database_sqlite_close(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::User) || !args[0].usertype().is<sqlite3>())
-            types::generateError(
+            throw types::TypeCheckingError(
                 "database:sqlite:close",
                 { { types::Contract { { types::Typedef("database", ValueType::User) } } } },
                 args);
@@ -36,7 +36,7 @@ namespace Database
     Value database_sqlite_exec(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::User, ValueType::String) || !args[0].usertype().is<sqlite3>())
-            types::generateError(
+            throw types::TypeCheckingError(
                 "database:sqlite:exec",
                 { { types::Contract { { types::Typedef("database", ValueType::User),
                                         types::Typedef("sql", ValueType::String) } } } },
@@ -61,7 +61,7 @@ namespace Database
     Value database_sqlite_exec_with_callback(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (args.size() != 3 || args[0].valueType() != ValueType::User || !args[0].usertype().is<sqlite3>() || args[1].valueType() != ValueType::String || !args[2].isFunction())
-            types::generateError(
+            throw types::TypeCheckingError(
                 "database:sqlite:exec_with_callback",
                 { { types::Contract { { types::Typedef("database", ValueType::User),
                                         types::Typedef("sql", ValueType::String),
@@ -111,7 +111,7 @@ namespace Database
     Value database_sqlite_last_insert_row_id(std::vector<Value>& args, VM* vm [[maybe_unused]])
     {
         if (!types::check(args, ValueType::User) || !args[0].usertype().is<sqlite3>())
-            types::generateError(
+            throw types::TypeCheckingError(
                 "database:sqlite:last_insert_row_id",
                 { { types::Contract { { types::Typedef("database", ValueType::User) } } } },
                 args);

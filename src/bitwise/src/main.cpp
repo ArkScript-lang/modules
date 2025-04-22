@@ -8,7 +8,7 @@ namespace ArkBitwise
     Value rshift(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::Number, ValueType::Number))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "bitwise:rshift",
                 { { types::Contract { { types::Typedef("number", ValueType::Number), types::Typedef("shift", ValueType::Number) } } } },
                 n);
@@ -22,7 +22,7 @@ namespace ArkBitwise
     Value lshift(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::Number, ValueType::Number))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "bitwise:lshift",
                 { { types::Contract { { types::Typedef("number", ValueType::Number), types::Typedef("shift", ValueType::Number) } } } },
                 n);
@@ -36,7 +36,7 @@ namespace ArkBitwise
     Value xor_(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::Number, ValueType::Number))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "bitwise:xor",
                 { { types::Contract { { types::Typedef("number", ValueType::Number), types::Typedef("mask", ValueType::Number) } } } },
                 n);
@@ -50,7 +50,7 @@ namespace ArkBitwise
     Value or_(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::Number, ValueType::Number))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "bitwise:or",
                 { { types::Contract { { types::Typedef("a", ValueType::Number), types::Typedef("b", ValueType::Number) } } } },
                 n);
@@ -64,7 +64,7 @@ namespace ArkBitwise
     Value and_(std::vector<Value>& n, VM* vm [[maybe_unused]])
     {
         if (!types::check(n, ValueType::Number, ValueType::Number))
-            types::generateError(
+            throw types::TypeCheckingError(
                 "bitwise:and",
                 { { types::Contract { { types::Typedef("a", ValueType::Number), types::Typedef("b", ValueType::Number) } } } },
                 n);

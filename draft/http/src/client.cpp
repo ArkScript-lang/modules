@@ -29,7 +29,7 @@ Value http_create_headers(std::vector<Value>& n, VM* vm [[maybe_unused]])
 Value http_create_client(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::String, ValueType::Number))
-        types::generateError(
+        throw types::TypeCheckingError(
             "http:client",
             { { types::Contract { { types::Typedef("host", ValueType::String), types::Typedef("port", ValueType::Number) } } } },
             n);
@@ -189,7 +189,7 @@ Value http_client_patch(std::vector<Value>& n, VM* vm [[maybe_unused]])
 Value http_client_set_follow_location(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if ((!types::check(n, ValueType::User, ValueType::True) && !types::check(n, ValueType::User, ValueType::False)) || !n[0].usertypeRef().is<Client>())
-        types::generateError(
+        throw types::TypeCheckingError(
             "http:setFollowLocation",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User), types::Typedef("value", ValueType::True) } },
                 types::Contract { { types::Typedef("httpClient", ValueType::User), types::Typedef("value", ValueType::False) } } } },
@@ -202,7 +202,7 @@ Value http_client_set_follow_location(std::vector<Value>& n, VM* vm [[maybe_unus
 Value http_client_set_co_timeout(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::User, ValueType::Number, ValueType::Number) || !n[0].usertype().is<Client>())
-        types::generateError(
+        throw types::TypeCheckingError(
             "http:setConnectionTimeout",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("seconds", ValueType::Number),
@@ -219,7 +219,7 @@ Value http_client_set_co_timeout(std::vector<Value>& n, VM* vm [[maybe_unused]])
 Value http_client_set_read_timeout(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::User, ValueType::Number, ValueType::Number) || !n[0].usertype().is<Client>())
-        types::generateError(
+        throw types::TypeCheckingError(
             "http:setReadTimeout",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("seconds", ValueType::Number),
@@ -236,7 +236,7 @@ Value http_client_set_read_timeout(std::vector<Value>& n, VM* vm [[maybe_unused]
 Value http_client_set_write_timeout(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::User, ValueType::Number, ValueType::Number) || !n[0].usertype().is<Client>())
-        types::generateError(
+        throw types::TypeCheckingError(
             "http:setWriteTimeout",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("seconds", ValueType::Number),
@@ -253,7 +253,7 @@ Value http_client_set_write_timeout(std::vector<Value>& n, VM* vm [[maybe_unused
 Value http_client_set_basic_auth(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::User, ValueType::String, ValueType::String) || !n[0].usertype().is<Client>())
-        types::generateError(
+        throw types::TypeCheckingError(
             "http:setBasicAuth",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("username", ValueType::String),
@@ -269,7 +269,7 @@ Value http_client_set_basic_auth(std::vector<Value>& n, VM* vm [[maybe_unused]])
 Value http_client_set_bearer_token_auth(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::User, ValueType::String) || !n[0].usertype().is<Client>())
-        types::generateError(
+        throw types::TypeCheckingError(
             "http:setBearerTokenAuth",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("token", ValueType::String) } } } },
@@ -282,7 +282,7 @@ Value http_client_set_bearer_token_auth(std::vector<Value>& n, VM* vm [[maybe_un
 Value http_client_set_keep_alive(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if ((!types::check(n, ValueType::User, ValueType::True) && !types::check(n, ValueType::User, ValueType::False)) || !n[0].usertype().is<Client>())
-        types::generateError(
+        throw types::TypeCheckingError(
             "http:setKeepAlive",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("toggle", ValueType::True) } },
@@ -297,7 +297,7 @@ Value http_client_set_keep_alive(std::vector<Value>& n, VM* vm [[maybe_unused]])
 Value http_client_set_proxy(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::User, ValueType::String, ValueType::Number) || !n[0].usertype().is<Client>())
-        types::generateError(
+        throw types::TypeCheckingError(
             "http:setProxy",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("host", ValueType::String),
@@ -311,7 +311,7 @@ Value http_client_set_proxy(std::vector<Value>& n, VM* vm [[maybe_unused]])
 Value http_client_set_proxy_basic_auth(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::User, ValueType::String, ValueType::String) || !n[0].usertype().is<Client>())
-        types::generateError(
+        throw types::TypeCheckingError(
             "http:setProxyBasicAuth",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("username", ValueType::String),
@@ -328,7 +328,7 @@ Value http_client_set_proxy_basic_auth(std::vector<Value>& n, VM* vm [[maybe_unu
 Value http_client_set_proxy_bearer_token_auth(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
     if (!types::check(n, ValueType::User, ValueType::String) || !n[0].usertype().is<Client>())
-        types::generateError(
+        throw types::TypeCheckingError(
             "http:setProxyBearerTokenAuth",
             { { types::Contract { { types::Typedef("httpClient", ValueType::User),
                                     types::Typedef("token", ValueType::String) } } } },
