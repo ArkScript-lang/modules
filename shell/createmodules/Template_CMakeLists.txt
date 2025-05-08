@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16)
 
 project(<module_name>)
 
@@ -17,5 +17,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ArkReactor)
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 add_custom_command(TARGET ${PROJECT_NAME}
+    POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         "$<TARGET_FILE:${PROJECT_NAME}>" ${ark_SOURCE_DIR}/lib/${PROJECT_NAME}.arkm)
