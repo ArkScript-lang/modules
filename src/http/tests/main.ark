@@ -7,23 +7,23 @@
   (let code (head result))
   (let lines (split (@ result 1) "\n"))
 
-  (test:case (string:format "{} {}{}{}" method path (if (empty? query) "" "?") query) {
+  (test:case (format "{} {}{}{}" method path (if (empty? query) "" "?") query) {
     (test:eq code 200)
-      (test:eq (@ lines 1) (string:format "CONTENT_LENGTH: {}" length))
-      (test:eq (@ lines 3) (string:format "REQUEST_METHOD: {}" method))
-      (test:eq (@ lines 4) (string:format "PATH_INFO: {}" path))
-      (test:eq (@ lines 5) (string:format "QUERY_STRING: {}" query))
-      (test:eq (@ lines 6) (string:format "CONTENT_TYPE: {}" content_type))
+      (test:eq (@ lines 1) (format "CONTENT_LENGTH: {}" length))
+      (test:eq (@ lines 3) (format "REQUEST_METHOD: {}" method))
+      (test:eq (@ lines 4) (format "PATH_INFO: {}" path))
+      (test:eq (@ lines 5) (format "QUERY_STRING: {}" query))
+      (test:eq (@ lines 6) (format "CONTENT_TYPE: {}" content_type))
 
       (if (not (nil? data))
-        (test:eq (@ lines 9) (string:format "DATA: {}" data)))
+        (test:eq (@ lines 9) (format "DATA: {}" data)))
       (if (not (empty? headers))
         {
           (let as_str (join
             (map
               headers
               (fun (tuple)
-                (string:format "{}={};" (toUpper (head tuple)) (@ tuple 1))))
+                (format "{}={};" (toUpper (head tuple)) (@ tuple 1))))
             ""))
           (test:eq (@ lines 10) (+ "HEADERS: " as_str)) })
   }) }))
