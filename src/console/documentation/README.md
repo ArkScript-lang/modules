@@ -1,4 +1,20 @@
-@page console_module Console module
+---
+title: "Console module"
+description: ""
+summary: ""
+date: 2025-07-23T14:25:16+02:00
+lastmod: 2025-07-23T14:25:16+02:00
+draft: false
+weight: 410
+toc: true
+seo:
+  title: "" # custom title (optional)
+  description: "" # custom description (recommended)
+  canonical: "" # custom canonical URL (optional)
+  noindex: false # false (default) or true
+---
+
+{{< highlight_scripts >}}
 
 ## console:clear
 
@@ -13,11 +29,11 @@ Clear the terminal on Windows and Posix.
 - [@SuperFola](https://github.com/SuperFola)
 
 **Example**
-~~~~{.lisp}
+{{< highlight_arkscript >}}
 (import console)
 (print "hello world")  # hello world is printed
 (console:clear)        # now the whole terminal is empty and nothing is printed
-~~~~
+{{< /highlight_arkscript >}}
 
 ## console:color
 
@@ -60,7 +76,7 @@ on_white
 ```
 
 **Example**
-~~~~{.lisp}
+{{< highlight_arkscript >}}
 (import console)
 (print "hello world")  # this is using the default color of the terminal
 (console:color "red")
@@ -70,4 +86,4 @@ on_white
 (print "I am normal")
 (console:color "on_cyan")
 (print "I am a text on cyan background")
-~~~~
+{{< /highlight_arkscript >}}

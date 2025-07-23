@@ -1,4 +1,20 @@
-@page http_module HTTP module
+---
+title: "HTTP module"
+description: ""
+summary: ""
+date: 2025-07-23T14:25:16+02:00
+lastmod: 2025-07-23T14:25:16+02:00
+draft: false
+weight: 410
+toc: true
+seo:
+  title: "" # custom title (optional)
+  description: "" # custom description (recommended)
+  canonical: "" # custom canonical URL (optional)
+  noindex: false # false (default) or true
+---
+
+{{< highlight_scripts >}}
 
 A module to play with HTTP requests, using [cpp-httplib](https://github.com/yhirose/cpp-httplib) (MIT License).
 
@@ -24,13 +40,13 @@ They work as pairs with:
 - [@SuperFola](https://github.com/SuperFola)
 
 **Example**
-~~~~{.lisp}
+{{< highlight_arkscript >}}
 (let headers (http:headers
-    # pair 0
-    "Accept-Encoding" "gzip, deflate"
-    # pair 1
-    "Content-Type" "application/json"))
-~~~~
+  # pair 0
+  "Accept-Encoding" "gzip, deflate"
+  # pair 1
+  "Content-Type" "application/json"))
+{{< /highlight_arkscript >}}
 
 ## http:client
 
@@ -46,9 +62,9 @@ Create a http client to query a server.
 - [@SuperFola](https://github.com/SuperFola)
 
 **Example**
-~~~~{.lisp}
+{{< highlight_arkscript >}}
 (let cli (http:client "localhost" 1234))
-~~~~
+{{< /highlight_arkscript >}}
 
 ## http:get
 
@@ -65,16 +81,16 @@ Get content from an online resource.
 - [@SuperFola](https://github.com/SuperFola)
 
 **Example**
-~~~~{.lisp}
+{{< highlight_arkscript >}}
 (let headers (http:headers:create
-    "Accept-Encoding" "gzip, deflate"))
+  "Accept-Encoding" "gzip, deflate"))
 (let cli (http:client "localhost" 1234))
 
 (mut output (http:get cli "/hi" headers))
 (if (nil? output)
-    (print "couldn't reach the server")
-    (print (@ output 0)))  # print the status
-~~~~
+  (print "couldn't reach the server")
+  (print (@ output 0)))  # print the status
+{{< /highlight_arkscript >}}
 
 ## http:post, http:put, http:patch, http:delete
 
@@ -93,11 +109,11 @@ Make a POST / PUT / PATCH / DELETE request with a String as the request's body.
 - [@SuperFola](https://github.com/SuperFola)
 
 **Example**
-~~~~{.lisp}
+{{< highlight_arkscript >}}
 (let cli (http:client "localhost" 1234))
 
 (mut output (http:post cli "/hi" "{\"key\": 5}" "application/json" headers))
 (if (nil? output)
-    (print "couldn't reach the server")
-    (print (@ output 0)))  # print the status
-~~~~
+  (print "couldn't reach the server")
+  (print (@ output 0)))  # print the status
+{{< /highlight_arkscript >}}
