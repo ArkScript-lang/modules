@@ -5,23 +5,22 @@ ARKSCRIPT=$(pwd)/build/arkscript
 ARKLIB=$(pwd)/lib
 
 Reset='\033[0m'
-Black='\033[0;30m'
 Red='\033[0;31m'
-Green='\033[0;32m'
-Yellow='\033[0;33m'
-Blue='\033[0;34m'
 Purple='\033[0;35m'
-Cyan='\033[0;36m'
-White='\033[0;37m'
 
 total_time=0
 
-for t in lib/modules/${1:-src}/*/tests/; do
+errors=0
+
+for t in lib/modules/"${1:-src}"/*/tests/; do
     start=$(date +%s%N | tr -d 'N')
 
     echo -n "Running ${t}..."
-    (cd $t; source ./run $ARKSCRIPT $ARKLIB)
+    (cd "$t" || exit 1; source ./run "$ARKSCRIPT" "$ARKLIB")
     code=$?
+    if [[ $code != 0 ]]; then
+      errors=$((errors + 1))
+    fi
 
     end=$(date +%s%N | tr -d 'N')
     elapsed=$((end - start))
@@ -30,10 +29,17 @@ for t in lib/modules/${1:-src}/*/tests/; do
     decimals=$((elapsed - (seconds * 1000000000) ))
     runtime="${seconds}.${decimals}sec"
 
-    echo -e "-- in ${Purple}${runtime}${Reset}"
+    echo -en "-- in ${Purple}${runtime}${Reset}"
+    if [[ $code != 0 ]]; then
+      echo -e " - ${Red}FAILED${Reset}"
+    else
+      echo ""
+    fi
 done
 
 seconds=$((total_time / 1000000000))
 decimals=$((total_time - (seconds * 1000000000) ))
 runtime="${seconds}.${decimals}sec"
 echo -e "Completed in ${Purple}${runtime}${Reset}"
+
+echo -e "Failures: ${Red}${errors}${Reset}"
