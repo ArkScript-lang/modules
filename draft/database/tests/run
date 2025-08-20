@@ -13,7 +13,7 @@ delete_test_db_if_exists()
 # Delete any existing test database if it exists
 delete_test_db_if_exists
 
-$ARKSCRIPT main.ark --lib $ARKLIB
+$ARKSCRIPT --lib $ARKLIB main.ark
 
 # Clean up test database after run
 delete_test_db_if_exists

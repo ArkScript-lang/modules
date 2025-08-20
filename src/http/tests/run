@@ -8,7 +8,7 @@ python3 api.py &
 # wait for the api to be up and running
 sleep 1
 
-$ARKSCRIPT main.ark --lib $ARKLIB
+$ARKSCRIPT --lib $ARKLIB main.ark
 
 # kill the api, running as a background job
 kill $(jobs -p)

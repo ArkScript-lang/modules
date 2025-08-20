@@ -3,4 +3,4 @@
 ARKSCRIPT=$1
 ARKLIB=$2
 
-$ARKSCRIPT main.ark --lib $ARKLIB
+$ARKSCRIPT --lib $ARKLIB main.ark
