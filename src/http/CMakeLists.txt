@@ -10,7 +10,7 @@ include_directories(
 
 file(GLOB_RECURSE SOURCE_FILES
         ${PROJECT_SOURCE_DIR}/src/*.cpp
-        ${ark_SOURCE_DIR}/lib/fmt/src/format.cc)
+        ${ark_SOURCE_DIR}/thirdparties/fmt/src/format.cc)
 
 set(OPENSSL_USE_STATIC_LIBS TRUE)
 find_package(OpenSSL REQUIRED)

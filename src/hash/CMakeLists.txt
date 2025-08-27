@@ -6,7 +6,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories(
         ${PROJECT_SOURCE_DIR}/include
-        ${ark_SOURCE_DIR}/lib/picosha2/)
+        ${ark_SOURCE_DIR}/thirdparties/picosha2/)
 
 file(GLOB_RECURSE SOURCE_FILES
         ${PROJECT_SOURCE_DIR}/src/*.cpp)
