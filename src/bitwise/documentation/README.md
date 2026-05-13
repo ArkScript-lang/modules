@@ -16,6 +16,10 @@ seo:
 
 {{< highlight_scripts >}}
 
+{{< callout context="note" title="Note" icon="outline/info-circle" >}}
+This module will be deprecated in ArkScript 4.6.0, in favor of [std.Math builtins]({{< ref "/docs/std/Math.md" >}}).
+{{< /callout >}}
+
 ## bitwise:rshift
 
 Right shifts a given number.
