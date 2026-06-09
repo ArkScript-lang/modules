@@ -53,10 +53,10 @@ They work as pairs with:
 Create a http client to query a server.
 
 **Parameters**
-- `host`: string, you must not put the protocol `http://` nor `https://`
-- `port`: number
+- `host`: string
+- `port`: number (optional if the protocol is in the host (`http://` or `https://`))
 
-**Return value** `List` if the request succeeded: `[status, body]`, otherwise `nil`
+**Return value** `httpClient`
 
 **Author**
 - [@SuperFola](https://github.com/SuperFola)

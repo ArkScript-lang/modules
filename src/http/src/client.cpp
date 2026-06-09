@@ -1,4 +1,5 @@
 #include <http_module.hpp>
+#include <stdexcept>
 
 Value http_create_headers(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
@@ -28,14 +29,27 @@ Value http_create_headers(std::vector<Value>& n, VM* vm [[maybe_unused]])
 
 Value http_create_client(std::vector<Value>& n, VM* vm [[maybe_unused]])
 {
-    if (!types::check(n, ValueType::String, ValueType::Number))
+    if (!types::check(n, ValueType::String) && !types::check(n, ValueType::String, ValueType::Number))
         throw types::TypeCheckingError(
             "http:client",
-            { { types::Contract { { types::Typedef("host", ValueType::String), types::Typedef("port", ValueType::Number) } } } },
+            { { types::Contract { { types::Typedef("host", ValueType::String) } },
+                types::Contract { { types::Typedef("host", ValueType::String), types::Typedef("port", ValueType::Number) } } } },
             n);
 
     std::vector<std::unique_ptr<Client>>& c = get_clients();
-    c.emplace_back(std::make_unique<Client>(n[0].stringRef(), static_cast<int>(n[1].number())));
+    const std::string& host = n[0].stringRef();
+
+    if (host.starts_with("http://") || host.starts_with("https://"))
+    {
+        c.emplace_back(std::make_unique<Client>(host));
+        c.back()->enable_server_certificate_verification(false);
+    }
+    else
+    {
+        if (n.size() != 2)
+            throw std::runtime_error("http:client: expected a port since no protocol (http or https) was found in the host");
+        c.emplace_back(std::make_unique<Client>(host, static_cast<int>(n[1].number())));
+    }
 
     return Value(UserType(c.back().get(), get_cfs_client()));
 }
