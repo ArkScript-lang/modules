@@ -13,3 +13,6 @@ build/
 *.lib
 *.a
 *.so
+
+draft/playground
+
