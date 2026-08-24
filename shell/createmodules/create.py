@@ -3,138 +3,123 @@ import json
 import argparse
 import constant as cs
 
-def buildStructure(rootDirectory, content):
-	'''
-	Builds the defined directory structure under the given root
-	
-	Parameters:
-	rootDirectory (string): The parent directory under which the content should be created
-	content (dict): the definition of the directories/files that should be created under the root
-	'''
 
-	contentType = content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_TYPE"]]
-	
-	if contentType == cs.DIRECTORY:
-		rootDirectory = createDirectory(rootDirectory, content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_NAME"]])
-	elif contentType == cs.FILE:
-		createFile(rootDirectory, content)
+def build_structure(root_directory, content):
+    """
+    Builds the defined directory structure under the given root
 
-	if cs.MODULE_STRUCTURE_KEYS["DIR_CONTENTS"] not in content:
-		return
+    Parameters:
+    root_directory (string): The parent directory under which the content should be created
+    content (dict): the definition of the directories/files that should be created under the root
+    """
 
-	for subContent in content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENTS"]]:
-		buildStructure(rootDirectory, subContent)
+    content_type = content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_TYPE"]]
 
-def createDirectory(rootDirectory, directoryName):
-	'''
-	Creates a given directory under the given root
-	
-	Parameters:
-	rootDirectory (string): The parent directory under which the sub directory should be created
-	content (dict): the definition of the directories/files that should be created under the root
+    if content_type == cs.DIRECTORY:
+        root_directory = create_directory(root_directory, content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_NAME"]])
+    elif content_type == cs.FILE:
+        create_file(root_directory, content)
 
-	Returns:
-	string: path of the current root directory
-	'''
-	path = os.path.join(rootDirectory, "src", directoryName)
-	os.mkdir(path)
+    if cs.MODULE_STRUCTURE_KEYS["DIR_CONTENTS"] not in content:
+        return
 
-	return path
-
-def isTemplateFile(content):
-	'''
-	Checks if a given file should be copied from a template file
-	
-	Parameters:
-	content (dict): the definition of the directories/files that should be created under the root
-
-	Returns:
-	boolean: true if template file is available else false
-	'''
-	isTemplateKey = cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_IS_TEMPLATE"]
-
-	return (isTemplateKey in content and content[isTemplateKey])
-
-def readTemplateFile(fileName):
-	'''
-	Reads the contents of the given template file
-	
-	Parameters:
-	fileName (string): file name to be created
-
-	Returns:
-	string: contents of the corresponding template file
-	'''
-	templateFileName = cs.TEMPLATE_FILE_NAME_PREFIX + fileName
-	path = os.path.join(cs.MODULE_CREATION_SHELL_DIR, templateFileName)
-
-	return open(path, cs.FILE_READ_PERMISSION).read()
-
-def writeContentsToFile(file, content, rootDirectory):
-	'''
-	Copies content from template file and writes to given file
-	
-	Parameters:
-	file (File object): the new file to which the contents of the template are copied
-	content (dict): the definition of the directories/files that should be created under the root
-	rootDirectory (string): name of the directory under which the file is created
-
-	Returns:
-	boolean: true if template file is available else false
-	'''
-	moduleName = rootDirectory.split(os.path.sep)[-1]
-
-	templateFileContents = readTemplateFile(content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_NAME"]])
-	file.write(templateFileContents.replace(cs.MODULE_NAME_PLACEHOLDER, moduleName))
+    for subContent in content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENTS"]]:
+        build_structure(root_directory, subContent)
 
 
-def createFile(rootDirectory, content):
-	'''
-	Creates a file under the given root
-	
-	Parameters:
-	rootDirectory (string): The parent directory under which the file should be created
-	content (dict): the definition of the directories/files that should be created under the root
-	'''
-	fileName = content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_NAME"]]
-	path = os.path.join(rootDirectory, fileName)
-	file = open(path, "w+")
+def create_directory(root_directory, directory_name):
+    """
+    Creates a given directory under the given root
 
-	if isTemplateFile(content):
-		writeContentsToFile(file, content, rootDirectory)
+    Parameters:
+    root_directory (string): The parent directory under which the subdirectory should be created
+    directory_name (string): name of the directory that should be created under the root
 
-def getModuleName():
-	'''
-	Fetches the argument name passed to the script
+    Returns:
+    string: path of the current root directory
+    """
+    path = os.path.join(root_directory, directory_name)
+    os.mkdir(path)
+    return path
 
-	Returns:
-	string: name of the module to be created
-	'''
-	parser = argparse.ArgumentParser()
-	parser.add_argument("name")
-	directory = parser.parse_args()
 
-	return directory.name
+def is_template_file(content):
+    """
+    Checks if a given file should be copied from a template file
 
-def getDirectoryStructure():
-	'''
-	Reads the directory structure from file and builds a dictionary
+    Parameters:
+    content (dict): the definition of the directories/files that should be created under the root
 
-	Returns
-	dict: dictionary with the directory structure to be created
-	'''
-	jsonFile = os.getcwd() + os.path.sep + cs.MODULE_CREATION_SHELL_DIR + os.path.sep + cs.MODULE_STRUCTURE_FILE_NAME
-	f = open(jsonFile)
-	directoryStructure = json.load(f)
-	f.close()
-	
-	return directoryStructure
+    Returns:
+    boolean: true if template file is available else false
+    """
+    is_template_key = cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_IS_TEMPLATE"]
+    return is_template_key in content and content[is_template_key]
+
+
+def read_template_file(file_name):
+    """
+    Reads the contents of the given template file
+
+    Parameters:
+    file_name (string): file name to be created
+
+    Returns:
+    string: contents of the corresponding template file
+    """
+    template_file_name = cs.TEMPLATE_FILE_NAME_PREFIX + file_name
+    with open(os.path.join(cs.MODULE_CREATION_SHELL_DIR, template_file_name)) as f:
+        return f.read()
+
+
+def write_contents_to_file(file, content, root_directory):
+    """
+    Copies content from template file and writes to given file
+
+    Parameters:
+    file (File object): the new file to which the contents of the template are copied
+    content (dict): the definition of the directories/files that should be created under the root
+    root_directory (string): name of the directory under which the file is created
+
+    Returns:
+    boolean: true if template file is available else false
+    """
+    module_name = root_directory.split(os.path.sep)[-1]
+
+    template_file_contents = read_template_file(content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_NAME"]])
+    file.write(template_file_contents.replace(cs.MODULE_NAME_PLACEHOLDER, module_name))
+
+
+def create_file(root_directory, content):
+    """
+    Creates a file under the given root
+
+    Parameters:
+    root_directory (string): The parent directory under which the file should be created
+    content (dict): the definition of the directories/files that should be created under the root
+    """
+    file_name = content[cs.MODULE_STRUCTURE_KEYS["DIR_CONTENT_NAME"]]
+    path = os.path.join(root_directory, file_name)
+    file = open(path, "w+")
+
+    if is_template_file(content):
+        write_contents_to_file(file, content, root_directory)
+
 
 if __name__ == "__main__":
-	moduleName = getModuleName()
-	directoryStructure = getDirectoryStructure()
-	
-	rootDir = createDirectory(os.getcwd(), moduleName)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("name")
+    directory = parser.parse_args()
 
-	for content in directoryStructure:
-		buildStructure(rootDir, content)
+    with open(os.path.join(os.getcwd(), cs.MODULE_CREATION_SHELL_DIR, cs.MODULE_STRUCTURE_FILE_NAME)) as f:
+        directory_structure = json.load(f)
+    root_dir = create_directory(os.path.join(os.getcwd(), "src"), directory.name)
+
+    for content in directory_structure:
+        build_structure(root_dir, content)
+
+    print(f"""\nINFO: to compile your module, add
+
+add_subdirectory({directory.name})
+
+To modules/src/CMakeLists.txt""")
