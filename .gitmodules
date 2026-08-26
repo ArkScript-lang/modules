@@ -7,3 +7,9 @@
 [submodule "submodules/termcolor"]
 	path = submodules/termcolor
 	url = https://github.com/ikalnytskyi/termcolor
+[submodule "submodules/abseil"]
+	path = submodules/abseil
+	url = https://github.com/abseil/abseil-cpp.git
+[submodule "submodules/re2"]
+	path = submodules/re2
+	url = https://github.com/google/re2.git
