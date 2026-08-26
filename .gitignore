@@ -1,12 +1,10 @@
 build/
+cmake-build-*/
 __pycache__/
 __arkscript__/
-cformat.ps1
 
 .idea/
 
-cmake-build-*/
-build/
 *.o
 *.out
 *.dll
@@ -15,4 +13,3 @@ build/
 *.so
 
 draft/playground
-
