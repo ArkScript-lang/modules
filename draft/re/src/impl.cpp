@@ -1,7 +1,9 @@
+#include <Ark/VM/Value/Dict.hpp>
 #include <module.hpp>
 #include <utils.hpp>
 
 #include <vector>
+#include <ranges>
 
 #include <re2/re2.h>
 
@@ -13,9 +15,21 @@ namespace Regex
 
     Value toValue(const Match& match, const std::string& text)
     {
-        if (const auto& span = match.spans.front(); !span.empty)
-            return Value(text.substr(span.start, span.size));
-        return Nil;
+        internal::Dict dict;
+        const auto& span = match.spans.front();
+        if (!span.empty)
+            dict.set(Value("match"), Value(text.substr(span.start, span.size)));
+        else
+            dict.set(Value("match"), Nil);
+        dict.set(Value("start"), Value(static_cast<int64_t>(span.start)));
+        dict.set(Value("end"), Value(static_cast<int64_t>(span.size + span.start)));
+
+        Value groups(ValueType::List);
+        for (const Span& s : match.spans | std::ranges::views::drop(1))
+            groups.push_back(Value(text.substr(s.start, s.size)));
+        dict.set(Value("groups"), groups);
+
+        return Value(std::move(dict));
     }
 
     Value toValue(const MatchImpl_t& res)
