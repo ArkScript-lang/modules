@@ -13,12 +13,13 @@ Main repository: **[ArkScript](https://github.com/ArkScript-lang/Ark)**
 
 ### Terminal related
 
-* `console` to change text color when using `print`
+* `console` to change text colour when using `print`
 
 ### Generic utilities
 
-* `bitwise` for bitwise operations
+* `bitwise` for bitwise operations (**deprecated**: now built-in)
 * `hash` to compute md5 and sha256 hashes
+* `re` to use regex
 
 ### Data related
 

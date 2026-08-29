@@ -2,15 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(Modules)
 
-set(ARK_MOD_ALL Off CACHE BOOL "Build all the modules")
-set(ARK_MOD_DRAFT Off CACHE BOOL "Build all draft modules")
+set(ARK_REQUESTED_MODULES "" CACHE STRING "List of module names to build")
 
-if (ARK_MOD_ALL)
-    message(STATUS "Building modules in modules/src")
-    add_subdirectory(src)
-endif ()
-
-if (ARK_MOD_DRAFT)
-    message(STATUS "Building modules in modules/draft")
-    add_subdirectory(draft)
-endif ()
+add_subdirectory(src)
+add_subdirectory(draft)
