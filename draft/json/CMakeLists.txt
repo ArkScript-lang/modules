@@ -21,4 +21,4 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 add_custom_command(TARGET ${PROJECT_NAME}
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-        "$<TARGET_FILE:${PROJECT_NAME}>" ${PROJECT_SOURCE_DIR}/../../../${PROJECT_NAME}.arkm)
+        "$<TARGET_FILE:${PROJECT_NAME}>" ${ark_SOURCE_DIR}/lib/std/${PROJECT_NAME}.arkm)

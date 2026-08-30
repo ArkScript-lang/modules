@@ -1,7 +1,9 @@
-bitwise/documentation
-console/documentation
-hash/documentation
-http/documentation
-http/bulk_req.py
-json/documentation
-random/documentation
+src/bitwise/documentation
+src/console/documentation
+src/hash/documentation
+src/http/documentation
+src/http/bulk_req.py
+
+draft/database/documentation
+draft/json/documentation
+draft/re/documentation
