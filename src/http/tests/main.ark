@@ -1,4 +1,4 @@
-(import http)
+(import std.http)
 (import std.Testing)
 (import std.String :split :join :toUpper)
 (import std.List :map)
