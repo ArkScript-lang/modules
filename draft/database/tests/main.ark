@@ -1,4 +1,4 @@
-(import database)
+(import std.database)
 
 (let db (database:sqlite:open "test.db"))
 
