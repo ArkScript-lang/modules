@@ -7,8 +7,8 @@ namespace Regex
 {
     using namespace Ark;
 
-    Value search(std::vector<Value>& args, VM* vm);
     Value match(std::vector<Value>& args, VM* vm);
+    Value prefix_match(std::vector<Value>& args, VM* vm);
     Value full_match(std::vector<Value>& args, VM* vm);
     Value find_all(std::vector<Value>& args, VM* vm);
     Value sub(std::vector<Value>& args, VM* vm);

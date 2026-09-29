@@ -3,8 +3,8 @@
 ARK_API Ark::mapping* getFunctionsMapping()
 {
     static Ark::mapping map[] = {
-        { "re:search", Regex::search },
         { "re:match", Regex::match },
+        { "re:prefixMatch", Regex::prefix_match },
         { "re:fullMatch", Regex::full_match },
         { "re:findAll", Regex::find_all },
         { "re:sub", Regex::sub },

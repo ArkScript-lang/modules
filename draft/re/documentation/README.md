@@ -3,7 +3,7 @@ title: "re module"
 description: ""
 summary: ""
 date: 2026-08-29T17:18:16+02:00
-lastmod: 2026-08-29T17:18:16+02:00
+lastmod: 2026-09-29T13:55:16+02:00
 draft: false
 weight: 410
 toc: true
@@ -537,7 +537,7 @@ This page lists the regular expression syntax accepted by RE2. Note that this sy
 
 </details>
 
-## re:search
+## re:match
 
 Scan through string looking for the first location where the regular expression pattern produces a match, and return a `dict` describing the match. Return `nil` if no position in the string matches the pattern.
 
@@ -553,11 +553,11 @@ Scan through string looking for the first location where the regular expression 
 **Example**
 {{< highlight_arkscript >}}
 (import std.re)
-(print (re:search r"\bf[a-z]*" "which foot or hand fell fastest"))
+(print (re:match r"\bf[a-z]*" "which foot or hand fell fastest"))
 # {match: foot, start: 6, end: 10, groups: []}
 {{< /highlight_arkscript >}}
 
-## re:match
+## re:prefixMatch
 
 If zero or more characters at the beginning of string match the regular expression pattern, return a `dict` describing the match. Return `nil` if the string does not match the pattern.
 
@@ -573,7 +573,7 @@ If zero or more characters at the beginning of string match the regular expressi
 **Example**
 {{< highlight_arkscript >}}
 (import std.re)
-(print (re:match r"(\w+) (\w+)" "Isaac Newton, physicist"))
+(print (re:prefixMatch r"(\w+) (\w+)" "Isaac Newton, physicist"))
 # {match: Isaac Newton, start: 0, end: 12, groups: ["Isaac" "Newton"]}
 {{< /highlight_arkscript >}}
 
@@ -627,7 +627,7 @@ Return all non-overlapping matches of pattern in string, as a list of strings or
 
 ## re:sub
 
-Return the string obtained by replacing the leftmost non-overlapping occurrences of pattern in string by the replacement repl. If the pattern isn’t found, string is returned unchanged. Backreferences, such as `\6`, are replaced with the substring matched by group 6 in the pattern. For example:
+Return the string obtained by replacing the leftmost non-overlapping occurrences of pattern in string by the replacement. If the pattern isn’t found, the string is returned unchanged. Backreferences, such as `\6`, are replaced with the substring matched by group 6 in the pattern. For example:
 
 {{< highlight_arkscript >}}
 (print
@@ -647,7 +647,7 @@ Return the string obtained by replacing the leftmost non-overlapping occurrences
 
 ## re:split
 
-Split string by the occurrences of pattern. If capturing parentheses are used in pattern, then the text of all groups in the pattern are also returned as part of the resulting list. If `max_split` is nonzero, at most `max_split` splits occur, and the remainder of the string is returned as the final element of the list.
+Split `input` by the occurrences of `regex`. If capturing parentheses are used in `regex`, then the text of all groups in the pattern are also returned as part of the resulting list. If `max_split` is nonzero, at most `max_split` splits occur, and the remainder of the string is returned as the final element of the list.
 
 **Parameters**
 - `regex`: String, regular expression to use for splitting
