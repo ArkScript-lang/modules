@@ -52,11 +52,11 @@ namespace Regex
         return toValue(match, res.text);
     }
 
-    Value search(std::vector<Value>& args, VM* vm)
+    Value match(std::vector<Value>& args, VM* vm)
     {
         if (!types::check(args, ValueType::String, ValueType::String))
             throw types::TypeCheckingError(
-                "re:search",
+                "re:match",
                 { { types::Contract { { types::Typedef("regex", ValueType::String), types::Typedef("input", ValueType::String) } } } },
                 args);
         const std::string& regex = args[0].string();
@@ -64,11 +64,11 @@ namespace Regex
         return toValue(matchImpl(RE2::UNANCHORED, regex, input, true));
     }
 
-    Value match(std::vector<Value>& args, VM* vm)
+    Value prefix_match(std::vector<Value>& args, VM* vm)
     {
         if (!types::check(args, ValueType::String, ValueType::String))
             throw types::TypeCheckingError(
-                "re:match",
+                "re:prefixMatch",
                 { { types::Contract { { types::Typedef("regex", ValueType::String), types::Typedef("input", ValueType::String) } } } },
                 args);
         const std::string& regex = args[0].string();
