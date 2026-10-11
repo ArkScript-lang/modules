@@ -46,7 +46,7 @@ jobs:
             -DCMAKE_C_COMPILER=clang-16 \
             -DCMAKE_CXX_COMPILER=clang++-16 \
             -DARK_BUILD_EXE=On -DARK_UNITY_BUILD=On \
-            -DARK_BUILD_MODULES=On -DARK_MOD_ALL=On -DARK_MOD_DRAFT=On
+            -DARK_BUILD_MODULES=On -DARK_REQUESTED_MODULES='*'
 
       - name: Build ArkScript
         shell: bash
