@@ -1,0 +1,67 @@
+(mut __tests_ok 0)
+(mut __tests_fail 0)
+
+(macro test:eq (_val _expected) {
+  (macro a ($gensym))
+  (macro b ($gensym))
+  (let a _val)
+  (let b _expected)
+  (print (format "{} -- Expected {}, got {}" (if (= a b) "✅" "❌") b a))
+
+  (if (= a b)
+    (set __tests_ok (+ 1 __tests_ok))
+    (set __tests_fail (+ 1 __tests_fail))) })
+
+(import std.re)
+
+(let pattern r"\bf[a-z]*")
+(let text "which foot or hand fell fastest")
+
+(test:eq (re:match pattern text) nil)
+(test:eq (re:match r"(\w+) (\w+)" "Isaac Newton, physicist") (dict "match" "Isaac Newton" "start" 0 "end" 12 "groups" ["Isaac" "Newton"]))
+(test:eq (@ (re:match r"(\w+) (\w+)" "Isaac Newton, physicist") "groups") ["Isaac" "Newton"])
+(test:eq (re:fullMatch r"(?P<first_name>\w+) (?P<last_name>\w+)" "Malcolm Reynolds") (dict "match" "Malcolm Reynolds" "start" 0 "end" 16 "groups" ["Malcolm" "Reynolds"]))
+(test:eq (re:search pattern text) (dict "match" "foot" "start" 6 "end" 10 "groups" []))
+(test:eq (re:findAll pattern text) [
+  (dict "match" "foot" "start" 6 "end" 10 "groups" [])
+  (dict "match" "fell" "start" 19 "end" 23 "groups" [])
+  (dict "match" "fastest" "start" 24 "end" 31 "groups" [])])
+(test:eq (re:findAll r"(\w+)=(\d+)" "set width=20 and height=10") [
+  (dict "match" "width=20" "start" 4 "end" 12 "groups" ["width" "20"])
+  (dict "match" "height=10" "start" 17 "end" 26 "groups" ["height" "10"])])
+
+(test:eq (re:match r"^[a2-9tjqk]{5}$" "akt5q") (dict "match" "akt5q" "start" 0 "end" 5 "groups" []))
+(test:eq (re:match r"^[a2-9tjqk]{5}$" "akt5e") nil)  # Invalid.
+(test:eq (re:match r"^[a2-9tjqk]{5}$" "akt") nil)    # Invalid.
+(test:eq (re:match r"^[a2-9tjqk]{5}$" "727ak") (dict "match" "727ak" "start" 0 "end" 5 "groups" []))
+
+(test:eq
+  (re:sub
+    r"def\s+([a-zA-Z_][a-zA-Z_0-9]*)\s*\(\s*\):"
+    r"static PyObject* py_\1(void) {"
+    "def myfunc():")
+  "static PyObject* py_myfunc(void) {")
+
+(test:eq (re:escape "1.5-2.0?") "1\\.5\\-2\\.0\\?")
+(test:eq (re:escape "abcdefgh") "abcdefgh")
+(test:eq (re:escape "") "")
+(test:eq (re:escape "[") "\\[")
+
+(test:eq (re:split r"\W+"   "Words, def, ijkl.") ["Words" "def" "ijkl"])
+(test:eq (re:split r"(\W+)" "Words, def, ijkl.") ["Words" ", " "def" ", " "ijkl" "."])
+(test:eq (re:split r"\W+"   "Words, def, ijkl." 1) ["Words" "def, ijkl."])
+
+(test:eq (re:match r"\W(.){2}\W" " ff ") (dict "match" " ff " "start" 0 "end" 4 "groups" ["f"]))
+(test:eq (re:match "\\W(.){2}\\W" " ff ") (dict "match" " ff " "start" 0 "end" 4 "groups" ["f"]))
+
+(print (format
+  "\n{} test{} run -- {} passed, {} failed\n{}"
+  (+ __tests_ok __tests_fail)
+  (if (!= 1 (+ __tests_ok __tests_fail)) "s" "")
+  __tests_ok
+  __tests_fail
+  (if (= 0 __tests_fail)
+    "✨ SUCCESS ✨"
+    "❌ FAILED ❌")))
+
+(assert (= 0 __tests_fail) "Everything works")
