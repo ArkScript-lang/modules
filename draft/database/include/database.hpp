@@ -3,9 +3,6 @@
 
 #include <Ark/Module.hpp>
 
-#include <stdio.h>
-#include <sqlite3.h>
-
 namespace Database
 {
     using namespace Ark;

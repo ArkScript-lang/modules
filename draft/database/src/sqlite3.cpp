@@ -1,5 +1,7 @@
 #include <database.hpp>
 
+#include <sqlite3.h>
+
 namespace Database
 {
     using namespace Ark;

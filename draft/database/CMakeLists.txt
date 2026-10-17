@@ -11,7 +11,8 @@ include_directories(
         ${SQLite3_INCLUDE_DIRS})
 
 file(GLOB_RECURSE SOURCE_FILES
-        ${PROJECT_SOURCE_DIR}/src/*.cpp)
+        ${PROJECT_SOURCE_DIR}/src/*.cpp
+        ${ark_SOURCE_DIR}/thirdparties/fmt/src/format.cc)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCE_FILES})
 
